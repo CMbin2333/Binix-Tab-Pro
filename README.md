@@ -34,9 +34,9 @@
 ---
 
 ## 👨‍💻 关于作者
-**陈名镔 (CM_Binix)**
-- 国家级摄影师 | 景观设计师 | Senior Novel Writer
-- 专注于审美与技术的跨界结合。
+** BinixOvO **
+- 联系方式：
+- QQ:3305107017
 
 ## 📄 开源协议
 本项目采用 [MIT License](LICENSE) 许可协议。
