@@ -29,7 +29,9 @@
    - 如需使用云端备份功能，请确保本地 Java 服务器已在 `8080` 端口运行。
 
 ## 📸 预览
-![Uploading image.png…]()
+<img width="1280" height="631" alt="页面详情" src="https://github.com/user-attachments/assets/6b093342-1ada-4bd0-9d6b-e16a0d2f71d2" />
+
+
 
 
 ---
