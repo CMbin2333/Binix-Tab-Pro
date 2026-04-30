@@ -1,45 +1,71 @@
-# Binix-Tab-Pro 🚀
+# 🚀 Binix Tab Pro
 
-一个基于极简 iOS 液体玻璃风格的 Chrome 扩展起始页工作区。
-
----
-
-## 🎨 设计理念
-作为一名景观设计师与摄影师，我追求极致的视觉通透感与交互的流畅度。Binix-Tab-Pro 采用了：
-- **液体玻璃 (Liquid Glass)**：深色液态玻璃渐变背景，配合 40px 高斯模糊，呈现极致的沉浸感。
-- **动态气象物理模拟**：根据实时天气自动触发雨雪粒子特效，让起始页与现实世界共鸣。
-- **极简 iOS 交互**：平滑的弹簧动画与圆角设计，打造原生应用级别的体验。
-
-## ✨ 核心功能
-- **智能工作流**：支持 14 种主流搜索引擎切换（Google, Bing, ChatGPT 等）。
-- **多功能组件**：
-  - **番茄钟与倒计时**：带精确到秒的绝对时间闹钟，支持自定义提醒音。
-  - **实时翻译与 OCR**：集成多引擎翻译，支持图片文字识别。
-  - **沉浸式音乐**：支持本地与在线音频播放，带液态浮窗控制器。
-- **云端同步**：配合本地 Java 后端，实现个人数据与布局的跨端备份。
-- **智能省电**：感知电池状态，断电自动进入降级模式以提升续航。
-
-## 🛠️ 安装与使用
-1. **下载代码**：点击本仓库右上角的 `Code` -> `Download ZIP` 并解压。
-2. **加载扩展**：
-   - 打开 Chrome 浏览器，访问 `chrome://extensions/`。
-   - 开启右上角的 **开发者模式**。
-   - 点击 **加载解压的扩展程序**，选择解压后的文件夹。
-3. **后端依赖（可选）**：
-   - 如需使用云端备份功能，请确保本地 Java 服务器已在 `8080` 端口运行。
-
-## 📸 预览
-<img width="1280" height="631" alt="页面详情" src="https://github.com/user-attachments/assets/6b093342-1ada-4bd0-9d6b-e16a0d2f71d2" />
-
-
-
+**[中文] 一个融合了 iOS 极简美学与极致交互性能的 Chrome 扩展起始页工作区。**  
+**[EN] A Chrome extension start-page workspace blending iOS minimalist aesthetics with high-performance interaction.**
 
 ---
 
-## 👨‍💻 关于作者
-** BinixOvO **
-- 联系方式：
+## 🎨 创作初衷 / Philosophy
+**[中文]** 作为一名代码基础较薄弱的摄影师，我借助 AI 开启了自学编程之路。我模仿了 iTab 插件的常用功能，并融入了许多实用的极客特性。我始终追求审美与效率的极致平衡，本项目采用了“液体玻璃 (Liquid Glass)”设计语言，旨在打造一个具备情绪感知能力的数字化桌面。[cite: 3]。  
+**[EN]** As a photographer with a limited background in coding, I embarked on a self-taught programming journey with the assistance of AI. I replicated the core features of iTab and integrated several practical geek-oriented functions. Driven by a pursuit of balance between aesthetics and efficiency, this project adopts a "Liquid Glass" design language, aiming to create a digital desktop with emotional perception.[cite: 3].
+
+---
+
+## ✨ 核心功能 / Key Features
+
+### 1. 视觉与特效 / Visuals & Particle Engine
+- **[中文] 动态气象模拟**：实时调用卫星数据，内置物理粒子引擎，可渲染逼真的雨滴、雪花或迷雾效果[cite: 2]。  
+  **[EN] Dynamic Weather Simulation**: Real-time satellite data integration with a built-in physics particle engine to render realistic rain, snow, or mist effects[cite: 2].
+- **[中文] 液体玻璃 UI**：全局 40px 高斯模糊与分层阴影，支持随时间变化的极光主题色[cite: 2, 3]。  
+  **[EN] Liquid Glass UI**: Global 40px Gaussian blur and layered shadows, supporting time-synced Aurora theme colors[cite: 2, 3].
+
+### 2. 效率工具 / Productivity Tools
+- **[中文] 14 种引擎矩阵**：集成 Google, Bing, ChatGPT, GitHub, Bilibili 等引擎，支持快捷键切换[cite: 2]。  
+  **[EN] 14-Engine Matrix**: Integrated search for Google, Bing, ChatGPT, GitHub, Bilibili, etc., with hotkey switching[cite: 2].
+- **[中文] 精确计时系统**：包含番茄钟、倒计时及绝对时间闹钟，精确到秒级触发[cite: 2]。  
+  **[EN] Precision Timing**: Includes Pomodoro, countdown, and absolute time alarms with second-level precision[cite: 2].
+- **[中文] 翻译与 OCR**：内置多引擎翻译与 OCR 文字识别工具[cite: 1, 2]。  
+  **[EN] Translation & OCR**: Built-in multi-engine translation and OCR text recognition tools[cite: 1, 2].
+
+### 3. 数据与同步 / Data & Sync
+- **[中文] Java 后端联动**：支持接入本地 Java 服务 (127.0.0.1:8080) 实现云端备份同步[cite: 2]。  
+  **[EN] Java Backend Sync**: Supports local Java service (127.0.0.1:8080) integration for cloud backup and synchronization[cite: 2].
+- **[中文] 智能省电**：感知电池状态，断电自动开启省电模式以优化续航[cite: 2]。  
+  **[EN] Smart Power Saving**: Battery status awareness; automatically enters power-saving mode when unplugged to optimize endurance[cite: 2].
+
+### 4. 快捷键 / Geek Hotkeys 🚀
+- **[中文] 快速聚焦**：在网页任何位置按下 `/` 键，鼠标光标将自动跳转并聚焦至搜索栏。  
+  **[EN] Quick Focus**: Press the `/` key anywhere on the page to automatically jump and focus the cursor onto the search bar.
+- **[中文] 智能翻译搜索**：在搜索框输入内容后，按 `Alt + Enter` 键可将当前文字自动翻译为英语，极大提升国际化搜索效率。  
+  **[EN] Smart Translation Search**: After typing in the search bar, press `Alt + Enter` to automatically translate the text into English, boosting global search efficiency.
+---
+
+## 🛠️ 安装与使用 / Installation
+1. **[中文] 下载代码**：下载本仓库 ZIP 包并解压[cite: 1]。  
+   **[EN] Download**: Download and unzip the ZIP package from this repository[cite: 1].
+2. **[中文] 载入扩展**：在 Chrome 的 `chrome://extensions/` 开启“开发者模式”，点击“加载解压的扩展程序”[cite: 1]。  
+   **[EN] Load Extension**: Enable "Developer mode" at `chrome://extensions/` and click "Load unpacked"[cite: 1].
+
+---
+
+## 👨‍💻 关于作者 / About Author
+** (CM_Binix)**[cite: 1]
+- 联系方式:
 - QQ:3305107017
 
-## 📄 开源协议
-本项目采用 [MIT License](LICENSE) 许可协议。
+---
+
+## ⚖️ 开源协议与版权声明 / License & Copyright
+
+**[中文] 本项目遵循 MIT License。**  
+1. **二次修改**：欢迎对本项目进行二次开发或 UI 修改。  
+2. **版权标注（强制）**：任何基于本项目的衍生版本，**必须在 README 及关于页面显著位置标注原作者：BinixOvO**[cite: 1]。  
+3. **禁止闭源商用**：未经授权禁止将本项目用于闭源商业用途。
+
+**[EN] This project is licensed under the MIT License.**  
+1. **Modification**: Modifications and UI enhancements are welcomed.  
+2. **Attribution (Mandatory)**: For any derivative works, **the original author Chen Mingbin (CM_Binix) must be prominently credited in the README and About page**[cite: 1].  
+3. **No Closed-Source Commercial Use**: Commercial use in closed-source formats is prohibited without explicit authorization.
+
+---
+*"Technology is the skeleton, Art is the soul." —— Binix*
