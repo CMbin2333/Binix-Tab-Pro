@@ -11,6 +11,13 @@
 
 ---
 
+![主界面预览]
+<img width="1280" height="631" alt="页面详情" src="https://github.com/user-attachments/assets/b636689e-0305-4d8c-8508-f36c6d7a9dd3" />
+
+*极简 iOS 液体玻璃设计风格[cite: 3]*
+
+---
+
 ## ✨ 核心功能 / Key Features
 
 ### 1. 视觉与特效 / Visuals & Particle Engine
