@@ -56,7 +56,7 @@
 ---
 
 ## 👨‍💻 关于作者 / About Author
-** (CM_Binix)**[cite: 1]
+(CM_Binix)[cite: 1]
 - 联系方式:
 - QQ:3305107017
 
@@ -75,4 +75,4 @@
 3. **No Closed-Source Commercial Use**: Commercial use in closed-source formats is prohibited without explicit authorization.
 
 ---
-*"Technology is the skeleton, Art is the soul." —— Binix*
+*"很感谢你能看到这里，你的Star对我真的有很大的帮助" —— Binix*
