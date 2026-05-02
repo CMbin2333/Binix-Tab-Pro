@@ -47,6 +47,16 @@
   **[EN] Smart Translation Search**: After typing in the search bar, press `Alt + Enter` to automatically translate the text into English, boosting global search efficiency.
 ---
 
+## 🛠️ 现版本1.1.0测试版
+[中文] 新增功能：新增联想词功能；新增开关联想词功能；增强 CSS 以支持苹果风格的拖拽补位动画 [cite: 1]。
+[EN] New Features: Added word association function; Added toggle for word association function; Enhanced CSS to support Apple-style drag-and-drop repositioning animation[cite: 1].
+[中文] 修复 bug：修复磁贴无法拖动的问题；优化拖拽体验，避免拖动后误触点击打开链接 [cite: 1]。
+[EN] Bug Fixes: Fixed the issue where tiles could not be dragged; Improved drag experience to prevent accidental link clicks after dragging[cite: 1].
+[中文] 优化项目：调整加载延迟时间，加快动画响应速度 [cite: 1]。
+[EN] Optimizations: Adjusted loading delay time for faster animation response[cite: 1].
+
+---
+
 ## 🛠️ 安装与使用 / Installation
 1. **[中文] 下载代码**：下载本仓库 ZIP 包并解压[cite: 1]。  
    **[EN] Download**: Download and unzip the ZIP package from this repository[cite: 1].
