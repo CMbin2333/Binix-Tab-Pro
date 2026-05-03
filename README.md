@@ -48,12 +48,14 @@
 ---
 
 ## 🛠️ 现版本1.1.0测试版
-- **[中文] 新增功能：新增联想词功能；新增开关联想词功能；增强 CSS 以支持苹果风格的拖拽补位动画 [cite: 1]。
-  **[EN] New Features: Added word association function; Added toggle for word association function; Enhanced CSS to support Apple-style drag-and-drop repositioning animation[cite: 1].
-- **[中文] 修复 bug：修复磁贴无法拖动的问题；优化拖拽体验，避免拖动后误触点击打开链接 [cite: 1]。
-  **[EN] Bug Fixes: Fixed the issue where tiles could not be dragged; Improved drag experience to prevent accidental link clicks after dragging[cite: 1].
-- **[中文] 优化项目：调整加载延迟时间，加快动画响应速度 [cite: 1]。
-  **[EN] Optimizations: Adjusted loading delay time for faster animation response[cite: 1].
+- [中文] 新增功能：背景和时钟支持主题色，实现实时根据背景取色更改主题颜色。
+[EN] New Features: Background and clock now support theme colors; dynamically updates theme colors in real-time based on background color extraction.
+
+- [中文] 修复 bug：修复分类组件和待办清单组件无法拖动的问题。
+[EN] Bug Fixes: Fixed the issue where the category component and to-do list component could not be dragged.
+
+- [中文] 优化项目：去掉了联想词中影响阅读体验的动画；优化了设置栏分类以及 UI；优化了分类栏和待办清单的动画。
+[EN] Optimizations: Removed animations in word associations that affected the reading experience; Optimized settings bar categories and UI; Optimized animations for the category bar and to-do list.
 
 ---
 
