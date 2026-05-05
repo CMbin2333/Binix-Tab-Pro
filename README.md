@@ -47,15 +47,15 @@
   **[EN] Smart Translation Search**: After typing in the search bar, press `Alt + Enter` to automatically translate the text into English, boosting global search efficiency.
 ---
 
-## 🛠️ 现版本1.2.0测试版
-- [中文] 新增功能：背景和时钟支持主题色，实现实时根据背景取色更改主题颜色。
-  [EN] New Features: Background and clock now support theme colors; dynamically updates theme colors in real-time based on background color extraction.
+## 🛠️ 现版本1.3.0正式版
+- **[中文] 新增功能：添加了一键导入本地 HTML 书签功能；支持自由开启自由排版模式与分类记忆；新增拖拽组件合并文件夹及文件夹后期改名功能；支持自定义链接打开方式（新标签页或原页面）。
+  **[EN] New Features: Added one-click import for local HTML bookmarks; Supported toggling free layout mode and category memory; Added the ability to drag components to merge into folders   **and rename folders later; Added the option to open links in a new tab or the current page.
 
-- [中文] 修复 bug：修复分类组件和待办清单组件无法拖动的问题。
-  [EN] Bug Fixes: Fixed the issue where the category component and to-do list component could not be dragged.
+- **[中文] 修复 bug：修复了拖动组件相关的 bug。
+  **[EN] Bug Fixes: Fixed bugs related to dragging components.
 
-- [中文] 优化项目：去掉了联想词中影响阅读体验的动画；优化了设置栏分类以及 UI；优化了分类栏和待办清单的动画。
-  [EN] Optimizations: Removed animations in word associations that affected the reading experience; Optimized settings bar categories and UI; Optimized animations for the category bar and to-do list.
+- **[中文] 优化项目：为待办清单的完成项添加了粒子动画；优化了设置栏的分类及 UI；进一步优化了垃圾桶和待办清单的粒子动画效果。
+  **[EN] Optimizations: Added particle animations for completed to-do list items; Optimized settings bar categories and UI; Further optimized particle animations for the trash can and to-do list.
 
 ---
 
