@@ -47,12 +47,9 @@
   **[EN] Smart Translation Search**: After typing in the search bar, press `Alt + Enter` to automatically translate the text into English, boosting global search efficiency.
 ---
 
-## 🛠️ 现版本1.4.0正式版
-- **[中文] 新增功能：新增春节粒子效果；新增右键点击磁贴修改名称、域名和图标功能；新增自定义选择磁贴图标图源功能。
-  **[EN] New Features: Added Spring Festival particle effects; Added right-click functionality on tiles to modify name, domain, and icon; Added custom selection for tile icon image sources.
-
-- **[中文] 修复 bug：修复图标加载不出的问题。
-  **[EN] Bug Fixes: Fixed the issue where icons failed to load.
+## 🛠️ 现版本1.5.0正式版
+- **[中文] 新增功能：数据与内容管理新增左侧分类及本地软件快捷启动；新增快捷键设置功能及更多功能的快捷键支持；新增图片重置选项；新增快捷翻译引擎切换功能。
+  **[EN] New Features: Added left-side categories and local software quick launch to Data & Content Management; Added shortcut key settings and expanded shortcut support for more functions; Added image reset option; Added quick toggle for translation engines.
 
 ---
 
