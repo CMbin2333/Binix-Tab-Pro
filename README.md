@@ -47,10 +47,9 @@
   **[EN] Smart Translation Search**: After typing in the search bar, press `Alt + Enter` to automatically translate the text into English, boosting global search efficiency.
 ---
 
-## 🛠️ 现版本1.5.0正式版
-- **[中文] 新增功能：数据与内容管理新增左侧分类及本地软件快捷启动；新增快捷键设置功能及更多功能的快捷键支持；新增图片重置选项；新增快捷翻译引擎切换功能。
-  **[EN] New Features: Added left-side categories and local software quick launch to Data & Content Management; Added shortcut key settings and expanded shortcut support for more functions; Added image reset option; Added quick toggle for translation engines.
-
+## 🛠️ 现版本1.6.0正式版
+- **[中文] 新增功能：新增多种交互式背景，包括全息地球（实时同步地月位置与光影）、等离子核、全息土星、量子核心（鼠标实时追踪）、赛博神经网（赛博朋克数据链）以及流型共振（像素赛博风）；新增“开启性能优化”选项，  **以降低特效占用的系统资源。
+- **[EN] New Features: Added multiple interactive backgrounds, including Holographic Earth (real-time sync of Earth/Moon positions and lighting), Plasma Core, Holographic Saturn, Quantum Core (real-time mouse tracking), Cyber Neural Network (cyberpunk data links), and Flow Resonance (pixel-style cyberpunk); Added a "Performance Optimization" toggle to reduce system resource consumption from background effects.
 ---
 
 ## 🛠️ 安装与使用 / Installation
