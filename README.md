@@ -48,8 +48,14 @@
 ---
 
 ## 🛠️ 现版本1.6.0正式版
-- **[中文] 新增功能：新增多种交互式背景，包括全息地球（实时同步地月位置与光影）、等离子核、全息土星、量子核心（鼠标实时追踪）、赛博神经网（赛博朋克数据链）以及流型共振（像素赛博风）；新增“开启性能优化”选项，  **以降低特效占用的系统资源。
-- **[EN] New Features: Added multiple interactive backgrounds, including Holographic Earth (real-time sync of Earth/Moon positions and lighting), Plasma Core, Holographic Saturn, Quantum Core (real-time mouse tracking), Cyber Neural Network (cyberpunk data links), and Flow Resonance (pixel-style cyberpunk); Added a "Performance Optimization" toggle to reduce system resource consumption from background effects.
+- **[中文] 新增功能：工具栏支持随主题色实时变色。
+  **[EN] New Features: Added real-time color syncing for the toolbar to match the theme color.
+
+- **[中文] 修复 bug：修复设置栏“声音与媒体”中文件名过长导致布局溢出的问题；修复了部分已知 bug。
+  **[EN] Bug Fixes: Fixed the layout overflow issue in "Sound & Media" settings caused by long filenames; Fixed other known bugs.
+
+- **[中文] 优化项目：优化了工具栏的页面布局和 UI 表现。
+  **[EN] Optimizations: Optimized the page layout and UI design of the toolbar.
 ---
 
 ## 🛠️ 安装与使用 / Installation
