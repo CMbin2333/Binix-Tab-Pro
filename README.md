@@ -48,15 +48,13 @@
 ---
 
 ## 🛠️ 现版本1.6.7正式版
-- **[中文] 新增功能：新增磁贴调整动画选项。
-  **[EN] New Features: Added tile adjustment animation options.
-
-- **[中文] 修复 bug：修复了部分已知 bug。
-  **[EN] Bug Fixes: Fixed some known bugs.
----
+1. **[中文] 新增功能：新增磁贴调整动画选项。
+   **[EN] New Features: Added tile adjustment animation options.
+2. **[中文] 修复 bug：修复了部分已知 bug。
+   **[EN] Bug Fixes: Fixed some known bugs.
 
 ## 🛠️ 安装与使用 / Installation
-1. **[中文] 下载代码**：下载本仓库 ZIP 包并解压[cite: 1]。  
+1. **[中文] 下载代码**：下载本仓库 ZIP 包并解压[cite: 1]。 
    **[EN] Download**: Download and unzip the ZIP package from this repository[cite: 1].
 2. **[中文] 载入扩展**：在 Chrome 的 `chrome://extensions/` 开启“开发者模式”，点击“加载解压的扩展程序”[cite: 1]。  
    **[EN] Load Extension**: Enable "Developer mode" at `chrome://extensions/` and click "Load unpacked"[cite: 1].
