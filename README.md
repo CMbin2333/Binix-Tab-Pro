@@ -47,15 +47,12 @@
   **[EN] Smart Translation Search**: After typing in the search bar, press `Alt + Enter` to automatically translate the text into English, boosting global search efficiency.
 ---
 
-## 🛠️ 现版本1.6.0正式版
-- **[中文] 新增功能：工具栏支持随主题色实时变色。
-  **[EN] New Features: Added real-time color syncing for the toolbar to match the theme color.
+## 🛠️ 现版本1.6.7正式版
+- **[中文] 新增功能：新增磁贴调整动画选项。
+  **[EN] New Features: Added tile adjustment animation options.
 
-- **[中文] 修复 bug：修复设置栏“声音与媒体”中文件名过长导致布局溢出的问题；修复了部分已知 bug。
-  **[EN] Bug Fixes: Fixed the layout overflow issue in "Sound & Media" settings caused by long filenames; Fixed other known bugs.
-
-- **[中文] 优化项目：优化了工具栏的页面布局和 UI 表现。
-  **[EN] Optimizations: Optimized the page layout and UI design of the toolbar.
+- **[中文] 修复 bug：修复了部分已知 bug。
+  **[EN] Bug Fixes: Fixed some known bugs.
 ---
 
 ## 🛠️ 安装与使用 / Installation
