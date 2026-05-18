@@ -47,9 +47,9 @@
   **[EN] Smart Translation Search**: After typing in the search bar, press `Alt + Enter` to automatically translate the text into English, boosting global search efficiency.
 ---
 
-## 🛠️ 现版本1.6.7正式版
-1. **[中文] 新增功能：新增磁贴调整动画选项。
-   **[EN] New Features: Added tile adjustment animation options.
+## 🛠️ 现版本1.8.0正式版（稳定）
+1. **[中文] 新增功能：新增调整快捷键切换引擎选项。
+   **[EN] New Feature: Added a customizable hotkey to switch engines.
 2. **[中文] 修复 bug：修复了部分已知 bug。
    **[EN] Bug Fixes: Fixed some known bugs.
 
