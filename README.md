@@ -47,12 +47,7 @@
   **[EN] Smart Translation Search**: After typing in the search bar, press `Alt + Enter` to automatically translate the text into English, boosting global search efficiency.
 ---
 
-## 🛠️ 现版本1.8.4正式版（稳定）
-[中文] 新增功能：新增搜索栏聚焦功能；新增背景预设分离功能。
-[EN] New Features: Added search bar focus functionality; Added separation for background presets.
-
-[中文] 修复 bug：修复春节特效不下雪的问题；修复拖动组件时容易误触跳转网站的问题。
-[EN] Bug Fixes: Fixed the issue where the Spring Festival effect does not snow; Fixed the issue where dragging components easily causes accidental website redirects.
+## 🛠️ 现版本2.0.0正式版（稳定）
 
 ## 🛠️ 安装与使用 / Installation
 1. **[中文] 下载代码**：下载本仓库 ZIP 包并解压[cite: 1]。 
