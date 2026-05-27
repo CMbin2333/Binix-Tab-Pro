@@ -6,7 +6,7 @@
     <a href="./README_EN.md">English</a> | <b>简体中文</b>
   </p>
 
-  <img src="https://img.shields.io/badge/Version-2.0.0_Stable-blue.svg" alt="Version">
+  <img src="https://img.shields.io/badge/Version-3.1.0_Stable-blue.svg" alt="Version">
   <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License">
   <img src="https://img.shields.io/badge/Author-CM__Binix-orange.svg" alt="Author">
 </div>
