@@ -49,7 +49,7 @@
 
 ## 📦 Installation & Usage
 
-> Current Version: **3.8.0 (Stable)**
+> Current Version: **3.8.5 (Stable)**
 
 1. **Download**: Download the ZIP package from this repository and extract it.
 2. **Load Extension**: Navigate to `chrome://extensions/` in your Chrome address bar, toggle on **"Developer mode"** in the top right, click **"Load unpacked,"** and select your extracted folder.
