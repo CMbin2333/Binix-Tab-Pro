@@ -22,6 +22,8 @@
 <div align="center">
   <img width="800" alt="主界面预览" src="https://github.com/user-attachments/assets/b636689e-0305-4d8c-8508-f36c6d7a9dd3" />
   <p><i>极简 iOS 液体玻璃设计风格</i></p>
+  <img width="2560" height="1347" alt="小组件预览" src="https://github.com/user-attachments/assets/84c9952a-dd77-402a-907c-2f31a13a9831" />
+  <p><i>新增各种实用功能小组件</i></p>
 </div>
 
 ---
