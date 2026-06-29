@@ -1,0 +1,91 @@
+--- TITLE: 背景模式 ---
+<div class="sub-settings">
+                                <div class="sub-settings-title">背景模式</div>
+                                <div class="config-group" style="margin-bottom: 10px;">
+          ...
+
+--- TITLE: 画面滤镜与形变 ---
+<div class="sub-settings" style="margin-bottom:0;">
+                                <div class="sub-settings-title">画面滤镜与形变</div>
+                                <div class="config-group"><label>背景模糊 ...
+
+--- TITLE: 桌面时钟 ---
+<div class="sub-settings">
+                                <div class="sub-settings-title">桌面时钟</div>
+                                <div class="config-group"><label>时钟大小 (<span id="val-clock-size">1...
+
+--- TITLE: 鼠标跟随光斑 ---
+<div class="sub-settings">
+                                <div class="sub-settings-title">鼠标跟随光斑</div>
+                                <div class="config-group switch-group"><label>开启鼠标跟随光斑</label><l...
+
+--- TITLE: 全局物理模拟 ---
+<div class="sub-settings" style="margin-bottom:0;">
+                                <div class="sub-settings-title">全局物理模拟</div>
+                                <div class="config-group switch-group">...
+
+--- TITLE: 磁贴图标源 (Favicon API) ---
+<div class="sub-settings">
+                                <div class="sub-settings-title">磁贴图标源 (Favicon API)</div>
+                                <div class="config-group">
+                        ...
+
+--- TITLE: 桌面行为控制 ---
+<div class="sub-settings">
+                                <div class="sub-settings-title">桌面行为控制</div>
+                                <div class="config-group switch-group">
+                        ...
+
+--- TITLE: 磁贴样式定制 ---
+<div class="sub-settings">
+                                <div class="sub-settings-title">磁贴样式定制</div>
+                                
+                                <div class="config-group switch...
+
+--- TITLE: 📚 长条书签视图 ---
+<div class="sub-settings">
+                                <div class="sub-settings-title" style="border-left-color: #6ee7b7;">📚 长条书签视图</div>
+                                
+                         ...
+
+--- TITLE: 长条书签样式 ---
+<div class="sub-settings" style="margin-bottom:0;">
+                                <div class="sub-settings-title">长条书签样式</div>
+                                
+                                <div c...
+
+--- TITLE: 基础快捷键映射 ---
+<div class="sub-settings">
+                                <div class="sub-settings-title">基础快捷键映射</div>
+                                <div id="shortcut-settings-list" class="shortcut-list" style="m...
+
+--- TITLE: 搜索引擎管理与 1~9 快捷键 ---
+<div class="sub-settings" style="margin-bottom:0;">
+                                <div class="sub-settings-title">搜索引擎管理与 1~9 快捷键</div>
+                                <div class="media-library-note...
+
+--- TITLE: 桌面行为 ---
+<div class="sub-settings"><div class="sub-settings-title">桌面行为</div><div class="config-group switch-group" style="margin-bottom:0 !important;"><label>在新标签页中打开链接</label><label class="switch"><input typ...
+
+--- TITLE: 默认翻译引擎设置 ---
+<div class="sub-settings" style="margin-bottom:0;">
+                                <div class="sub-settings-title">默认翻译引擎设置</div>
+                                <div class="config-group">
+          ...
+
+--- TITLE: 功能与翻译 (Alt+Enter) ---
+<div class="sub-settings">
+                                <div class="sub-settings-title">功能与翻译 (Alt+Enter)</div>
+                                <div class="config-group switch-group">
+             ...
+
+--- TITLE: 外观与尺寸 ---
+<div class="sub-settings" style="margin-bottom:0;">
+                                <div class="sub-settings-title">外观与尺寸</div>
+                                <div class="config-group switch-group"><...
+
+--- TITLE: 右下角工具台 ---
+<div class="sub-settings">
+                                <div class="sub-settings-title">右下角工具台</div>
+                                <div class="config-group switch-group"><label>在菜单栏显示时间工具</label>...
+

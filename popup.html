@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=520, initial-scale=1.0">
+<link rel="icon" href="favicon.ico">
+<link rel="stylesheet" href="popup.css">
+</head>
+<body>
+<div class="ext-popup-container">
+<div class="ext-navbar">
+<div class="ext-tabs">
+<button class="ext-tab active" data-tab="bookmarks">
+<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 1.5h10v11l-5-3-5 3v-11z" stroke="currentColor" stroke-width="1.2" fill="none"/></svg>
+书签
+</button>
+<button class="ext-tab" data-tab="history">
+<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.2"/><path d="M7 4v3l2 2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+历史
+</button>
+<button class="ext-tab" data-tab="downloads">
+<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v8M4 6l3 3 3-3M1.5 11v1.5h11V11" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+下载
+</button>
+<button class="ext-tab" data-tab="unified">
+<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="6.5" cy="6.5" r="5" stroke="currentColor" stroke-width="1.2"/><path d="M10 10l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+综合
+</button>
+<button class="ext-tab" data-tab="search">
+<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.2"/><path d="M11 11l2.5 2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+搜索
+</button>
+</div>
+<div class="ext-nav-actions">
+<button class="ext-action-btn" id="ext-import-btn" title="导入当前网页到我的标签页">
+<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v8M4 6l3 3 3-3M1.5 11v1.5h11V11" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</button>
+<button class="ext-action-btn" id="ext-dark-toggle" title="深色模式">
+<svg id="ext-dark-icon" width="14" height="14" viewBox="0 0 14 14" fill="none">
+<circle cx="7" cy="7" r="2.5" stroke="currentColor" stroke-width="1.2"/>
+<path d="M7 1v1.5M7 11.5V13M1 7h1.5M11.5 7H13M2.76 2.76l1.06 1.06M10.18 10.18l1.06 1.06M2.76 11.24l1.06-1.06M10.18 3.82l1.06-1.06" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+</svg>
+</button>
+<button class="ext-action-btn" id="ext-settings-btn" title="设置">
+<svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+<circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="2.2" stroke-dasharray="1.8 1.4"/>
+<circle cx="7" cy="7" r="4" stroke="currentColor" stroke-width="1.2"/>
+<circle cx="7" cy="7" r="1.5" fill="currentColor"/>
+</svg>
+</button>
+</div>
+</div>
+<div class="ext-search-area">
+<div class="ext-search-wrapper">
+<svg class="ext-search-icon" width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.5"/><path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+<input type="text" id="ext-search-input" class="ext-search-input" placeholder="搜索书签、历史、下载..." autocomplete="off">
+<button id="ext-search-engine-btn" class="ext-search-engine-btn" title="切换引擎" style="display:none;">
+<img id="ext-search-engine-icon" src="https://www.google.com/favicon.ico" alt="引擎">
+</button>
+<button id="ext-search-clear" class="ext-search-clear" style="display:none;">
+<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3.5 3.5l7 7M10.5 3.5l-7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+</button>
+</div>
+<div class="ext-engine-drop" id="ext-engine-drop" style="display:none;">
+<div class="ext-engine-drop-inner" id="ext-engine-drop-inner"></div>
+</div>
+</div>
+<div class="ext-results" id="ext-results">
+<div class="ext-empty-state">
+<svg width="40" height="40" viewBox="0 0 40 40" fill="none" opacity="0.3"><rect x="4" y="8" width="32" height="24" rx="4" stroke="currentColor" stroke-width="2"/><line x1="12" y1="16" x2="28" y2="16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="12" y1="22" x2="24" y2="22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+<p>输入关键词开始搜索</p>
+</div>
+</div>
+<div class="ext-footer-hint">
+<span><kbd>↑↓</kbd> 导航</span>
+<span><kbd>←→</kbd> 折叠</span>
+<span><kbd>Enter</kbd> 打开</span>
+<span><kbd>Del</kbd> 删除</span>
+<span><kbd>Tab</kbd> 切换</span>
+</div>
+<div class="ext-settings-panel" id="ext-settings-panel" style="display:none;">
+<div class="ext-settings-header">
+<span>插件设置</span>
+<button class="ext-settings-back" id="ext-settings-back">← 返回</button>
+</div>
+<div class="ext-settings-body">
+<div class="ext-settings-group">
+<label class="ext-settings-toggle">
+<span class="ext-settings-label">记忆上次标签页</span>
+<input type="checkbox" id="ext-setting-remember-last-tab">
+<span class="ext-toggle-switch"></span>
+</label>
+</div>
+<div class="ext-settings-group" id="ext-default-tab-group">
+<div class="ext-settings-label">默认标签页</div>
+<select id="ext-setting-default-tab" class="ext-settings-select">
+<option value="unified">综合搜索</option>
+<option value="history">历史记录</option>
+<option value="bookmarks">书签</option>
+<option value="downloads">下载</option>
+<option value="search">搜索</option>
+</select>
+</div>
+<div class="ext-settings-group">
+<div class="ext-settings-label">主题色</div>
+<input type="color" id="ext-setting-theme-color" class="ext-settings-color" value="#ff453a">
+</div>
+<div class="ext-settings-group">
+<label class="ext-settings-toggle">
+<span class="ext-settings-label">书签按访问次数排序</span>
+<input type="checkbox" id="ext-setting-sort-visit" checked>
+<span class="ext-toggle-switch"></span>
+</label>
+</div>
+<div class="ext-settings-group">
+<label class="ext-settings-toggle">
+<span class="ext-settings-label">日期折叠分组</span>
+<input type="checkbox" id="ext-setting-date-fold" checked>
+<span class="ext-toggle-switch"></span>
+</label>
+<p class="ext-settings-hint">开启后，按访问次数排序将失效</p>
+</div>
+<div class="ext-settings-group">
+<label class="ext-settings-toggle">
+<span class="ext-settings-label">自动展开日期分组</span>
+<input type="checkbox" id="ext-setting-auto-expand-date" checked>
+<span class="ext-toggle-switch"></span>
+</label>
+</div>
+<div class="ext-settings-group">
+<label class="ext-settings-toggle">
+<span class="ext-settings-label">删除二次确认</span>
+<input type="checkbox" id="ext-setting-delete-confirm" checked>
+<span class="ext-toggle-switch"></span>
+</label>
+</div>
+<div class="ext-settings-group">
+<button class="ext-settings-btn-danger" id="ext-clear-bookmarks-stats">清除书签访问统计</button>
+</div>
+<div class="ext-settings-group">
+<button class="ext-settings-btn-danger" id="ext-clear-history">清除历史记录</button>
+</div>
+</div>
+</div>
+<div class="ext-confirm-overlay" id="ext-confirm-overlay" style="display:none;">
+<div class="ext-confirm-box">
+<div class="ext-confirm-title">确认删除</div>
+<div class="ext-confirm-msg" id="ext-confirm-msg">确定要删除此项吗？</div>
+<div class="ext-confirm-actions">
+<button class="ext-confirm-btn ext-confirm-cancel" id="ext-confirm-cancel">取消</button>
+<button class="ext-confirm-btn ext-confirm-ok" id="ext-confirm-ok">删除</button>
+</div>
+</div>
+</div>
+<div class="ext-confirm-overlay" id="ext-import-overlay" style="display:none;">
+<div class="ext-confirm-box">
+<div class="ext-confirm-title">导入到分类</div>
+<div class="ext-confirm-msg" id="ext-import-info"></div>
+<div class="ext-import-cat-list" id="ext-import-cat-list"></div>
+<div class="ext-confirm-actions">
+<button class="ext-confirm-btn ext-confirm-cancel" id="ext-import-cancel">取消</button>
+</div>
+</div>
+</div>
+</div>
+<script src="popup.js"></script>
+</body>
+</html>

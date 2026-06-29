@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>纯净物理翻页时钟</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+/* CSS 变量及核心动画 */
+:root {
+--app-bg: #050505;
+--card-bg: #262626;
+--digit-color: #e5e5e5;
+--card-radius: 8px;
+--font-family: Arial, sans-serif;
+--font-scale: 1;
+--flip-speed: 0.3s;
+--clock-scale: 1;
+}
+body {
+background-color: var(--app-bg);
+margin: 0;
+overflow-x: hidden;
+transition: background-color 0.3s;
+}
+.perspective-1000 {
+perspective: 1000px;
+transform-style: preserve-3d;
+}
+.digit-container {
+width: 100px;
+height: 150px;
+background-color: var(--card-bg);
+border-radius: var(--card-radius);
+color: var(--digit-color);
+font-family: var(--font-family);
+font-size: calc(80px * var(--font-scale));
+font-weight: bold;
+margin: 0 2px;
+}
+.animate-flip-down {
+animation: flipDown var(--flip-speed) cubic-bezier(0.37, 0.01, 0.2, 0.99) forwards;
+transform-origin: bottom;
+transform-style: preserve-3d;
+will-change: transform;
+}
+@keyframes flipDown {
+0% { transform: rotateX(0deg); }
+100% { transform: rotateX(-180deg); }
+}
+.flap-front, .flap-back {
+backface-visibility: hidden;
+-webkit-backface-visibility: hidden;
+position: absolute;
+inset: 0;
+}
+.flap-front { transform: rotateX(0deg) translateZ(1px); }
+.flap-back { transform: rotateX(180deg) translateZ(1px); }
+.animate-front-shadow { animation: frontShadow var(--flip-speed) cubic-bezier(0.37, 0.01, 0.2, 0.99) forwards; }
+.animate-back-shadow { animation: backShadow var(--flip-speed) cubic-bezier(0.37, 0.01, 0.2, 0.99) forwards; }
+.animate-bottom-shadow { animation: bottomShadow var(--flip-speed) cubic-bezier(0.37, 0.01, 0.2, 0.99) forwards; }
+@keyframes frontShadow { 0% { opacity: 0; } 100% { opacity: 0.5; } }
+@keyframes backShadow { 0% { opacity: 0.5; } 100% { opacity: 0; } }
+@keyframes bottomShadow { 0% { opacity: 0; } 40% { opacity: 0.2; } 100% { opacity: 0.5; } }
+/* 防烧屏炫光 */
+.animate-glare-sweep {
+position: absolute;
+top: -50%; bottom: -50%;
+width: 30vw;
+background: linear-gradient(to right, rgba(68, 68, 68, 0) 0%, rgba(68, 68, 68, 0.6) 50%, rgba(68, 68, 68, 0) 100%);
+transform: skewX(-30deg);
+animation: glareSweep 8s ease-in-out forwards;
+pointer-events: none;
+z-index: 100;
+}
+@keyframes glareSweep { 0% { left: -50vw; } 100% { left: 150vw; } }
+/* 样式美化 */
+input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+input[type="color"]::-webkit-color-swatch { border: none; border-radius: 4px; }
+/* 自定义滚动条 */
+#settings-sidebar::-webkit-scrollbar { width: 6px; }
+#settings-sidebar::-webkit-scrollbar-track { background: #111; }
+#settings-sidebar::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+</style>
+</head>
+<body class="flex justify-center items-center min-h-screen relative select-none font-sans text-white">
+<button id="btn-open-settings" class="absolute top-6 right-6 p-3 bg-white/10 hover:bg-white/20 rounded-full backdrop-blur-md transition-all z-40 shadow-lg cursor-pointer">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+</button>
+<div id="clock-container" style="transform: scale(var(--clock-scale)); transform-origin: center; display: flex; flex-direction: column; align-items: center;">
+<div id="top-info-bar" class="relative flex justify-center items-center w-full px-4 mb-6 min-h-[32px]" style="color: var(--digit-color)">
+<div id="date-display" class="text-xl sm:text-3xl tracking-widest font-bold opacity-90 drop-shadow-md text-center"></div>
+<div id="battery-display" class="hidden absolute right-4 items-center gap-2 opacity-80 drop-shadow-md">
+<span id="battery-level" class="text-lg font-bold">--%</span>
+<div class="w-8 h-4 border-2 rounded-sm p-[1px] flex items-center relative" style="border-color: var(--digit-color)">
+<div id="battery-fill" class="h-full transition-all" style="width: 0%; background-color: var(--digit-color)"></div>
+<div class="absolute -right-[5px] top-1/2 -translate-y-1/2 w-1 h-2 rounded-r-sm" style="background-color: var(--digit-color)"></div>
+</div>
+</div>
+</div>
+<div class="flex items-center relative">
+<div id="ampm-display" class="hidden absolute -left-12 sm:-left-16 bottom-2 text-xl sm:text-3xl font-black opacity-40 drop-shadow-lg" style="color: var(--digit-color)">AM</div>
+<div class="flex">
+<div id="digit-h1" class="relative flex justify-center items-center perspective-1000 shadow-2xl border border-black/50 digit-container"></div>
+<div id="digit-h2" class="relative flex justify-center items-center perspective-1000 shadow-2xl border border-black/50 digit-container"></div>
+</div>
+<div class="flex flex-col justify-center items-center gap-6 mx-4">
+<div class="w-3 h-3 rounded-full shadow-[0_0_10px_rgba(255,255,255,0.1)]" style="background-color: var(--card-bg)"></div>
+<div class="w-3 h-3 rounded-full shadow-[0_0_10px_rgba(255,255,255,0.1)]" style="background-color: var(--card-bg)"></div>
+</div>
+<div class="flex">
+<div id="digit-m1" class="relative flex justify-center items-center perspective-1000 shadow-2xl border border-black/50 digit-container"></div>
+<div id="digit-m2" class="relative flex justify-center items-center perspective-1000 shadow-2xl border border-black/50 digit-container"></div>
+</div>
+<div id="seconds-section" class="flex items-center">
+<div class="flex flex-col justify-center items-center gap-6 mx-4">
+<div class="w-3 h-3 rounded-full shadow-[0_0_10px_rgba(255,255,255,0.1)]" style="background-color: var(--card-bg)"></div>
+<div class="w-3 h-3 rounded-full shadow-[0_0_10px_rgba(255,255,255,0.1)]" style="background-color: var(--card-bg)"></div>
+</div>
+<div class="flex">
+<div id="digit-s1" class="relative flex justify-center items-center perspective-1000 shadow-2xl border border-black/50 digit-container"></div>
+<div id="digit-s2" class="relative flex justify-center items-center perspective-1000 shadow-2xl border border-black/50 digit-container"></div>
+</div>
+</div>
+</div>
+</div>
+<div id="glare-container" class="fixed inset-0 overflow-hidden pointer-events-none z-50"></div>
+<div id="overlay" class="fixed inset-0 bg-black/50 z-40 backdrop-blur-sm transition-opacity opacity-0 pointer-events-none"></div>
+<div id="settings-sidebar" class="fixed top-0 right-0 h-full w-80 bg-[#111] text-white p-6 shadow-2xl transform translate-x-full transition-transform duration-300 z-50 overflow-y-auto border-l border-white/10">
+<div class="flex justify-between items-center mb-8">
+<h2 class="text-xl font-bold tracking-wider">个性化设置</h2>
+<button id="btn-close-settings" class="p-1 hover:bg-white/10 rounded-md transition-colors cursor-pointer">
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+</button>
+</div>
+<div class="space-y-6">
+<div class="space-y-4">
+<h3 class="text-sm text-gray-400 uppercase tracking-widest font-semibold border-b border-white/10 pb-2">颜色 (Colors)</h3>
+<div class="flex justify-between items-center"><label class="text-sm">背景颜色</label><input type="color" id="set-appBg" class="w-8 h-8 rounded cursor-pointer" /></div>
+<div class="flex justify-between items-center"><label class="text-sm">卡片颜色</label><input type="color" id="set-cardBg" class="w-8 h-8 rounded cursor-pointer" /></div>
+<div class="flex justify-between items-center"><label class="text-sm">数字颜色</label><input type="color" id="set-digitColor" class="w-8 h-8 rounded cursor-pointer" /></div>
+</div>
+<div class="space-y-4">
+<h3 class="text-sm text-gray-400 uppercase tracking-widest font-semibold border-b border-white/10 pb-2 mt-6">外观 (Appearance)</h3>
+<div><div class="flex justify-between text-sm mb-2"><label>卡片圆角</label><span id="val-cardRadius" class="text-gray-400"></span></div><input type="range" id="set-cardRadius" min="0" max="40" class="w-full accent-white" /></div>
+<div><div class="flex justify-between text-sm mb-2"><label>整体大小</label><span id="val-clockScale" class="text-gray-400"></span></div><input type="range" id="set-clockScale" min="0.3" max="2.5" step="0.1" class="w-full accent-white" /></div>
+<div><div class="flex justify-between text-sm mb-2"><label>字体大小</label><span id="val-fontScale" class="text-gray-400"></span></div><input type="range" id="set-fontScale" min="0.5" max="3.0" step="0.1" class="w-full accent-white" /></div>
+<div>
+<label class="block text-sm mb-2">字体</label>
+<select id="set-fontFamily" class="w-full bg-[#222] border border-white/20 rounded text-sm p-2 text-white outline-none focus:border-white transition-colors cursor-pointer">
+<option value="Arial, sans-serif">Arial (默认)</option>
+<option value="'Courier New', Courier, monospace">Courier New (等宽)</option>
+<option value="'Times New Roman', Times, serif">Times New Roman (衬线)</option>
+<option value="Impact, fantasy">Impact (粗体)</option>
+<option value="'Trebuchet MS', sans-serif">Trebuchet MS (现代)</option>
+</select>
+</div>
+</div>
+<div class="space-y-4">
+<h3 class="text-sm text-gray-400 uppercase tracking-widest font-semibold border-b border-white/10 pb-2 mt-6">功能与显示 (Features)</h3>
+<div><div class="flex justify-between text-sm mb-2"><label>翻页速度</label><span id="val-flipSpeed" class="text-gray-400"></span></div><input type="range" id="set-flipSpeed" min="0.1" max="2.5" step="0.05" class="w-full accent-white" /></div>
+<div class="flex justify-between items-center">
+<label class="text-sm">12小时制 (12-Hour)</label>
+<button id="toggle-use12Hour" class="w-10 h-5 rounded-full relative transition-colors shadow-inner cursor-pointer"><div class="w-4 h-4 bg-white rounded-full absolute top-0.5 transition-all shadow"></div></button>
+</div>
+<div class="flex justify-between items-center">
+<label class="text-sm">显示秒钟 (Seconds)</label>
+<button id="toggle-showSeconds" class="w-10 h-5 rounded-full relative transition-colors shadow-inner cursor-pointer"><div class="w-4 h-4 bg-white rounded-full absolute top-0.5 transition-all shadow"></div></button>
+</div>
+<div class="flex justify-between items-center">
+<label class="text-sm">显示日期 (Date)</label>
+<button id="toggle-showDate" class="w-10 h-5 rounded-full relative transition-colors shadow-inner cursor-pointer"><div class="w-4 h-4 bg-white rounded-full absolute top-0.5 transition-all shadow"></div></button>
+</div>
+<div class="flex justify-between items-center">
+<label class="text-sm">显示电池 (Battery)</label>
+<button id="toggle-showBattery" class="w-10 h-5 rounded-full relative transition-colors shadow-inner cursor-pointer"><div class="w-4 h-4 bg-white rounded-full absolute top-0.5 transition-all shadow"></div></button>
+</div>
+</div>
+<div class="space-y-4">
+<h3 class="text-sm text-gray-400 uppercase tracking-widest font-semibold border-b border-white/10 pb-2 mt-6">声音 (Audio)</h3>
+<div class="flex justify-between items-center">
+<label class="text-sm">翻页滴答声 (Tick Sound)</label>
+<button id="toggle-playTicking" class="w-10 h-5 rounded-full relative transition-colors shadow-inner cursor-pointer"><div class="w-4 h-4 bg-white rounded-full absolute top-0.5 transition-all shadow"></div></button>
+</div>
+<div id="tick-options-container" class="pl-3 border-l-2 border-white/10 space-y-4 py-1 hidden">
+<div>
+<div class="flex justify-between text-xs mb-2"><label class="text-gray-400">滴答声音量</label><span id="val-tickVolume" class="text-gray-400"></span></div>
+<input type="range" id="set-tickVolume" min="0" max="1" step="0.05" class="w-full accent-white" />
+</div>
+<div>
+<label class="block text-xs mb-2 text-gray-400">滴答声音效 (Sound Type)</label>
+<select id="set-tickType" class="w-full bg-[#222] border border-white/20 rounded text-xs p-2 text-white outline-none cursor-pointer"></select>
+</div>
+</div>
+<div class="flex justify-between items-center">
+<label class="text-sm">整点报时 (Hourly Chime)</label>
+<button id="toggle-hourlyChime" class="w-10 h-5 rounded-full relative transition-colors shadow-inner cursor-pointer"><div class="w-4 h-4 bg-white rounded-full absolute top-0.5 transition-all shadow"></div></button>
+</div>
+</div>
+<div class="space-y-4 pb-8">
+<h3 class="text-sm text-gray-400 uppercase tracking-widest font-semibold border-b border-white/10 pb-2 mt-6">高级 (Advanced)</h3>
+<div>
+<div class="flex justify-between text-sm mb-2"><label>防烧屏炫光</label><span id="val-burnInInterval" class="text-gray-400"></span></div>
+<input type="range" id="set-burnInInterval" min="0" max="60" step="1" class="w-full accent-white" />
+<p class="text-xs text-gray-500 mt-2">定期在屏幕上滑过一道光幕，防止 OLED 烧屏。</p>
+<button id="btn-test-glare" class="w-full mt-3 bg-white/10 hover:bg-white/20 py-1.5 rounded text-xs transition-colors cursor-pointer">测试炫光效果</button>
+</div>
+<button id="btn-reset" class="w-full mt-8 flex justify-center items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 py-3 rounded-lg text-sm transition-colors cursor-pointer">
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
+恢复默认设置
+</button>
+</div>
+</div>
+</div>
+<script>
+/* ================= 核心状态配置 ================= */
+const DEFAULT_SETTINGS = {
+appBg: '#050505', cardBg: '#262626', digitColor: '#e5e5e5',
+fontFamily: 'Arial, sans-serif', cardRadius: 8, clockScale: 1, fontScale: 1, flipSpeed: 0.3,
+burnInInterval: 1, use12Hour: false, showSeconds: true, showDate: true,
+showBattery: false, playTicking: false, hourlyChime: false, tickVolume: 0.5, tickType: 0
+};
+let settings = { ...DEFAULT_SETTINGS };
+/* ================= 声音合成引擎 ================= */
+const TICK_PRESETS = [
+{ name: '怀表轻滴 (Pocket Watch)', type: 'triangle', f1: 2500, f2: 1500, dur: 0.015 },
+{ name: '座钟重响 (Grandfather Tock)', type: 'sine', f1: 350, f2: 50, dur: 0.08 },
+{ name: '石英壁钟 (Quartz Wall Clock)', type: 'square', f1: 1200, f2: 100, dur: 0.025 },
+{ name: '机械齿轮 (Mechanical Gear)', type: 'sawtooth', f1: 800, f2: 100, dur: 0.04 },
+{ name: '电子表单音 (Digital Watch)', type: 'sine', f1: 2048, f2: 2040, dur: 0.06 },
+{ name: '卡西欧闹铃 (Casio Beep)', type: 'square', f1: 1500, f2: 1490, dur: 0.05 },
+{ name: '炸弹倒数 (Bomb Countdown)', type: 'triangle', f1: 1000, f2: 990, dur: 0.08 },
+{ name: '紧急警报 (Urgent Buzzer)', type: 'sawtooth', f1: 800, f2: 790, dur: 0.1 },
+{ name: '水滴沙漏 (Water Drop)', type: 'sine', f1: 400, f2: 1200, dur: 0.06 },
+{ name: '清脆撞铃 (Clear Bell)', type: 'sine', f1: 2800, f2: 2750, dur: 0.25 },
+{ name: '沉闷木槌 (Wooden Metronome)', type: 'sine', f1: 600, f2: 100, dur: 0.07 },
+{ name: '老式闹钟敲击 (Vintage Hit)', type: 'sawtooth', f1: 1800, f2: 200, dur: 0.06 },
+{ name: '雷达探测 (Radar Ping)', type: 'sine', f1: 3000, f2: 2990, dur: 0.15 },
+{ name: '心跳计时 (Heartbeat Timer)', type: 'sine', f1: 120, f2: 40, dur: 0.12 },
+{ name: '科幻仪表 (Sci-Fi Panel)', type: 'sawtooth', f1: 4000, f2: 500, dur: 0.03 },
+{ name: '打字机走带 (Typewriter)', type: 'square', f1: 2500, f2: 200, dur: 0.015 }
+];
+let audioCtx = null;
+const initAudio = () => {
+if (!audioCtx) {
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+if (AudioContext) audioCtx = new AudioContext();
+}
+if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+};
+const playTick = (volume = 0.5, typeIndex = 0) => {
+if (!audioCtx || volume <= 0) return;
+const preset = TICK_PRESETS[typeIndex] || TICK_PRESETS[0];
+const osc = audioCtx.createOscillator();
+const gain = audioCtx.createGain();
+osc.connect(gain); gain.connect(audioCtx.destination);
+osc.type = preset.type;
+osc.frequency.setValueAtTime(preset.f1, audioCtx.currentTime);
+osc.frequency.exponentialRampToValueAtTime(preset.f2, audioCtx.currentTime + preset.dur);
+gain.gain.setValueAtTime(volume * 0.15, audioCtx.currentTime);
+gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + preset.dur);
+osc.start(audioCtx.currentTime); osc.stop(audioCtx.currentTime + preset.dur);
+};
+const playChime = () => {
+if (!audioCtx) return;
+[523.25, 659.25, 783.99].forEach(freq => {
+const osc = audioCtx.createOscillator();
+const gain = audioCtx.createGain();
+osc.connect(gain); gain.connect(audioCtx.destination);
+osc.type = 'sine'; osc.frequency.value = freq;
+gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 2);
+osc.start(audioCtx.currentTime); osc.stop(audioCtx.currentTime + 2);
+});
+};
+// 点击屏幕任意位置解锁音频权限
+document.addEventListener('click', initAudio, { once: true });
+document.addEventListener('touchstart', initAudio, { once: true });
+/* ================= UI 翻页卡片渲染 ================= */
+// 初始化卡片的内部结构
+const initDigitDOM = (id) => {
+const el = document.getElementById(id);
+el.innerHTML = `
+<div class="absolute top-0 left-0 w-full h-1/2 overflow-hidden bg-[var(--card-bg)]" style="border-top-left-radius: var(--card-radius); border-top-right-radius: var(--card-radius);">
+<div class="static-top-text absolute top-0 left-0 w-full h-[200%] flex items-center justify-center"></div>
+</div>
+<div class="absolute bottom-0 left-0 w-full h-1/2 overflow-hidden bg-[var(--card-bg)]" style="border-bottom-left-radius: var(--card-radius); border-bottom-right-radius: var(--card-radius);">
+<div class="static-bottom-text absolute bottom-0 left-0 w-full h-[200%] flex items-center justify-center"></div>
+<div class="static-bottom-shadow absolute inset-0 bg-black pointer-events-none opacity-0" style="border-bottom-left-radius: var(--card-radius); border-bottom-right-radius: var(--card-radius);"></div>
+</div>
+<div class="absolute top-1/2 left-0 w-full h-[2px] bg-black/80 -mt-[1px] z-20 shadow-[0_1px_2px_rgba(0,0,0,0.5)]"></div>
+<div class="absolute top-1/2 left-0 w-2 h-2 bg-[#888] rounded-full -mt-[4px] -ml-[4px] z-30 shadow-inner"></div>
+<div class="absolute top-1/2 right-0 w-2 h-2 bg-[#888] rounded-full -mt-[4px] -mr-[4px] z-30 shadow-inner"></div>
+`;
+el._zCounter = 10;
+};
+// 核心瀑布流下落算法
+const updateDigit = (id, newValue) => {
+const el = document.getElementById(id);
+if (!el) return;
+if (el._targetValue === undefined) el._targetValue = newValue;
+if (el._settledValue === undefined) el._settledValue = newValue;
+// 没有任何变化，初始化静态值
+if (el._targetValue === newValue) {
+el.querySelector('.static-top-text').innerText = newValue;
+el.querySelector('.static-bottom-text').innerText = el._settledValue;
+return;
+}
+const frontValue = el._targetValue;
+const backValue = newValue;
+el._targetValue = newValue;
+// 顶层直接更新为最新等待翻开的数字
+el.querySelector('.static-top-text').innerText = newValue;
+// 创建一张往下坠落的新卡片
+const flap = document.createElement('div');
+flap.className = "absolute top-0 left-0 w-full h-1/2 animate-flip-down flap-item";
+el._zCounter++;
+flap.style.zIndex = el._zCounter;
+flap.innerHTML = `
+<div class="flap-front overflow-hidden bg-[var(--card-bg)]" style="border-top-left-radius: var(--card-radius); border-top-right-radius: var(--card-radius);">
+<div class="absolute top-0 left-0 w-full h-[200%] flex items-center justify-center">${frontValue}</div>
+<div class="absolute inset-0 bg-black animate-front-shadow pointer-events-none" style="border-top-left-radius: var(--card-radius); border-top-right-radius: var(--card-radius);"></div>
+</div>
+<div class="flap-back overflow-hidden bg-[var(--card-bg)]" style="border-bottom-left-radius: var(--card-radius); border-bottom-right-radius: var(--card-radius);">
+<div class="absolute bottom-0 left-0 w-full h-[200%] flex items-center justify-center">${backValue}</div>
+<div class="absolute inset-0 bg-black animate-back-shadow pointer-events-none" style="border-bottom-left-radius: var(--card-radius); border-bottom-right-radius: var(--card-radius);"></div>
+</div>
+`;
+el.appendChild(flap);
+// 开启底部静态卡片的阴影笼罩
+const shadowEl = el.querySelector('.static-bottom-shadow');
+shadowEl.classList.remove('opacity-0');
+shadowEl.style.animation = 'none';
+void shadowEl.offsetWidth; // 触发重绘
+shadowEl.style.animation = `bottomShadow var(--flip-speed) cubic-bezier(0.37, 0.01, 0.2, 0.99) forwards`;
+// 当卡片落地时的清理工作
+flap.addEventListener('animationend', () => {
+flap.remove();
+el._settledValue = backValue;
+el.querySelector('.static-bottom-text').innerText = backValue;
+// 如果天上没有正在飞的卡片了，把底层阴影取消
+if (!el.querySelector('.flap-item')) {
+shadowEl.style.animation = 'none';
+shadowEl.classList.add('opacity-0');
+}
+});
+};
+['digit-h1', 'digit-h2', 'digit-m1', 'digit-m2', 'digit-s1', 'digit-s2'].forEach(initDigitDOM);
+/* ================= 时钟核心逻辑 ================= */
+const formatTime = (v) => v.toString().padStart(2, '0');
+// 更新统一格式的日期：公历 + 农历 + 星期
+const updateDateDisplay = (date) => {
+const el = document.getElementById('date-display');
+if (!settings.showDate) {
+el.innerText = ''; return;
+}
+const y = date.getFullYear();
+const m = date.getMonth() + 1;
+const d = date.getDate();
+const gregorian = `${y}年${m}月${d}日`;
+const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+const weekday = weekdays[date.getDay()];
+let lunar = '';
+try {
+// 利用浏览器原生 Intl API 提取农历的月日部分 (如: 五月初三)
+lunar = new Intl.DateTimeFormat('zh-CN-u-ca-chinese', { month: 'long', day: 'numeric' }).format(date);
+} catch(e) {}
+el.innerText = `${gregorian} ${lunar} ${weekday}`;
+};
+const updateClock = () => {
+const now = new Date();
+let h = now.getHours();
+const ampm = h >= 12 ? 'PM' : 'AM';
+if (settings.use12Hour) h = h % 12 || 12;
+const hs = formatTime(h);
+const ms = formatTime(now.getMinutes());
+const ss = formatTime(now.getSeconds());
+// 检测时间是否跳动，如果有跳动再执行翻页以避免重复计算
+if(document.getElementById('digit-s2')._targetValue !== ss[1]) {
+if (settings.playTicking) playTick(settings.tickVolume, settings.tickType);
+if (settings.hourlyChime && now.getMinutes() === 0 && now.getSeconds() === 0) playChime();
+}
+updateDigit('digit-h1', hs[0]); updateDigit('digit-h2', hs[1]);
+updateDigit('digit-m1', ms[0]); updateDigit('digit-m2', ms[1]);
+updateDigit('digit-s1', ss[0]); updateDigit('digit-s2', ss[1]);
+document.getElementById('ampm-display').innerText = ampm;
+updateDateDisplay(now);
+};
+// 电池 API
+if ('getBattery' in navigator) {
+navigator.getBattery().then(bat => {
+const updateBat = () => {
+document.getElementById('battery-level').innerText = `${Math.round(bat.level * 100)}%`;
+document.getElementById('battery-fill').style.width = `${bat.level * 100}%`;
+document.getElementById('battery-fill').style.backgroundColor = bat.charging ? '#4ade80' : 'var(--digit-color)';
+};
+updateBat();
+bat.addEventListener('levelchange', updateBat);
+bat.addEventListener('chargingchange', updateBat);
+});
+}
+// 防烧屏炫光逻辑
+let glareTimer;
+const resetGlareTimer = () => {
+clearInterval(glareTimer);
+if (settings.burnInInterval > 0) {
+glareTimer = setInterval(() => triggerGlare(), settings.burnInInterval * 60 * 1000);
+}
+};
+const triggerGlare = () => {
+const container = document.getElementById('glare-container');
+container.innerHTML = '<div class="animate-glare-sweep"></div>';
+};
+/* ================= 设置控制面板 ================= */
+const root = document.documentElement;
+// 初始化音效下拉列表
+const tickSelect = document.getElementById('set-tickType');
+TICK_PRESETS.forEach((p, idx) => {
+const opt = document.createElement('option');
+opt.value = idx; opt.innerText = `${idx + 1}. ${p.name}`;
+tickSelect.appendChild(opt);
+});
+const applySettingsToUI = () => {
+root.style.setProperty('--app-bg', settings.appBg);
+root.style.setProperty('--card-bg', settings.cardBg);
+root.style.setProperty('--digit-color', settings.digitColor);
+root.style.setProperty('--card-radius', `${settings.cardRadius}px`);
+root.style.setProperty('--clock-scale', settings.clockScale);
+root.style.setProperty('--font-scale', settings.fontScale);
+root.style.setProperty('--font-family', settings.fontFamily);
+root.style.setProperty('--flip-speed', `${settings.flipSpeed}s`);
+// 输入框同步
+document.getElementById('set-appBg').value = settings.appBg;
+document.getElementById('set-cardBg').value = settings.cardBg;
+document.getElementById('set-digitColor').value = settings.digitColor;
+document.getElementById('set-cardRadius').value = settings.cardRadius;
+document.getElementById('val-cardRadius').innerText = `${settings.cardRadius}px`;
+document.getElementById('set-clockScale').value = settings.clockScale;
+document.getElementById('val-clockScale').innerText = `${parseFloat(settings.clockScale).toFixed(1)}x`;
+document.getElementById('set-fontScale').value = settings.fontScale;
+document.getElementById('val-fontScale').innerText = `${parseFloat(settings.fontScale).toFixed(1)}x`;
+document.getElementById('set-fontFamily').value = settings.fontFamily;
+document.getElementById('set-flipSpeed').value = settings.flipSpeed;
+document.getElementById('val-flipSpeed').innerText = `${parseFloat(settings.flipSpeed).toFixed(2)}s`;
+document.getElementById('set-burnInInterval').value = settings.burnInInterval;
+document.getElementById('val-burnInInterval').innerText = settings.burnInInterval === 0 ? '已关闭' : `${settings.burnInInterval}分钟`;
+document.getElementById('set-tickVolume').value = settings.tickVolume;
+document.getElementById('val-tickVolume').innerText = `${Math.round(settings.tickVolume * 100)}%`;
+document.getElementById('set-tickType').value = settings.tickType;
+// 按钮开关同步与UI隐藏控制
+const setToggle = (id, val) => {
+const btn = document.getElementById(id);
+if (val) { btn.classList.replace('bg-gray-600', 'bg-green-500'); btn.firstChild.classList.replace('left-0.5', 'right-0.5'); }
+else { btn.classList.replace('bg-green-500', 'bg-gray-600'); btn.firstChild.classList.replace('right-0.5', 'left-0.5'); }
+};
+setToggle('toggle-use12Hour', settings.use12Hour);
+document.getElementById('ampm-display').style.display = settings.use12Hour ? 'block' : 'none';
+setToggle('toggle-showSeconds', settings.showSeconds);
+document.getElementById('seconds-section').style.display = settings.showSeconds ? 'flex' : 'none';
+setToggle('toggle-showDate', settings.showDate);
+setToggle('toggle-showBattery', settings.showBattery);
+document.getElementById('battery-display').style.display = settings.showBattery ? 'flex' : 'none';
+setToggle('toggle-playTicking', settings.playTicking);
+document.getElementById('tick-options-container').style.display = settings.playTicking ? 'block' : 'none';
+setToggle('toggle-hourlyChime', settings.hourlyChime);
+// 如果日期和电量都关了，隐藏整行防止占位
+document.getElementById('top-info-bar').style.display = (!settings.showDate && !settings.showBattery) ? 'none' : 'flex';
+resetGlareTimer();
+updateClock();
+};
+// 事件绑定
+const bindInput = (id, key, isNum = false) => {
+document.getElementById(`set-${id}`).addEventListener('input', (e) => {
+settings[key] = isNum ? Number(e.target.value) : e.target.value;
+applySettingsToUI();
+});
+};
+const bindToggle = (id, key) => {
+document.getElementById(`toggle-${id}`).addEventListener('click', () => {
+settings[key] = !settings[key];
+if (key === 'playTicking' || key === 'hourlyChime') initAudio();
+applySettingsToUI();
+});
+};
+bindInput('appBg', 'appBg'); bindInput('cardBg', 'cardBg'); bindInput('digitColor', 'digitColor');
+bindInput('cardRadius', 'cardRadius', true); bindInput('clockScale', 'clockScale', true);
+bindInput('fontScale', 'fontScale', true); bindInput('fontFamily', 'fontFamily');
+bindInput('flipSpeed', 'flipSpeed', true); bindInput('burnInInterval', 'burnInInterval', true);
+bindToggle('use12Hour', 'use12Hour'); bindToggle('showSeconds', 'showSeconds');
+bindToggle('showDate', 'showDate'); bindToggle('showBattery', 'showBattery');
+bindToggle('playTicking', 'playTicking'); bindToggle('hourlyChime', 'hourlyChime');
+document.getElementById('set-tickVolume').addEventListener('input', (e) => { settings.tickVolume = Number(e.target.value); applySettingsToUI(); });
+document.getElementById('set-tickType').addEventListener('change', (e) => {
+settings.tickType = Number(e.target.value);
+initAudio(); playTick(settings.tickVolume, settings.tickType); // 试播
+applySettingsToUI();
+});
+document.getElementById('btn-test-glare').addEventListener('click', triggerGlare);
+document.getElementById('btn-reset').addEventListener('click', () => { settings = { ...DEFAULT_SETTINGS }; applySettingsToUI(); });
+// 侧边栏开启关闭逻辑
+const sidebar = document.getElementById('settings-sidebar');
+const overlay = document.getElementById('overlay');
+const openSettings = () => { sidebar.classList.remove('translate-x-full'); overlay.classList.remove('opacity-0', 'pointer-events-none'); };
+const closeSettings = () => { sidebar.classList.add('translate-x-full'); overlay.classList.add('opacity-0', 'pointer-events-none'); };
+document.getElementById('btn-open-settings').addEventListener('click', openSettings);
+document.getElementById('btn-close-settings').addEventListener('click', closeSettings);
+overlay.addEventListener('click', closeSettings);
+/* ================= 启动 ================= */
+applySettingsToUI();
+setInterval(updateClock, 1000);
+</script>
+</body>
+</html>

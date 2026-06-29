@@ -1,0 +1,57 @@
+﻿{
+  "manifest_version": 3,
+  "name": "BinixOvO Tab Pro",
+  "version": "4.3.0",
+  "description": "BinixOvO 4.3.0 旗舰版响应式动态主题新标签页 - 本地安全版",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "binixovo@example.com",
+      "strict_min_version": "113.0"
+    }
+  },
+  "chrome_url_overrides": {
+    "newtab": "index.html"
+  },
+  "permissions": [
+    "storage",
+    "scripting",
+    "activeTab",
+    "declarativeNetRequest",
+    "bookmarks",
+    "history",
+    "downloads",
+    "geolocation",
+    "tts"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "icons": {
+    "16": "favicon.ico",
+    "48": "favicon.ico",
+    "128": "favicon.ico"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "BinixOvO Tab Pro",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "favicon.ico",
+      "48": "favicon.ico",
+      "128": "favicon.ico"
+    }
+  },
+  "content_security_policy": {
+    "extension_pages": "default-src 'self'; connect-src 'self' https://wttr.in https://api.open-meteo.com https://restapi.amap.com https://ipapi.co https://get.geojs.io https://whois.pconline.com.cn https://nominatim.openstreetmap.org https://ip.taobao.com https://v1.jinrishici.com https://v1.hitokoto.cn https://api.xygeng.cn https://api.allorigins.win https://api.xinac.net https://api.iowen.cn https://translate.googleapis.com https://lingva.ml https://api.mymemory.translated.net https://dns.alidns.com https://api.ocr.space https://bing.biturl.top https://wsrv.nl https://cdn.jsdelivr.net https://qt.gtimg.cn https://smartbox.gtimg.cn https://web.ifzq.gtimg.cn https://open.er-api.com https://site.api.espn.com https://a.espncdn.com https://60s.viki.moe; img-src 'self' data: https:; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; font-src 'self' https://cdn.jsdelivr.net; media-src 'self' data: https://www.soundjay.com; script-src 'self'"
+  },
+  "commands": {
+    "open-popup": {
+      "suggested_key": {
+        "default": "Ctrl+B"
+      },
+      "description": "打开 BinixOvO 插件搜索窗口"
+    }
+  }
+}

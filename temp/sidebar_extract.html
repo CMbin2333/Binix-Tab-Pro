@@ -1,0 +1,1557 @@
+        <aside class="sidebar" id="sidebar">
+            <div class="side-rail">
+                <div class="avatar" id="sidebar-avatar" title="点击更换头像" role="button" tabindex="0" aria-label="更换头像">
+                    <img id="rail-avatar-img" src="图标.jpg" alt="侧边栏头像">
+                </div>
+                <div class="nav-container">
+                    <nav class="nav-menu" id="dynamicNav"></nav>
+                    <div class="nav-add-btn" id="addCatBtn">＋</div>
+                </div>
+                <div class="set-trigger" id="setBtn">⚙️</div>
+            </div>
+            
+            <div class="side-drawer" id="sideDrawer">
+                <div class="drawer-inner">
+                                        <!-- 设置搜索框 -->
+                    <div class="setting-search-wrap">
+                        <input type="text" id="setting-search" class="ui-input setting-search-input" placeholder="搜索设置项...">
+                    </div>
+
+                    <div class="setting-section" data-section="appearance-theme">
+                        <div class="setting-title">🎨 外观与主题</div>
+                        <div class="setting-content">
+<div class="sub-settings">
+                                <div class="sub-settings-title">背景模式</div>
+                                <div class="config-group" style="margin-bottom: 10px;">
+                                    <div class="bg-mode-selector">
+                                        <div class="mode-opt active" data-mode="mesh">极光</div>
+                                        <div class="mode-opt" data-mode="bing">Bing</div>
+                                        <div class="mode-opt" data-mode="custom">自选</div>
+                                        <div class="mode-opt" data-mode="live">动态</div>
+                                        <div class="mode-opt" data-mode="wallhaven">Wallhaven</div>
+                                        <div class="mode-opt" data-mode="interactive">交互</div>
+                                    </div>
+                                </div>
+                                <div id="interactive-settings" class="inner-settings-group" style="display: none;">
+                                    <div class="config-group">
+                                        <label>选择交互主题</label>
+                                        <div class="bg-mode-selector" id="interactive-theme-selector">
+                                            <div class="mode-opt active" data-theme="earth">全息地球</div>
+                                            <div class="mode-opt" data-theme="solar">等离子核</div>
+                                            <div class="mode-opt" data-theme="saturn">全息土星</div>
+                                            <div class="mode-opt" data-theme="quantum">量子星核</div>
+                                            <div class="mode-opt" data-theme="cyber">赛博神经</div>
+                                            <div class="mode-opt" data-theme="manifold">流形共振</div>
+                                        </div>
+                                    </div>
+                                    <div class="config-group switch-group" style="margin-top: 15px; background: rgba(255,69,58,0.05); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,69,58,0.2);">
+                                        <label style="color: #ff6b6b; margin: 0;">⚡ 开启极致性能优化</label>
+                                        <label class="switch">
+                                            <input type="checkbox" id="interactive-opt-switch">
+                                            <span class="slider round"></span>
+                                        </label>
+                                    </div>
+                                    <div class="tool-result">提示：在桌面空白处拖拽可旋转全景。</div>
+                                </div>
+                                <div id="mesh-settings" class="inner-settings-group">
+                                    <div class="config-group switch-group" style="margin-top: 10px;"><label>极光随时间变化</label><label class="switch"><input type="checkbox" id="mesh-auto-switch" checked><span class="slider round"></span></label></div>
+                                    <div id="mesh-colors-picker" class="config-group" style="display: none;"><label>自定义流体色</label><div class="color-pickers-row"><input type="color" id="mesh-c1" value="#4338ca"><input type="color" id="mesh-c2" value="#3730a3"><input type="color" id="mesh-c3" value="#312e81"><input type="color" id="mesh-c4" value="#4f46e5"><input type="color" id="mesh-c5" value="#6366f1"></div></div>
+                                </div>
+                                <div id="bing-settings" class="inner-settings-group" style="display: none;"><div class="config-group" style="margin-top: 10px;"><label>更新频率</label><div class="custom-select" id="bing-interval-select"><div class="select-trigger"><span class="selected-text">永不</span><span class="arrow">▼</span></div><div class="select-options"><div class="option" data-value="0">永不 (锁定)</div><div class="option" data-value="1800000">每 30 分钟</div><div class="option" data-value="3600000">每 1 小时</div><div class="option" data-value="86400000">每天</div></div></div></div><button id="bing-refresh-btn" class="ui-button small-btn">🎲 换一张</button></div>
+                                <div id="custom-settings" class="inner-settings-group" style="display: none; margin-top: 10px;">
+                                    <div class="config-group"><label>图片 URL</label><input type="text" id="custom-bg-url" class="ui-input" placeholder="https://..."></div>
+                                    <div class="config-group"><label>上传本地图片</label><input type="file" id="custom-bg-upload" accept="image/*" style="display: none;"><button class="ui-button small-btn" id="trigger-custom-bg-upload">📂 选择本地图片</button><div id="custom-bg-file-name" style="margin-top:8px; font-size:11px; opacity:0.6;">未选择文件</div></div>
+                                </div>
+                                <div id="live-settings" class="inner-settings-group" style="display: none; margin-top: 10px;">
+                                    <div class="config-group"><label>上传视频 (mp4/webm)</label><input type="file" id="live-upload-input" accept="video/mp4,video/webm" style="display: none;"><button class="ui-button small-btn" id="trigger-live-upload">📂 选择本地视频</button><div id="live-file-name" style="margin-top:8px; font-size:11px; opacity:0.6;">未选择文件</div></div>
+                                    <div class="config-group switch-group" style="margin-top:10px;"><label>视频静音</label><label class="switch"><input type="checkbox" id="live-muted-switch" checked><span class="slider round"></span></label></div>
+                                </div>
+                                <div id="wallhaven-settings" class="inner-settings-group" style="display: none; margin-top: 10px;">
+                                    <div class="config-group"><label>类别 (Categories)</label><div class="bg-mode-selector" id="wh-category-selector"><div class="mode-opt" data-wh-cat="111">全选</div><div class="mode-opt" data-wh-cat="100">常规</div><div class="mode-opt" data-wh-cat="010">二次元</div><div class="mode-opt" data-wh-cat="001">人物</div></div></div>
+                                    <div class="config-group"><label>排序方式</label>
+                                        <select id="wh-sort-select" class="ui-input compact-input" style="margin-bottom: 0;">
+                                            <option value="random">随机 (Random)</option>
+                                            <option value="toplist">热门 (Toplist)</option>
+                                            <option value="hot">趋势 (Hot)</option>
+                                            <option value="latest">最新 (Latest)</option>
+                                        </select>
+                                    </div>
+                                    <div class="config-group"><label>关键词检索 (可选)</label><input type="text" id="wh-query-input" class="ui-input" placeholder="如: cyberpunk, landscape..."></div>
+                                    <div style="font-size:11px; color:rgba(255,255,255,0.4); margin-bottom: 15px; line-height: 1.4;">* 数据源来自全球顶尖壁纸库 Wallhaven。已自动过滤 R18 结果以保证浏览安全。</div>
+                                    <button id="wh-refresh-btn" class="ui-button small-btn" style="background: rgba(165,180,252,0.15); color: var(--text-b); border-color: rgba(165,180,252,0.3); margin-bottom: 8px;">🎲 换一张随机壁纸</button>
+                                    <button id="wh-open-gallery-btn" class="ui-button small-btn" style="background: rgba(52,199,89,0.15); color: #34c759; border-color: rgba(52,199,89,0.3);">🖼️ 浏览全部高清壁纸 (收藏库)</button>
+                                </div>
+                            </div>
+                            
+<div class="sub-settings" style="margin-bottom:0;">
+                                <div class="sub-settings-title">画面滤镜与形变</div>
+                                <div class="config-group"><label>背景模糊 (<span id="val-bg-blur">10</span>px)</label><input type="range" id="range-bg-blur" min="0" max="60" value="10"></div>
+                                <div class="config-group"><label>暗度遮罩 (<span id="val-bg-mask">40</span>%)</label><input type="range" id="range-bg-mask" min="0" max="95" value="40"></div>
+                                <div class="config-group"><label>整体缩放 (<span id="val-bg-scale">105</span>%)</label><input type="range" id="range-bg-scale" min="50" max="250" value="105"></div>
+                                <div class="config-group"><label>拉伸宽度 (<span id="val-bg-width">100</span>%)</label><input type="range" id="range-bg-width" min="10" max="300" value="100"></div>
+                                <div class="config-group"><label>拉伸高度 (<span id="val-bg-height">100</span>%)</label><input type="range" id="range-bg-height" min="10" max="300" value="100"></div>
+                                <div class="config-group"><label>背景旋转 (<span id="val-bg-rotate">0</span>°)</label><input type="range" id="range-bg-rotate" min="-180" max="180" value="0"></div>
+                                <div class="config-group"><label>X 轴位移 (<span id="val-bg-translate-x">0</span>px)</label><input type="range" id="range-bg-translate-x" min="-1000" max="1000" step="1"></div>
+                                <div class="config-group"><label>Y 轴位移 (<span id="val-bg-translate-y">0</span>px)</label><input type="range" id="range-bg-translate-y" min="-1000" max="1000" step="1"></div>
+                                <div class="config-group"><label>Z 轴位移 (<span id="val-bg-translate-z">0</span>px)</label><input type="range" id="range-bg-translate-z" min="-2000" max="2000" step="1"></div>
+                                <div class="config-group"><label>显示模式</label><div class="bg-mode-selector" id="bg-fit-selector"><div class="mode-opt active" data-bg-fit="cover">填充</div><div class="mode-opt" data-bg-fit="contain">完整</div><div class="mode-opt" data-bg-fit="stretch">拉伸</div><div class="mode-opt" data-bg-fit="tile">平铺</div></div></div>
+                                <div class="config-group switch-group"><label>水平翻转</label><label class="switch"><input type="checkbox" id="bg-flip-switch"><span class="slider round"></span></label></div>
+                                <div style="display:flex; gap:10px; margin-top: 15px;">
+                                    <button id="reset-bg-transform-btn" class="ui-button small-btn" style="flex:1;">↺ 形变复原</button>
+                                    <button id="reset-appearance-btn" class="ui-button small-btn" style="flex:1; background: rgba(255,69,58,0.15); color: #ff453a; border-color: rgba(255,69,58,0.3);">🚨 滤镜复原</button>
+                                </div>
+                            </div>
+                        
+                            
+                            
+<div class="sub-settings">
+                                <div class="sub-settings-title">桌面时钟</div>
+                                <div class="config-group"><label>时钟大小 (<span id="val-clock-size">120</span>px)</label><input type="range" id="range-clock-size" min="60" max="250" value="120"></div>
+                                <div class="config-group" style="display: block !important;">
+                                    <label style="margin-bottom: 8px !important; color: #fff;">时钟字体 (23款精选预设)</label>
+                                    <select id="clock-font-select" class="ui-input compact-input" style="width: 100%; margin-bottom: 0;">
+                                        <option value="default">默认系统字体 (Default)</option>
+                                        <option value="'DS-Digital', 'Share Tech Mono', monospace">DS-Digital (数字电子)</option>
+                                        <option value="'MiSans', sans-serif">MiSans (小米)</option>
+                                        <option value="'-apple-system', 'BlinkMacSystemFont', 'SF Pro Display', sans-serif">SFUI (苹果)</option>
+                                        <option value="'HarmonyOS Sans', sans-serif">HarmonyOS (鸿蒙)</option>
+                                        <option value="Arial, sans-serif">Arial (标准黑体)</option>
+                                        <option value="'Bebas Neue', sans-serif">Bebas Neue (窄高海报)</option>
+                                        <option value="'Silkscreen', cursive">Silkscreen (像素丝印)</option>
+                                        <option value="'Orbitron', sans-serif">Orbitron (未来科幻)</option>
+                                        <option value="'Press Start 2P', cursive">Press Start 2P (复古8位)</option>
+                                        <option value="'Righteous', cursive">Righteous (圆润艺术)</option>
+                                        <option value="'Wallpoet', cursive">Wallpoet (街头涂鸦)</option>
+                                        <option value="'Space Mono', monospace">Space Mono (极客等宽)</option>
+                                        <option value="'VT323', monospace">VT323 (复古终端)</option>
+                                        <option value="'Monoton', cursive">Monoton (霓虹线框)</option>
+                                        <option value="'Share Tech Mono', monospace">Share Tech Mono (科技等宽)</option>
+                                        <option value="'Audiowide', cursive">Audiowide (数码宽体)</option>
+                                        <option value="'Nova Square', cursive">Nova Square (方正科技)</option>
+                                        <option value="'Black Ops One', cursive">Black Ops One (军事模版)</option>
+                                        <option value="'Chakra Petch', sans-serif">Chakra Petch (机甲切割)</option>
+                                        <option value="'Michroma', sans-serif">Michroma (宽扁科幻)</option>
+                                        <option value="'Teko', sans-serif">Teko (紧凑方块)</option>
+                                        <option value="Impact, sans-serif">Impact (厚重冲击)</option>
+                                    </select>
+                                </div>
+                                <div class="config-group switch-group"><label>自动吸取背景主题色</label><label class="switch"><input type="checkbox" id="clock-auto-switch" checked><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group"><label>开启时钟动画</label><label class="switch"><input type="checkbox" id="clock-anim-switch" checked><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group"><label>开启秒钟显示</label><label class="switch"><input type="checkbox" id="clock-seconds-switch" checked><span class="slider round"></span></label></div>
+                                <div id="clock-manual-settings" class="inner-settings-group" style="display: none; margin-top: 10px;">
+                                    <div class="config-group"><label>色彩模式</label><div class="bg-mode-selector"><div class="mode-opt active" data-clock-mode="gradient">渐变</div><div class="mode-opt" data-clock-mode="solid">纯色</div></div></div>
+                                    <div class="config-group"><label>文字颜色</label><div class="color-pickers-row"><input type="color" id="clock-col-1" value="#ffffff"><input type="color" id="clock-col-2" value="#a5b4fc"></div></div>
+                                </div>
+                                <div class="config-group" style="margin-top: 10px;">
+                                    <div class="switch-group" style="margin-bottom: 10px !important;"><label>时钟发光特效</label><label class="switch"><input type="checkbox" id="clock-glow-switch" checked><span class="slider round"></span></label></div>
+                                    <div id="clock-glow-panel" class="inner-settings-group">
+                                        <div class="config-group" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;"><label style="margin:0; opacity:0.8; font-size:11px;">发光颜色</label><input type="color" id="clock-glow-color" value="#a5b4fc"></div>
+                                        <div class="config-group"><label style="font-size:11px; opacity:0.8;">扩散强度 (<span id="val-clock-blur">20</span>px)</label><input type="range" id="range-clock-blur" min="0" max="30" value="20"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            
+<div class="sub-settings">
+                                <div class="sub-settings-title">鼠标跟随光斑</div>
+                                <div class="config-group switch-group"><label>开启鼠标跟随光斑</label><label class="switch"><input type="checkbox" id="mouse-follow-switch" checked><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group"><label>光斑自动吸取背景色</label><label class="switch"><input type="checkbox" id="mouse-follow-auto-switch" checked><span class="slider round"></span></label></div>
+                                <div class="config-group"><label>光斑样式</label><div class="bg-mode-selector" id="mouse-follow-mode-selector"><div class="mode-opt active" data-cursor-mode="single">单色</div><div class="mode-opt" data-cursor-mode="dual">双色</div><div class="mode-opt" data-cursor-mode="triple">三色</div></div></div>
+                                <div class="config-group"><label>光斑大小 (<span id="val-cursor-size">180</span>px)</label><input type="range" id="range-cursor-size" min="80" max="420" value="180"></div>
+                                <div id="mouse-follow-color-panel" class="inner-settings-group">
+                                    <div class="config-group" id="mouse-follow-color-group" style="display:flex; justify-content:space-between; align-items:center;"><label style="margin:0;">主色</label><input type="color" id="mouse-follow-color" value="#a5b4fc"></div>
+                                    <div class="config-group" id="mouse-follow-color-group-2" style="display:flex; justify-content:space-between; align-items:center;"><label style="margin:0;">辅色</label><input type="color" id="mouse-follow-color-2" value="#f472b6"></div>
+                                    <div class="config-group" id="mouse-follow-color-group-3" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0;"><label style="margin:0;">第三色</label><input type="color" id="mouse-follow-color-3" value="#22d3ee"></div>
+                                </div>
+                            </div>
+
+                            
+<div class="sub-settings" style="margin-bottom:0;">
+                                <div class="sub-settings-title">全局物理模拟</div>
+                                <div class="config-group switch-group"><label>开启全屏物理天气模拟 (雨雪)</label><label class="switch"><input type="checkbox" id="weather-sim-switch"><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group">
+                                    <label>🧨 春节自动下雪特效</label>
+                                    <label class="switch">
+                                        <input type="checkbox" id="spring-snow-switch" checked>
+                                        <span class="slider round"></span>
+                                    </label>
+                                </div>
+                                <div class="config-group"><label>天气特效浓度 (<span id="val-weather-intensity">100</span>%)</label><input type="range" id="range-weather-intensity" min="10" max="1000" value="100"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="setting-section" data-section="tile-desktop">
+                        <div class="setting-title">📐 磁贴与桌面</div>
+                        <div class="setting-content">
+<div class="sub-settings">
+                                <div class="sub-settings-title">磁贴图标源 (Favicon API)</div>
+                                <div class="config-group">
+                                    <div class="engine-choice-grid" id="icon-source-grid">
+                                        <button type="button" class="engine-choice active" data-icon-source="yandex"><strong>Yandex</strong><span>全球极速/最稳</span></button>
+                                        <button type="button" class="engine-choice" data-icon-source="unavatar"><strong>Unavatar</strong><span>高颜值/防缺图</span></button>
+                                        <button type="button" class="engine-choice" data-icon-source="xinac"><strong>Xinac API</strong><span>国内稳定源</span></button>
+                                        <button type="button" class="engine-choice" data-icon-source="iowen"><strong>Iowen API</strong><span>备用国内源</span></button>
+                                        <button type="button" class="engine-choice" data-icon-source="google"><strong>Google</strong><span>最全/需代理</span></button>
+                                        <button type="button" class="engine-choice" data-icon-source="duckduckgo"><strong>DuckDuckGo</strong><span>海外直连可用</span></button>
+                                        <button type="button" class="engine-choice" data-icon-source="custom" style="grid-column: span 2;"><strong>自定义源</strong><span>填入专属 URL 模板</span></button>
+                                    </div>
+                                </div>
+                                <div id="custom-icon-settings" class="inner-settings-group" style="display:none; margin-bottom:15px;">
+                                    <div class="config-group">
+                                        <label>自定义 API 模板</label>
+                                        <input type="text" id="custom-icon-url" class="ui-input" placeholder="https://...?domain=%domain">
+                                        <div style="font-size:11px; opacity:0.6; margin-top:4px;">占位符支持：`%domain`</div>
+                                    </div>
+                                </div>
+                                <div class="config-group" style="margin-bottom: 0;">
+                                    <button class="ui-button small-btn" id="refresh-all-icons-btn" style="background: rgba(255, 69, 58, 0.15); color: #ff453a; border: 1px solid rgba(255, 69, 58, 0.3);">🔄 强制重置并刷新所有图标</button>
+                                    <div style="font-size:11px; opacity:0.6; margin-top:8px; line-height: 1.4;">提示：切换图标源后，请点击此按钮清空缓存。</div>
+                                </div>
+                            </div>
+                            
+                            
+<div class="sub-settings">
+                                <div class="sub-settings-title">桌面行为控制</div>
+                                <div class="config-group switch-group">
+                                    <label>记住上次所在的分类</label>
+                                    <label class="switch"><input type="checkbox" id="remember-category-switch" checked><span class="slider round"></span></label>
+                                </div>
+                                <div class="config-group switch-group">
+                                    <label>左侧栏自动隐藏 (边缘悬浮显示)</label>
+                                    <label class="switch"><input type="checkbox" id="sidebar-auto-hide-switch"><span class="slider round"></span></label>
+                                </div>
+                                <div class="config-group switch-group">
+                                    <label>开启磁贴自由摆放 (桌面模式)</label>
+                                    <label class="switch"><input type="checkbox" id="free-layout-switch"><span class="slider round"></span></label>
+                                </div>
+                                <div class="config-group switch-group" style="margin-bottom:0 !important;">
+                                    <label>在新标签页中打开链接</label>
+                                    <label class="switch"><input type="checkbox" id="open-new-tab-switch" checked><span class="slider round"></span></label>
+                                </div>
+                            </div>
+                            
+                            
+<div class="sub-settings">
+                                <div class="sub-settings-title">磁贴样式定制</div>
+                                
+                                <div class="config-group switch-group">
+                                    <label>开启入场弹性动画</label>
+                                    <label class="switch">
+                                        <input type="checkbox" id="tile-anim-switch" checked>
+                                        <span class="slider round"></span>
+                                    </label>
+                                </div>
+                                <div class="config-group">
+                                    <label>单体弹出速度 (<span id="val-tile-anim-duration">0.45</span>s) - 越小越快</label>
+                                    <input type="range" id="range-tile-anim-duration" min="0.1" max="1.5" step="0.05" value="0.45">
+                                </div>
+                                <div class="config-group">
+                                    <label>阵列加载间隔 (<span id="val-tile-anim-stagger">0.02</span>s) - 越小越紧凑</label>
+                                    <input type="range" id="range-tile-anim-stagger" min="0" max="0.15" step="0.01" value="0.02">
+                                </div>
+                                
+                                <div class="config-group">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <label style="margin: 0;">两侧留白</label>
+                                        <span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-grid-padding">8</span>%</span>
+                                    </div>
+                                    <input type="range" id="range-grid-padding" min="0" max="30" value="8">
+                                </div>
+                                <div class="config-group">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <label style="margin: 0;">磁贴大小</label>
+                                        <span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-tile-size">85</span>px</span>
+                                    </div>
+                                    <input type="range" id="range-tile-size" min="50" max="150" value="85">
+                                </div>
+                                <div class="config-group">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <label style="margin: 0;">圆角程度</label>
+                                        <span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-tile-radius">20</span>px</span>
+                                    </div>
+                                    <input type="range" id="range-tile-radius" min="0" max="75" value="20">
+                                </div>
+                                <div class="config-group">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <label style="margin: 0;">玻璃底板透明度</label>
+                                        <span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-tile-opacity">6</span>%</span>
+                                    </div>
+                                    <input type="range" id="range-tile-opacity" min="0" max="100" value="6">
+                                </div>
+                                <div class="config-group switch-group"><label>显示磁贴文字</label><label class="switch"><input type="checkbox" id="tile-text-switch" checked><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group"><label>磁贴背景跟随主题色</label><label class="switch"><input type="checkbox" id="tile-bg-auto-switch"><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group"><label>磁贴文字跟随主题色</label><label class="switch"><input type="checkbox" id="tile-text-auto-switch"><span class="slider round"></span></label></div>
+                                <div class="config-group" style="display:flex; justify-content:space-between; align-items:center;"><label style="margin:0;">磁贴背景颜色</label><input type="color" id="tile-bg-color" value="#ffffff"></div>
+                                <div class="config-group" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0;"><label style="margin:0;">磁贴文字颜色</label><input type="color" id="tile-text-color" value="#ffffff"></div>
+                        </div>
+                        </div>
+                    </div>
+
+                    <div class="setting-section" data-section="search-bar">
+                        <div class="setting-title">🔍 搜索栏</div>
+                        <div class="setting-content">
+<div class="sub-settings">
+                                <div class="sub-settings-title">功能与翻译 (Alt+Enter)</div>
+                                <div class="config-group switch-group">
+                                    <label>开启搜索沉浸聚焦与水波纹特效</label>
+                                    <label class="switch">
+                                        <input type="checkbox" id="search-focus-switch">
+                                        <span class="slider round"></span>
+                                    </label>
+                                </div>
+                                <div class="config-group switch-group"><label>开启搜索关联建议</label><label class="switch"><input type="checkbox" id="search-suggestion-switch" checked><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group"><label>开启搜索历史记录</label><label class="switch"><input type="checkbox" id="search-history-switch" checked><span class="slider round"></span></label></div>
+                                </div>
+                            
+<div class="sub-settings" style="margin-bottom:0;">
+                                <div class="sub-settings-title">外观与尺寸</div>
+                                <div class="config-group switch-group"><label>显示查询按钮</label><label class="switch"><input type="checkbox" id="search-btn-switch" checked><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group"><label>显示语音输入按钮</label><label class="switch"><input type="checkbox" id="mic-btn-switch"><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group"><label>显示扫码识别按钮</label><label class="switch"><input type="checkbox" id="qr-btn-switch"><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group"><label>显示左侧引擎图标</label><label class="switch"><input type="checkbox" id="search-engine-switch" checked><span class="slider round"></span></label></div>
+                                <div class="config-group">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <label style="margin: 0;">宽度</label>
+                                        <span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-search-width">500</span>px</span>
+                                    </div>
+                                    <input type="range" id="range-search-width" min="200" max="1000" value="500">
+                                </div>
+                                <div class="config-group">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <label style="margin: 0;">高度</label>
+                                        <span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-search-height">52</span>px</span>
+                                    </div>
+                                    <input type="range" id="range-search-height" min="30" max="80" value="52">
+                                </div>
+                                <div class="config-group">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <label style="margin: 0;">圆角</label>
+                                        <span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-search-radius">26</span>px</span>
+                                    </div>
+                                    <input type="range" id="range-search-radius" min="0" max="40" value="26">
+                                </div>
+                                <div class="config-group">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <label style="margin: 0;">背景透明度</label>
+                                        <span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-search-opacity">15</span>%</span>
+                                    </div>
+                                    <input type="range" id="range-search-opacity" min="0" max="100" value="15">
+                                </div>
+                                <div class="config-group" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0;"><label style="margin:0;">呼吸灯发光颜色</label><input type="color" id="color-search-glow" value="#a5b4fc"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="setting-section" data-section="fold-view-mode">
+                        <div class="setting-title">🗂️ 折叠窗口模式</div>
+                        <div class="setting-content">
+<div class="sub-settings">
+                                <div class="sub-settings-title" style="border-left-color: #6ee7b7;">📚 长条书签视图</div>
+                                
+                                <div class="config-group switch-group">
+                                    <label>记住折叠状态</label>
+                                    <label class="switch"><input type="checkbox" id="remember-fold-state-switch" checked><span class="slider round"></span></label>
+                                </div>
+                                
+                                <div class="config-group">
+                                    <label>长条页面模式</label>
+                                    <div class="bg-mode-selector" id="list-layout-selector">
+                                        <div class="mode-opt active" data-list-layout="simple">简约页面</div>
+                                        <div class="mode-opt" data-list-layout="detailed">详细页面 (带预览)</div>
+                                    </div>
+                                </div>
+
+                                <div class="config-group" id="list-preview-mode-group" style="display: none;">
+                                    <label>悬浮预览实现方式</label>
+                                    <div class="bg-mode-selector" id="list-preview-mode-selector">
+                                        <div class="mode-opt" data-preview-mode="iframe">原网页微缩嵌入</div>
+                                        <div class="mode-opt active" data-preview-mode="metadata">安全信息卡片(推荐)</div>
+                                    </div>
+                                    <div style="font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 8px; line-height: 1.4;">* 提示：微缩嵌入呈现 1920x1080 原网页缩放。若遭遇目标网站安全拦截，请切换至安全信息卡片。</div>
+                                </div>
+                                <div class="config-group switch-group">
+                                    <label>全屏沉浸时开启迷你浏览器 (标签页/控制栏)</label>
+                                    <label class="switch"><input type="checkbox" id="list-view-mini-browser-switch" checked><span class="slider round"></span></label>
+                                </div>
+
+                                <div class="config-group" id="list-view-cols-group">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                        <label style="margin: 0;">分栏数量</label>
+                                        <span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-list-view-cols">8</span></span>
+                                    </div>
+                                    <div style="font-size: 10px; opacity: 0.45; margin-bottom: 8px; line-height: 1.35;">折叠总览：每行并排 N 个分类折叠窗，多行向下排列；窗内书签始终单列竖排</div>
+                                    <input type="range" id="range-list-view-cols" min="1" max="12" step="1" value="8">
+                                </div>
+                                <div class="config-group">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <label style="margin: 0;">长条高度</label>
+                                        <span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-list-view-item-height">36</span>px</span>
+                                    </div>
+                                    <input type="range" id="range-list-view-item-height" min="14" max="80" step="1" value="36">
+                                </div>
+                                <div class="config-group" id="list-view-max-width-group">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <label style="margin: 0;">顶部容器最大宽度</label>
+                                        <span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-list-view-max-width">700</span>px</span>
+                                    </div>
+                                    <input type="range" id="range-list-view-max-width" min="300" max="4000" step="10" value="700">
+                                </div>
+                                <div class="config-group" id="list-view-tile-max-width-group">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <label style="margin: 0;">底部磁贴最大长度</label>
+                                        <span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-list-view-tile-max-width">1200</span>px</span>
+                                    </div>
+                                    <input type="range" id="range-list-view-tile-max-width" min="300" max="4000" step="10" value="1200">
+                                </div>
+                                <div class="config-group" id="list-view-header-margin-top-group">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <label style="margin: 0;">顶部组件距顶高度</label>
+                                        <span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-list-view-header-margin-top">0</span>px</span>
+                                    </div>
+                                    <input type="range" id="range-list-view-header-margin-top" min="0" max="300" step="5" value="0">
+                                </div>
+                                <div class="config-group" id="list-view-grid-margin-top-group">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <label style="margin: 0;">底部磁贴距顶高度</label>
+                                        <span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-list-view-grid-margin-top">0</span>px</span>
+                                    </div>
+                                    <input type="range" id="range-list-view-grid-margin-top" min="0" max="300" step="5" value="0">
+                                </div>
+                                <div class="config-group" id="list-view-header-padding-group">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <label style="margin: 0;">顶部组件两侧留白</label>
+                                        <span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-list-view-header-padding">2</span>%</span>
+                                    </div>
+                                    <input type="range" id="range-list-view-header-padding" min="0" max="30" value="2">
+                                </div>
+                                <div class="config-group" id="list-view-grid-padding-group" style="margin-bottom: 0;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <label style="margin: 0;">底部磁贴留白</label>
+                                        <span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-list-view-grid-padding">2</span>%</span>
+                                    </div>
+                                    <input type="range" id="range-list-view-grid-padding" min="0" max="30" value="2">
+                                </div>
+                                
+                                <div style="height: 1px; background: rgba(255,255,255,0.08); margin: 15px 0;"></div>
+                                <div class="sub-settings-title" style="padding: 0; border: none; margin-bottom: 12px; font-size: 12px; color: #6ee7b7;">⏱️ 顶部组件独立尺寸 (时钟与搜索栏)</div>
+                                
+                                <div class="config-group">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <label style="margin: 0;">时钟大小</label>
+                                        <span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-list-view-clock-size">66</span>px</span>
+                                    </div>
+                                    <input type="range" id="range-list-view-clock-size" min="30" max="150" value="66">
+                                </div>
+                                <div class="config-group">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <label style="margin: 0;">搜索栏宽度</label>
+                                        <span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-list-view-search-width">320</span>px</span>
+                                    </div>
+                                    <input type="range" id="range-list-view-search-width" min="200" max="1000" value="320">
+                                </div>
+                                <div class="config-group">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <label style="margin: 0;">搜索栏高度</label>
+                                        <span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-list-view-search-height">44</span>px</span>
+                                    </div>
+                                    <input type="range" id="range-list-view-search-height" min="30" max="80" value="44">
+                                </div>
+                                <div class="config-group">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <label style="margin: 0;">搜索栏圆角</label>
+                                        <span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-list-view-search-radius">22</span>px</span>
+                                    </div>
+                                    <input type="range" id="range-list-view-search-radius" min="0" max="40" value="22">
+                                </div>
+                                <div class="config-group">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <label style="margin: 0;">搜索栏背景透明度</label>
+                                        <span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-list-view-search-opacity">8</span>%</span>
+                                    </div>
+                                    <input type="range" id="range-list-view-search-opacity" min="0" max="100" value="8">
+                                </div>
+                                <div class="config-group" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0;"><label style="margin:0;">呼吸灯发光颜色</label><input type="color" id="color-list-view-search-glow" value="#a5b4fc"></div>
+                            </div>
+
+                            
+<div class="sub-settings" style="margin-bottom:0;">
+                                <div class="sub-settings-title">长条书签样式</div>
+                                
+                                <div class="config-group switch-group">
+                                    <label>开启入场弹性动画</label>
+                                    <label class="switch">
+                                        <input type="checkbox" id="list-view-tile-anim-switch" checked>
+                                        <span class="slider round"></span>
+                                    </label>
+                                </div>
+                                <div class="config-group">
+                                    <label>单体弹出速度 (<span id="val-list-view-tile-anim-duration">0.45</span>s) - 越小越快</label>
+                                    <input type="range" id="range-list-view-tile-anim-duration" min="0.1" max="1.5" step="0.05" value="0.45">
+                                </div>
+                                <div class="config-group">
+                                    <label>阵列加载间隔 (<span id="val-list-view-tile-anim-stagger">0.02</span>s) - 越小越紧凑</label>
+                                    <input type="range" id="range-list-view-tile-anim-stagger" min="0" max="0.15" step="0.01" value="0.02">
+                                </div>
+
+                                <div class="config-group">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <label style="margin: 0;">圆角程度</label>
+                                        <span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-list-view-tile-radius">8</span>px</span>
+                                    </div>
+                                    <input type="range" id="range-list-view-tile-radius" min="0" max="30" value="8">
+                                </div>
+                                <div class="config-group">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <label style="margin: 0;">玻璃底板透明度</label>
+                                        <span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-list-view-tile-opacity">10</span>%</span>
+                                    </div>
+                                    <input type="range" id="range-list-view-tile-opacity" min="0" max="100" value="10">
+                                </div>
+                                <div class="config-group switch-group"><label>显示书签文字</label><label class="switch"><input type="checkbox" id="list-view-tile-text-switch" checked><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group"><label>背景跟随主题色</label><label class="switch"><input type="checkbox" id="list-view-tile-bg-auto-switch"><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group"><label>文字跟随主题色</label><label class="switch"><input type="checkbox" id="list-view-tile-text-auto-switch"><span class="slider round"></span></label></div>
+                                <div class="config-group" style="display:flex; justify-content:space-between; align-items:center;"><label style="margin:0;">背景颜色</label><input type="color" id="list-view-tile-bg-color" value="#ffffff"></div>
+                                <div class="config-group" style="display:flex; justify-content:space-between; align-items:center;"><label style="margin:0;">文字颜色</label><input type="color" id="list-view-tile-text-color" value="#ffffff"></div>
+                                
+                                <div style="height: 1px; background: rgba(255,255,255,0.08); margin: 15px 0;"></div>
+                                <div class="sub-settings-title" style="padding: 0; border: none; margin-bottom: 12px; font-size: 12px; color: #6ee7b7;">➗ 列分割线定制</div>
+                                <div class="config-group switch-group"><label>显示列分割线</label><label class="switch"><input type="checkbox" id="list-view-sep-switch" checked><span class="slider round"></span></label></div>
+                                <div class="config-group">
+                                    <label>分割线样式</label>
+                                    <div class="bg-mode-selector" id="list-view-sep-style-selector">
+                                        <div class="mode-opt" data-sep-style="solid">实线</div>
+                                        <div class="mode-opt active" data-sep-style="dashed">虚线</div>
+                                        <div class="mode-opt" data-sep-style="dotted">点线</div>
+                                    </div>
+                                </div>
+                                <div class="config-group switch-group"><label>分割线跟随主题色</label><label class="switch"><input type="checkbox" id="list-view-sep-auto-switch"><span class="slider round"></span></label></div>
+                                <div class="config-group" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0;"><label style="margin:0;">分割线颜色</label><input type="color" id="list-view-sep-color" value="#ffffff"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="setting-section" data-section="shortcuts-interact">
+                        <div class="setting-title">⌨️ 快捷键与交互</div>
+                        <div class="setting-content">
+<div class="sub-settings">
+                                <div class="sub-settings-title">基础快捷键映射</div>
+                                <div id="shortcut-settings-list" class="shortcut-list" style="margin-top: 10px;"></div>
+                                <button id="reset-shortcuts-btn" class="ui-button small-btn" style="margin-top: 15px; width: 100%;">↺ 恢复快捷键默认设置</button>
+                                <button id="view-shortcuts-guide-btn" class="ui-button small-btn" style="margin-top: 8px; width: 100%; background: rgba(52, 199, 89, 0.15); color: #34c759; border-color: rgba(52, 199, 89, 0.3);">📖 查看全部快捷键详细说明</button>
+                                <p style="font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 12px; margin-bottom: 0; line-height: 1.5;">提示：点击上方对应按键框后，按下新按键即可完成录制。</p>
+                                <div class="config-group" style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 15px;">
+                                    <label>联想词点击与快捷键选择行为</label>
+                                    <div class="bg-mode-selector" id="suggestion-action-selector">
+                                        <div class="mode-opt active" data-action="direct">直接跳转</div>
+                                        <div class="mode-opt" data-action="fill">仅填入</div>
+                                    </div>
+                                </div>
+                                <p style="font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 12px; margin-bottom: 0; line-height: 1.5;">提示：设置为仅填入时，选中联想词后需手动按回车键搜索。</p>
+                            </div>
+                            
+<div class="sub-settings" style="margin-bottom:0;">
+                                <div class="sub-settings-title">搜索引擎管理与 1~9 快捷键</div>
+                                <div class="media-library-note" style="margin-top: 10px; margin-bottom: 12px; line-height: 1.5;">上下拖拽排序，前 9 个自动绑定数字快捷键。<br>拖拽到页面顶部垃圾桶可删除。修改 URL 自动保存。<br><span style="color: var(--text-b); font-weight: bold;">🚀 极客技巧：按住你设置的“切换引擎”快捷键，再按数字键 1~9，即可瞬间切换！</span></div>
+                                <div id="engine-edit-list" class="music-playlist" style="margin-bottom: 15px; min-height: 10px; display: flex; flex-direction: column; gap: 6px;"></div>
+                                
+                                <div style="height: 1px; background: rgba(255,255,255,0.08); margin: 15px 0;"></div>
+                                
+                                <div class="sub-settings-title" style="padding: 0; border: none; margin-bottom: 12px; font-size: 12px;">➕ 添加自定义搜索引擎</div>
+                                <div class="config-group" style="margin-bottom: 10px;"><input type="text" id="custom-engine-name" class="ui-input" placeholder="名称，例如：知乎" style="margin-bottom:0;"></div>
+                                <div class="config-group" style="margin-bottom: 10px;"><select id="custom-engine-type" class="ui-input" style="margin-bottom:0;"><option value="search">综合搜索</option><option value="ai">AI 搜索</option><option value="media">媒体视频</option></select></div>
+                                <div class="config-group" style="margin-bottom: 10px;"><input type="text" id="custom-engine-url" class="ui-input" placeholder="URL (必须用 %s 代替搜索词)" style="margin-bottom:0;"></div>
+                                <div class="config-group" style="margin-bottom: 15px;"><input type="text" id="custom-engine-icon" class="ui-input" placeholder="图标 URL（选填，留空则自动抓取）" style="margin-bottom:0;"></div>
+                                <button class="ui-button small-btn" id="add-custom-engine" style="background: rgba(52, 199, 89, 0.15); border-color: rgba(52, 199, 89, 0.3); color: #fff; width: 100%;">添加并加入快捷列表</button>
+                            </div>
+                        
+                            
+<div class="sub-settings"><div class="sub-settings-title">桌面行为</div><div class="config-group switch-group" style="margin-bottom:0 !important;"><label>在新标签页中打开链接</label><label class="switch"><input type="checkbox" id="open-new-tab-switch" checked><span class="slider round"></span></label></div></div>
+<div class="sub-settings">
+                                <div class="sub-settings-title">历史记录点击后行为</div>
+<div class="config-group">
+                                    <label>历史记录点击后行为</label>
+                                    <div class="bg-mode-selector" id="history-action-selector">
+                                        <div class="mode-opt active" data-history-action="direct">直接跳转</div>
+                            </div>
+<div class="sub-settings">
+                                <div class="sub-settings-title">默认直译引擎</div>
+<div class="config-group" style="margin-bottom:0;">
+                                    <label>默认直译引擎</label>
+                                    <div class="bg-mode-selector" id="quick-trans-selector">
+                                        <div class="mode-opt active" data-quick-trans="google">Google</div>
+                            </div>
+<div class="sub-settings" style="margin-bottom:0;">
+                                <div class="sub-settings-title">默认翻译引擎设置</div>
+                                <div class="config-group">
+                                    <div class="engine-choice-grid" id="translate-engine-grid">
+                                        <button type="button" class="engine-choice" data-translate-engine="mymemory"><strong>MyMemory</strong><span>轻量直译</span></button>
+                                        <button type="button" class="engine-choice" data-translate-engine="google"><strong>谷歌翻译</strong><span>快速直译</span></button>
+                                        <button type="button" class="engine-choice" data-translate-engine="microsoft"><strong>微软翻译</strong><span>网页跳转</span></button>
+                                        <button type="button" class="engine-choice" data-translate-engine="youdao"><strong>有道翻译</strong><span>网页跳转</span></button>
+                                        <button type="button" class="engine-choice" data-translate-engine="chatgpt"><strong>ChatGPT AI</strong><span>AI 翻译</span></button>
+                                        <button type="button" class="engine-choice" data-translate-engine="kimi"><strong>Kimi AI</strong><span>AI 翻译</span></button>
+                                        <button type="button" class="engine-choice" data-translate-engine="doubao"><strong>豆包 AI</strong><span>AI 翻译</span></button>
+                                        <button type="button" class="engine-choice" data-translate-engine="custom"><strong>自定义</strong><span>模板跳转</span></button>
+                                    </div>
+                                </div>
+                                <div id="custom-translate-settings" class="inner-settings-group" style="display:none; margin-top:15px;">
+                                    <div class="config-group"><label>自定义翻译名称</label><input type="text" id="custom-translate-name" class="ui-input" placeholder="例如：内部翻译"></div>
+                                    <div class="config-group"><label>自定义 URL 模板</label><input type="text" id="custom-translate-url" class="ui-input" placeholder="https://...?q=%text&from=%from"></div>
+                                    <div class="config-group"><label style="font-size:11px; opacity:0.6; margin:0;">占位符支持：`%text`、`%from`、`%to`</label></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="setting-section" data-section="system-tools">
+                        <div class="setting-title">⚙️ 系统工具</div>
+                        <div class="setting-content">
+<div class="sub-settings">
+                                <div class="sub-settings-title">气象与定位</div>
+                                <div class="config-group switch-group"><label>显示右上角天气胶囊</label><label class="switch"><input type="checkbox" id="toggle-weather-display" checked><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group"><label>天气胶囊显示定位城市</label><label class="switch"><input type="checkbox" id="toggle-location-display" checked><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.05);">
+                                    <label>右上角胶囊自动隐藏 (悬浮显示)</label>
+                                    <label class="switch"><input type="checkbox" id="capsule-auto-hide-switch"><span class="slider round"></span></label>
+                                </div>
+                                <div class="config-group switch-group"><label>锁定天气为自定义坐标</label><label class="switch"><input type="checkbox" id="custom-location-switch"><span class="slider round"></span></label></div>
+                                <div id="custom-location-settings" class="inner-settings-group" style="display:none; margin-top: 15px;">
+                                    <div class="config-group"><label>纬度 (Latitude)</label><input type="number" id="custom-lat" class="ui-input" placeholder="-90 到 90" step="0.0001" min="-90" max="90"></div>
+                                    <div class="config-group"><label>经度 (Longitude)</label><input type="number" id="custom-lon" class="ui-input" placeholder="-180 到 180" step="0.0001" min="-180" max="180"></div>
+                                    <div class="config-group" style="position: relative;"><label>位置名称</label><input type="text" id="custom-city" class="ui-input" placeholder="可选，留空自动获取" autocomplete="off"><div id="city-autocomplete-list" class="city-autocomplete-dropdown" style="display:none;"></div></div>
+                                    <div style="display: flex; gap: 8px; margin-top: 10px;">
+                                        <button class="ui-button small-btn" id="save-custom-location" style="flex: 1;">保存</button>
+                                        <button class="ui-button small-btn" id="reset-location-default" style="flex: 1; background: rgba(255,69,58,0.1); color: #ff453a; border-color: rgba(255,69,58,0.3);">清除配置</button>
+                                    </div>
+                                </div>
+                            
+<div class="sub-settings">
+                                <div class="sub-settings-title">右下角工具台</div>
+                                <div class="config-group switch-group"><label>在菜单栏显示时间工具</label><label class="switch"><input type="checkbox" id="show-time-tool-switch" checked><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group"><label>在菜单栏显示翻译/OCR</label><label class="switch"><input type="checkbox" id="show-translate-tool-switch" checked><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group"><label>在菜单栏显示音乐控制</label><label class="switch"><input type="checkbox" id="show-music-tool-switch" checked><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group"><label>在菜单栏显示代办清单</label><label class="switch"><input type="checkbox" id="show-todo-tool-switch" checked><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.05); margin-bottom:0 !important;">
+                                    <label>右下角工具台自动隐藏 (悬浮显示)</label>
+                                    <label class="switch"><input type="checkbox" id="dock-auto-hide-switch"><span class="slider round"></span></label>
+                                </div>
+                            
+<div class="sub-settings">
+                                <div class="sub-settings-title">闲散功能</div>
+                                <div class="config-group switch-group"><label>显示底部每日名言</label><label class="switch"><input type="checkbox" id="show-quote-switch" checked><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group"><label>开启自动整点报时</label><label class="switch"><input type="checkbox" id="hourly-chime-switch"><span class="slider round"></span></label></div>
+                                <div class="config-group" style="margin-top: 12px; margin-bottom: 12px;">
+                                    <label>名言数据源 (API)</label>
+                                    <select id="quote-source-select" class="ui-input compact-input" style="margin-bottom: 0;">
+                                        <option value="hitokoto">一言 (Hitokoto / 国内极速)</option>
+                                        <option value="jinrishici">今日诗词 (古诗词 / 国内稳定)</option>
+                                        <option value="xygeng">句子迷 (Xygeng / 经典语录)</option>
+                                        <option value="zenquotes">ZenQuotes (英文 / 海外节点)</option>
+                                    </select>
+                                </div>
+                                <div class="config-group" style="margin-bottom: 0;">
+                                    <label>历史上的今天数据源 (API)</label>
+                                    <select id="history-source-select" class="ui-input compact-input" style="margin-bottom: 0;">
+                                        <option value="baidu">百度百科 (中文 / 需代理代理)</option>
+                                        <option value="wikipedia">Wikipedia (英文 / 海外直连)</option>
+                                    </select>
+                                </div>
+                            
+<div class="sub-settings">
+                                <div class="sub-settings-title">🌙 夜间免打扰模式</div>
+                                <div class="config-group switch-group"><label>开启夜间免打扰</label><label class="switch"><input type="checkbox" id="dnd-switch"><span class="slider round"></span></label></div>
+                                <div id="dnd-time-settings" class="inner-settings-group" style="display: none; margin-top: 10px;">
+                                    <div class="inline-tool-row compact-row">
+                                        <div class="config-group" style="flex:1; margin-bottom:0;"><label style="font-size: 11px; opacity: 0.8; margin-bottom: 4px; display: block;">开始时间</label><input type="time" id="dnd-start-time" class="ui-input compact-input" style="width: 100%;"></div>
+                                        <span style="opacity: 0.5;">至</span>
+                                        <div class="config-group" style="flex:1; margin-bottom:0;"><label style="font-size: 11px; opacity: 0.8; margin-bottom: 4px; display: block;">结束时间</label><input type="time" id="dnd-end-time" class="ui-input compact-input" style="width: 100%;"></div>
+                                    </div>
+                                    <div style="font-size: 11px; opacity: 0.6; margin-top: 8px;">在此时段内将自动静音时钟滴答声，并在跨入该时段时自动平滑暂停音乐。</div>
+                                </div>
+                            
+                            
+<div class="sub-settings" style="margin-bottom:0;">
+                                <div class="sub-settings-title" style="color: #ff453a;">性能与省电</div>
+                                <div class="config-group switch-group"><label>强制锁定为极致省电/专注模式</label><label class="switch"><input type="checkbox" id="power-save-switch"><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group"><label>笔记本断电自动进入省电模式</label><label class="switch"><input type="checkbox" id="auto-power-save-switch"><span class="slider round"></span></label></div>
+                                <div class="tool-result" style="margin-bottom: 0;">开启省电模式后，将自动暂停所有的动态壁纸、极光运算、雨雪粒子模拟，让设备彻底降温冷静。</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="setting-section" data-section="content-manage" id="setting-data-section">
+                        <div class="setting-title">📦 内容管理</div>
+                        <div class="setting-content">
+<div class="sub-settings add-form" id="addSection">
+                                <div class="sub-settings-title" style="color: #34c759;">快速添加内容</div>
+                                <input type="text" id="new-name" placeholder="名称" class="ui-input">
+                                <input type="text" id="new-url" placeholder="网址 (添加分类/文件夹时留空)" class="ui-input">
+                                
+                                <div style="display: flex; gap: 8px; margin-top: 5px;">
+                                    <button class="ui-button" id="add-submit" style="flex: 1; padding: 10px 0;">添加网址</button>
+                                    <button class="ui-button" id="add-folder-btn" style="flex: 1; padding: 10px 0; background: rgba(52,199,89,0.15); color: #fff; border: 1px solid rgba(52,199,89,0.3);">+ 新建文件夹</button>
+                                </div>
+                                
+                                <div style="display: flex; gap: 8px; margin-top: 8px;">
+                                    <button class="ui-button" id="add-cat-submit" style="flex: 1; padding: 10px 0; background: rgba(52,199,89,0.15); color: #fff; border: 1px solid rgba(52,199,89,0.3);">+ 添加左侧新分类</button>
+                                </div>
+
+                                <button class="ui-button" id="add-local-app-btn" style="width: 100%; margin-top: 8px; padding: 10px 0; background: rgba(255,149,0,0.15); color: #ff9500; border: 1px solid rgba(255,149,0,0.3);">💻 添加本地软件 / 快捷协议</button>
+                            </div>
+                            
+                            
+<div class="sub-settings" style="margin-bottom:0;">
+                                <div class="sub-settings-title" style="color: #34c759;">📚 批量导入与高级编辑</div>
+                                <div style="display:flex; gap:10px; flex-direction:column;">
+                                    <button class="ui-button small-btn" id="btn-import-browser-bookmarks" style="background: rgba(52,199,89,0.15); border-color: rgba(52,199,89,0.3); color: #fff;">🌟 一键导入浏览器书签</button>
+                                    <button class="ui-button small-btn" id="btn-batch-manage">📋 打开高级批量管理中心</button>
+                                    <input type="file" id="html-bookmark-upload" accept=".html" style="display:none;">
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+
+                    <div class="setting-section" data-section="media-sound">
+                        <div class="setting-title">🎵 媒体与声音</div>
+                        <div class="setting-content">
+<div class="sub-settings">
+                                <div class="sub-settings-title">背景音乐播放器</div>
+                                <div class="config-group switch-group"><label>加载网页时自动播放音乐</label><label class="switch"><input type="checkbox" id="music-autoplay-switch" checked><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group"><label>后台播放保护 (防误关 / 系统控制)</label><label class="switch"><input type="checkbox" id="music-bg-play-switch" checked><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group"><label>记忆并继续上次播放进度 (断点续播)</label><label class="switch"><input type="checkbox" id="music-resume-switch" checked><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group"><label>切换网页时自动暂停，切回时播放</label><label class="switch"><input type="checkbox" id="music-auto-pause-switch"><span class="slider round"></span></label></div>
+                                <div class="config-group"><label>音乐循环模式</label><div class="bg-mode-selector" id="music-play-mode-selector"><div class="mode-opt active" data-music-mode="loop">列表循环</div><div class="mode-opt" data-music-mode="single">单曲循环</div><div class="mode-opt" data-music-mode="shuffle">随机播放</div></div></div>
+                                
+                                <div class="config-group" style="margin-bottom:0;">
+                                    <div class="music-playlist-head" style="margin-top:0;"><strong style="color: var(--text-b);">全局音乐播放列表</strong><button class="ui-button small-btn" id="clear-music-list" style="width: auto;">一键清空</button></div>
+                                    <div class="media-library-note">拖动左侧手柄可重新排序，右侧可删除单曲。</div>
+                                    <div class="music-playlist" id="music-playlist"></div>
+                                </div>
+                            
+<div class="sub-settings" style="margin-bottom:0;">
+                                <div class="sub-settings-title">闹钟/计时器铃声库</div>
+                                <div class="media-library-note">这里管理时间工具弹窗使用的提示音。</div>
+                                <div class="music-playlist alarm-sound-list" id="alarm-sound-list"></div>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+        </aside>
+
+        <main class="viewport">
+            <div class="center-stage">
+                <header class="header">
+                    <div class="clock-container" title="点击切换简约模式">
+                        <div class="apple-clock" id="apple-clock">
+                            <div class="time-unit" id="h1"></div><div class="time-unit" id="h2"></div><div class="time-sep">:</div>
+                            <div class="time-unit" id="m1"></div><div class="time-unit" id="m2"></div><div class="time-sep">:</div>
+                            <div class="time-unit" id="s1"></div><div class="time-unit" id="s2"></div>
+                            <div id="small-real-clock" class="small-real-clock" style="display: none;"></div>
+                        </div>
+                        <div class="date-row"><span id="date-str">...</span><span id="lunar-str">...</span></div>
+                    </div>
+
+                    <div class="search-container">
+                        <div class="search-bar">
+                            <div class="engine-capsule" id="engineBtn" title="切换搜索引擎">
+                                <div class="engine-icon-wrap current-engine-icon" data-icon-label="Go">
+                                    <img id="curEngIcon" src="https://www.google.com/favicon.ico" alt="当前搜索引擎">
+                                    <span class="engine-fallback-text" id="curEngFallback">Go</span>
+                                </div>
+                                <div class="engine-drop" id="engineMenu"></div>
+                            </div>
+                            <input type="text" id="searchInput" placeholder="搜索..." autocomplete="off">
+                            <div class="search-btn qr-btn" id="qrBtn" title="左键调用相机 | 右键本地传图" role="button" tabindex="0" aria-label="二维码扫描">
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M4 7V4h3"></path>
+                                    <path d="M20 7V4h-3"></path>
+                                    <path d="M4 17v3h3"></path>
+                                    <path d="M20 17v3h-3"></path>
+                                    <line x1="4" y1="12" x2="20" y2="12" stroke-width="1.5" stroke-dasharray="2 2"></line>
+                                </svg>
+                            </div>
+                            <div class="search-btn mic-btn" id="micBtn" title="语音输入" role="button" tabindex="0" aria-label="语音输入">
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="22"></line></svg>
+                            </div>
+                            <div class="search-btn" id="searchBtn" role="button" tabindex="0" aria-label="执行搜索">
+                                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                            </div>
+                            <div class="search-suggestions" id="searchSuggestions">
+                                <div class="suggestion-list" id="suggestionList"></div>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+
+                <div class="preview-panel" id="preview-panel">
+                    <div class="preview-sidebar" id="preview-sidebar" style="display: none;">
+                        <div class="ps-header">
+                            <img id="ps-icon" src="">
+                            <div class="ps-title-wrap">
+                                <div class="ps-name" id="ps-name"></div>
+                                <div class="ps-domain" id="ps-domain"></div>
+                            </div>
+                        </div>
+                        <div class="ps-info-box">
+                            <div><span style="opacity:0.6; color:inherit;">IP: </span><span id="ps-ip"></span></div>
+                        </div>
+                        <div class="ps-memo-wrap">
+                            <label>📝 专属备注</label>
+                            <textarea id="ps-memo" placeholder="写下关于这个网站的笔记、账号提示或其他备忘信息..."></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="preview-content" id="preview-content">
+                        <div class="preview-hint" id="preview-hint">
+                            <div class="preview-hint-bg" id="preview-hint-bg"></div>
+                            <div class="preview-hint-avatar-wrap">
+                                <img id="preview-hint-avatar" src="图标.jpg" alt="头像">
+                            </div>
+                            <div class="preview-hint-text">
+                                长时间悬浮在长条书签上以预览网页内容<br>
+                                <span style="font-size: 11px; opacity: 0.6; display: block; margin-top: 8px;">* 受限于浏览器安全策略，部分网站可能拒绝被嵌套预览</span>
+                            </div>
+                        </div>
+                        
+                        <div id="preview-iframe-wrapper" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; overflow: hidden; display: none; flex-direction: column; border-radius: 12px; background: #000;">
+                            <!-- 🌟 迷你浏览器控制栏 -->
+                            <div class="mini-browser-bar" id="mini-browser-bar">
+                                <div class="mb-tabs" id="mb-tabs"></div>
+                                <div class="mb-controls">
+                                    <!-- macOS 风格窗口控制按钮 -->
+                                    <div class="mb-win-controls">
+                                        <span class="mb-win-btn red" id="mb-win-close" title="退出全屏"></span>
+                                        <span class="mb-win-btn yellow" id="mb-win-min" title="最小化"></span>
+                                        <span class="mb-win-btn green" id="mb-win-max" title="最大化"></span>
+                                    </div>
+                                    <button class="mb-btn" id="mb-back" title="上一页">◀</button>
+                                    <button class="mb-btn" id="mb-forward" title="下一页">▶</button>
+                                    <button class="mb-btn" id="mb-reload" title="重新加载此页">↻</button>
+                                    <div class="mb-address-bar">
+                                        <span class="mb-lock-icon">🔒</span>
+                                        <input type="text" id="mb-url" class="ui-input compact-input" readonly placeholder="网页地址">
+                                    </div>
+                                    <button class="mb-btn mb-exit-btn" id="mb-exit" title="退出沉浸阅读模式">退出全屏 ✖</button>
+                                </div>
+                            </div>
+                            <iframe id="preview-iframe" title="Web Preview" sandbox="allow-scripts allow-same-origin allow-popups allow-forms" style="border: none; opacity: 0; transition: opacity 0.4s ease; background: #fff; flex: 1; width: 100%;"></iframe>
+                        </div>
+                    
+                        <div id="preview-meta-card" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; display: none; flex-direction: column; opacity: 0; transition: opacity 0.4s ease; background: rgba(0,0,0,0.4); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08);">
+                        <div id="preview-meta-img-wrap" style="width: 100%; height: 180px; display: none; border-bottom: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.3);">
+                            <img id="preview-meta-img" src="" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                        <div style="padding: 25px; flex: 1; display: flex; flex-direction: column; justify-content: flex-start;">
+                            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 15px;">
+                                <img id="preview-meta-icon" src="" style="width: 32px; height: 32px; border-radius: 8px; object-fit: cover; background: rgba(255,255,255,0.1);">
+                                <h3 id="preview-meta-title" style="margin: 0; font-size: 20px; color: #fff; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-weight: bold;">获取中...</h3>
+                            </div>
+                            <p id="preview-meta-desc" style="margin: 0; font-size: 14px; color: rgba(255,255,255,0.7); line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden;">正在抓取元数据...</p>
+                            <div style="margin-top: auto; display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 16px;">🔗</span>
+                                <span id="preview-meta-url" style="font-size: 13px; color: var(--text-b); word-break: break-all; opacity: 0.9;"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div> <!-- 🌟 致命修复：补上这个闭合标签，将 .center-stage 容器完美关门！ -->
+
+            <section class="grid-section">
+                <div class="tile-grid" id="widgetGrid"></div>
+            </section>
+        </main>
+    </div>
+
+    <div class="quote-card" id="quoteCard" title="单击复制，双击切换内容">
+        <div class="quote-badge" id="quoteBadge">每日名言</div>
+        <div class="quote-text" id="quoteText">加载中...</div>
+        <div class="quote-meta" id="quoteMeta">单击复制，双击切换到历史上的今天</div>
+    </div>
+
+    <div id="cursor-follower" class="cursor-follower"></div>
+    <div class="toast" id="toast"></div>
+
+    <div class="dock-hover-trigger"></div>
+    <div class="utility-dock" id="utilityDock">
+        <button class="utility-btn" data-panel="time-panel">时间工具</button>
+        <button class="utility-btn" data-panel="translate-panel">翻译 / OCR</button>
+        <button class="utility-btn" data-panel="music-panel">音乐悬浮窗</button>
+        <button class="utility-btn" data-panel="todo-panel">代办清单</button>
+    </div>
+
+    <section class="floating-panel time-panel" id="time-panel">
+        <div class="panel-head">
+            <span>⏰ 时间工具</span>
+            <button class="panel-close" data-close-panel="time-panel">×</button>
+        </div>
+        <div class="panel-body">
+            <div class="time-tool-main" id="time-tool-main">--:--:--</div>
+            <div class="time-zone-header">
+    <h3 style="margin-bottom: 8px; font-size: 14px; color: var(--text-a);">🌍 时区设置</h3>
+    
+    <div class="time-zone-add" style="display: flex; gap: 6px; align-items: center; width: 100%;">
+        <input type="text" id="custom-zone-label" class="ui-input compact-input" placeholder="地区名称 e.g. 巴黎" style="flex: 1;">
+        <input type="text" id="custom-zone-value" class="ui-input compact-input" placeholder="时区标识 e.g. Europe/Paris" style="flex: 1;">
+        <button class="ui-button small-btn" id="add-custom-zone-btn" style="flex-shrink: 0;">添加</button>
+        <button class="ui-button small-btn" id="reset-timezone-btn" style="flex-shrink: 0; background: rgba(255,69,58,0.1); color: #ff453a; border-color: rgba(255,69,58,0.3); padding: 0 10px; font-weight: bold;" title="恢复默认时区">↺</button>
+    </div>
+</div>
+            <div class="time-zone-list" id="time-zone-list"></div>
+
+            <!-- 闹钟折叠区域 -->
+            <div class="collapsible-section" id="alarm-section">
+                <div class="collapsible-header">
+                    <span>⏰ 闹钟设置</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="alarm-time-row">
+                        <div style="display: flex; align-items: center; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.12); border-radius: 6px; padding: 0 10px; height: 48px; box-shadow: inset 0 1px 2px rgba(0,0,0,0.2);">
+                            <input type="number" id="alarm-hour" class="glass-time-input" placeholder="00" min="0" max="23" style="width: 40px; text-align: center; padding: 0; font-size: 15px; font-weight: 600;">
+                            <span style="color: rgba(255,255,255,0.7); font-weight: 700; margin: 0 6px;">:</span>
+                            <input type="number" id="alarm-minute" class="glass-time-input" placeholder="00" min="0" max="59" style="width: 40px; text-align: center; padding: 0; font-size: 15px; font-weight: 600;">
+                            <span style="color: rgba(255,255,255,0.7); font-weight: 700; margin: 0 6px;">:</span>
+                            <input type="number" id="alarm-second" class="glass-time-input" placeholder="00" min="0" max="59" style="width: 40px; text-align: center; padding: 0; font-size: 15px; font-weight: 600;">
+                        </div>
+                    </div>
+                    <div class="alarm-label-row">
+                        <input type="text" id="alarm-label-input" class="ui-input compact-input" placeholder="提醒内容" style="flex: 1; margin-bottom: 0; height: 34px;">
+                        <button class="ui-button small-btn" id="add-alarm-btn" style="width: 38px; height: 34px; padding: 0; flex-shrink: 0; font-size: 14px;">+</button>
+                    </div>
+                    <div id="alarm-list-container" style="display: flex; flex-direction: column; gap: 6px;"></div>
+                </div>
+            </div>
+
+            <div class="collapsible-section" id="tick-sound-section">
+                <div class="collapsible-header">
+                    <span>⏱️ 开启时钟滴答声</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="config-group" style="margin-bottom: 12px;">
+                        <label style="display: flex; justify-content: space-between; align-items: center; font-weight: 600; color: var(--text-b); margin-bottom: 8px; cursor: pointer; font-size: 12px;">
+                            <span>启用滴答声 (精准卡点)</span>
+                            <input type="checkbox" id="tick-sound-switch" class="apple-switch">
+                        </label>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <div class="config-group" style="margin-bottom: 0;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                    <label style="margin: 0; font-size: 11px;">音量</label>
+                                    <span style="font-size: 11px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-tick-volume">50</span>%</span>
+                                </div>
+                                <input type="range" id="range-tick-volume" min="0" max="100" value="50">
+                            </div>
+                            <select id="tick-preset-select" class="ui-input compact-input" style="width: 100%; margin: 0;">
+                                <option value="preset_1">预设 1：清脆机械表</option>
+                                <option value="preset_2">预设 2：纯净电子音</option>
+                                <option value="preset_3">预设 3：沉稳木鱼声</option>
+                                <option value="preset_4">预设 4：老式打字机</option>
+                                <option value="preset_5">预设 5：厚重钟摆声</option>
+                                <option value="preset_6">预设 6：灵动滴水声</option>
+                                <option value="preset_7">预设 7：金属敲击音</option>
+                                <option value="preset_8">预设 8：深沉心跳音</option>
+                                <option value="preset_9">预设 9：锐利机械键</option>
+                                <option value="preset_10">预设 10：气泡破裂音</option>
+                                <option value="preset_11">预设 11：清脆响指音</option>
+                                <option value="preset_12">预设 12：极简微点音</option>
+                                <option value="custom">📁 自定义上传...</option>
+                            </select>
+                            <div id="tick-custom-wrap" style="display: none; gap: 6px;">
+                                <button class="ui-button small-btn" id="upload-tick-btn" style="flex: 1; font-size: 12px;">🎵 上传滴答声</button>
+                                <input type="file" id="tick-file-input" accept="audio/*" style="display: none;">
+                                <button class="ui-button small-btn" id="reset-tick-btn" style="width: 32px; padding: 0; font-size: 14px;" title="恢复默认">↺</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 倒计时折叠区域 -->
+            <div class="collapsible-section" id="countdown-section">
+                <div class="collapsible-header">
+                    <span>⏱️ 倒计时</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="inline-tool-row">
+                        <input type="number" id="countdown-minutes" class="ui-input compact-input" min="1" placeholder="25">
+                        <button class="ui-button small-btn" id="start-countdown" style="font-size: 12px;">开始</button>
+                        <button class="ui-button small-btn" id="stop-countdown" style="font-size: 12px;">停止</button>
+                    </div>
+                    <div class="tool-result" id="countdown-result">未启动</div>
+                    <div class="config-group switch-group" style="margin-top: 12px; margin-bottom: 0; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px;">
+                        <label style="font-size: 12px;">同步至主页时钟显示</label>
+                        <label class="switch"><input type="checkbox" id="replace-clock-countdown-switch"><span class="slider round"></span></label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 番茄钟折叠区域 -->
+            <div class="collapsible-section" id="pomodoro-section">
+                <div class="collapsible-header">
+                    <span>🍅 番茄钟</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="tool-result" style="margin-bottom: 8px; font-size: 11px;">专注分钟 / 休息分钟 / 循环轮数</div>
+                    <div class="inline-tool-row compact-row three-col-row">
+                        <input type="number" id="pomodoro-work" class="ui-input compact-input" min="1" placeholder="25">
+                        <input type="number" id="pomodoro-break" class="ui-input compact-input" min="1" placeholder="5">
+                        <input type="number" id="pomodoro-rounds" class="ui-input compact-input" min="1" placeholder="4">
+                    </div>
+                    <div class="inline-tool-row">
+                        <button class="ui-button small-btn" id="start-pomodoro" style="font-size: 12px;">开始番茄钟</button>
+                        <button class="ui-button small-btn" id="stop-pomodoro" style="font-size: 12px;">停止</button>
+                    </div>
+                    <div class="tool-result" id="pomodoro-status">未启动</div>
+                    <div class="config-group switch-group" style="margin-top: 12px; margin-bottom: 0; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px;">
+                        <label style="font-size: 12px;">同步至主页时钟显示</label>
+                        <label class="switch"><input type="checkbox" id="replace-clock-pomodoro-switch"><span class="slider round"></span></label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="collapsible-section" id="alarm-sound-section">
+                <div class="collapsible-header">
+                    <span>🔊 结束提醒音设置</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="config-group" style="margin-bottom: 0; margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px;">
+                        <label style="font-size: 12px; font-weight: 600; color: var(--text-b); margin-bottom: 6px; display: block;">提醒音选择</label>
+                        <div class="inline-tool-row compact-row">
+                            <select id="alarm-sound-select" class="ui-input compact-input"></select>
+                            <button class="ui-button small-btn" id="preview-alarm-sound" style="font-size: 12px;">试听</button>
+                        </div>
+                        <div class="inline-tool-row">
+                            <button class="ui-button small-btn" id="pick-alarm-sound" style="font-size: 12px;">上传音频</button>
+                            <button class="ui-button small-btn" id="clear-alarm-sound" style="font-size: 12px;">删除选中</button>
+                            <input type="file" id="alarm-sound-file" accept="audio/*" style="display:none">
+                        </div>
+                        <div class="tool-result" id="alarm-sound-status">当前使用默认提醒音</div>
+                        <audio id="alarm-audio" preload="auto"></audio>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="floating-panel translate-panel" id="translate-panel">
+        <div class="panel-head">
+            <span>🌐 翻译 / OCR</span>
+            <button class="panel-close" data-close-panel="translate-panel">×</button>
+        </div>
+        <div class="panel-body">
+            <div class="tool-result translate-engine-note">源语言支持自动识别，支持热门语言快速切换</div>
+            <div class="inline-tool-row compact-row translate-lang-row">
+                <select id="translate-from" class="ui-input compact-input">
+                    <option value="auto">自动识别</option>
+                    <option value="zh-CN">中文</option>
+                    <option value="en">English</option>
+                    <option value="fr">Français</option>
+                    <option value="ru">Русский</option>
+                    <option value="de">Deutsch</option>
+                    <option value="es">Español</option>
+                    <option value="it">Italiano</option>
+                    <option value="pt">Português</option>
+                    <option value="ja">日本語</option>
+                    <option value="ko">한국어</option>
+                    <option value="ar">العربية</option>
+                    <option value="th">ไทย</option>
+                </select>
+                <select id="translate-to" class="ui-input compact-input">
+                    <option value="zh-CN">中文</option>
+                    <option value="en">English</option>
+                    <option value="fr">Français</option>
+                    <option value="ru">Русский</option>
+                    <option value="de">Deutsch</option>
+                    <option value="es">Español</option>
+                    <option value="it">Italiano</option>
+                    <option value="pt">Português</option>
+                    <option value="ja">日本語</option>
+                    <option value="ko">한국어</option>
+                    <option value="ar">العربية</option>
+                    <option value="th">ไทย</option>
+                </select>
+                <button class="ui-button small-btn" id="swap-translate-langs" style="font-size: 12px;">⇄</button>
+            </div>
+            <textarea id="translate-input" class="tool-textarea" placeholder="输入要翻译的文字" style="margin-top: 8px;"></textarea>
+            <div class="inline-tool-row translate-action-row">
+                <button class="ui-button small-btn" id="translate-btn" style="font-size: 12px;">开始翻译</button>
+                <button class="ui-button small-btn" id="copy-translate-result" style="font-size: 12px;">复制结果</button>
+                <button class="ui-button small-btn" id="send-translate-to-search" style="font-size: 12px;">转到搜索</button>
+                <button class="ui-button small-btn" id="speak-translate-result" style="font-size: 12px;">AI朗读</button>
+            </div>
+            <textarea id="translate-output" class="tool-textarea readonly" placeholder="翻译结果" readonly style="margin-top: 8px;"></textarea>
+
+            <div class="inline-tool-row" style="margin-top: 12px; margin-bottom: 8px;">
+                <select id="ocr-engine-select" class="ui-input compact-input" style="width: 100%; margin-bottom: 0;">
+                    <option value="tesseract">1. Tesseract 引擎 (本地离线/最安全)</option>
+                    <option value="ocrspace_1">2. OCR.Space v1 (云端/极速常规)</option>
+                    <option value="ocrspace_2">3. OCR.Space v2 (云端/复杂排版)</option>
+                    <option value="ocrspace_3">4. OCR.Space v3 (云端/表格票据)</option>
+                    <option value="ocrspace_kor">5. OCR.Space KOR (云端/韩文专精)</option>
+                    <option value="ocrspace_jpn">6. OCR.Space JPN (云端/日文专精)</option>
+                </select>
+            </div>
+            <div class="inline-tool-row">
+                <button class="ui-button small-btn" id="ocr-pick-btn" style="font-size: 12px;">📷 选择图片</button>
+                <input type="file" id="ocr-input" accept="image/*" style="display:none">
+                <button class="ui-button small-btn" id="copy-ocr-result" style="font-size: 12px;">复制OCR结果</button>
+            </div>
+            <div id="ocr-paste-zone" class="tool-result" tabindex="0" style="text-align: center; border: 1px dashed rgba(255,255,255,0.3); padding: 18px 10px; cursor: pointer; transition: all 0.2s ease; outline: none; margin-top: 2px;">
+                <span style="opacity: 0.7; pointer-events: none; font-size: 11.5px;">📋 点击此处并按 <b>Ctrl+V</b> 粘贴图片<br>或直接拖拽图片到这里</span>
+            </div>
+            <div class="tool-result" id="ocr-status">等待识别</div>
+            <textarea id="ocr-output" class="tool-textarea" placeholder="OCR 识别结果区，支持自由编辑修改排版..." style="margin-top: 8px; line-height: 1.6;"></textarea>
+        </div>
+    </section>
+
+    <section class="floating-panel music-panel" id="music-panel">
+        <div class="panel-head drag-handle">
+            <span>🎵 音乐悬浮窗</span>
+            <button class="panel-close" data-close-panel="music-panel">×</button>
+        </div>
+        <div class="panel-body">
+            <input type="text" id="music-url" class="ui-input" placeholder="输入音频 URL 或直链" style="margin-bottom: 8px;">
+            <div class="inline-tool-row">
+                <button class="ui-button small-btn" id="load-music" style="font-size: 12px;">加载直链</button>
+                <button class="ui-button small-btn" id="pick-music-file" style="font-size: 12px;">上传本地</button>
+                <input type="file" id="music-file" accept="audio/*" style="display:none">
+            </div>
+            <div class="tool-result" id="music-status">未加载音频</div>
+            <div class="music-now-playing" id="music-now-playing">当前未选择歌曲</div>
+            <div class="music-controls inline-tool-row compact-row">
+                <button class="ui-button small-btn" id="music-prev" style="font-size: 12px;">⏮️</button>
+                <button class="ui-button small-btn" id="music-backward" style="font-size: 12px;">⏪ 10秒</button>
+                <button class="ui-button small-btn" id="music-play-toggle" style="font-size: 12px;">▶️/⏸️</button>
+                <button class="ui-button small-btn" id="music-forward" style="font-size: 12px;">⏩ 10秒</button>
+                <button class="ui-button small-btn" id="music-next" style="font-size: 12px;">⏭️</button>
+            </div>
+            <audio id="music-audio" controls preload="none" style="margin-top: 8px;"></audio>
+            <div class="music-progress" id="music-progress" style="margin-top: 8px; font-size: 12px; text-align: center;">00:00 / 00:00</div>
+        </div>
+    </section>
+
+    <section class="floating-panel todo-panel" id="todo-panel">
+        <div class="panel-head">
+            <span>📝 代办清单</span>
+            <button class="panel-close" data-close-panel="todo-panel">×</button>
+        </div>
+        <div class="panel-body">
+            <div class="config-group" style="margin-bottom: 12px;">
+                <label style="font-size: 12px; font-weight: 600; color: var(--text-b); margin-bottom: 6px; display: block;">📋 新建计划表</label>
+                <div class="inline-tool-row">
+                    <input type="text" id="todo-board-name" class="ui-input compact-input" placeholder="例如：今天学习计划">
+                    <button class="ui-button small-btn" id="add-todo-board" style="font-size: 12px;">创建</button>
+                </div>
+            </div>
+            <div class="collapsible-section" id="todo-board-section">
+                <div class="collapsible-header">
+                    <span>🗂️ 任务清单表</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="todo-board-list" id="todo-board-list"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="alarm-alert" id="alarm-alert">
+        <div class="alarm-alert-head">
+            <strong id="alarm-alert-title">时间提醒</strong>
+            <span id="alarm-alert-subtitle">请确认本次提醒</span>
+        </div>
+        <div class="alarm-alert-progress-track">
+            <div class="alarm-alert-progress-fill" id="alarm-alert-progress"></div>
+        </div>
+        <div class="alarm-alert-meta" id="alarm-alert-meta">30 秒内未处理，将自动推迟 10 分钟</div>
+        <div class="alarm-alert-actions">
+            <button class="ui-button small-btn" id="dismiss-alarm-alert">关闭铃声</button>
+            <button class="ui-button small-btn" id="snooze-alarm-alert">推迟 10 分钟</button>
+        </div>
+    </div>
+
+    <div class="capsule-hover-trigger"></div>
+    <div id="weather-capsule" class="weather-capsule" title="点击查看详细气象与定位">
+        <span id="weather-icon">--</span>
+        <span id="weather-temp">--°C</span>
+        <span id="weather-city" style="font-size: 11px; opacity: 0.8; margin-left: 4px;">定位中</span>
+    </div>
+
+    <div id="weather-modal" class="modal-overlay">
+        <div class="modal-content glass-panel" style="width: 380px;">
+            <div class="modal-close" id="weather-modal-close">×</div>
+            <h3 style="margin-top:0;">🌤️ 本地气象与坐标</h3>
+            <div id="weather-detail-content" style="margin-top: 15px;">
+                <p style="text-align:center; opacity:0.6;">正在调用卫星数据...</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="folder-modal" class="modal-overlay">
+        <div class="modal-content glass-panel" style="width: 600px; max-width: 90vw;">
+            <div class="modal-close" id="folder-modal-close">×</div>
+            <h3 id="folder-modal-title" style="margin-top:0;">📁 文件夹</h3>
+            
+            <div class="tile-grid" id="folder-grid" style="margin: 20px 0; min-height: 120px; justify-content: flex-start;"></div>
+            
+            <hr class="sep-line">
+            <div class="config-group add-form" style="margin-bottom:0;">
+                <label style="color: var(--text-b); font-weight: bold;">向该文件夹添加新网址</label>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="folder-new-name" placeholder="名称" class="ui-input compact-input" style="flex: 1;">
+                    <input type="text" id="folder-new-url" placeholder="网址" class="ui-input compact-input" style="flex: 1;">
+                    <button class="ui-button small-btn" id="folder-add-submit" style="width: auto; padding: 0 16px;">装入文件夹</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="batch-manage-modal" class="modal-overlay">
+        <div class="modal-content glass-panel" style="width: 860px; max-width: 95vw; height: 80vh; display: flex; flex-direction: column;">
+            <div class="modal-close" id="batch-modal-close">×</div>
+            <h3 style="margin-top:0; font-size: 16px;">📋 书签批量管理工具</h3>
+            
+            <!-- 顶部 Tab 切换栏 -->
+            <div class="batch-tabs" style="display: flex; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; margin-top: 15px;">
+                <button class="batch-tab-btn" data-tab="scan">🔍 扫描清理</button>
+                <button class="batch-tab-btn active" data-tab="category">📁 分类面板</button>
+                <button class="batch-tab-btn" data-tab="merge">🔄 合并去重</button>
+                <button class="batch-tab-btn" data-tab="ai">✨ AI 整理</button>
+            </div>
+
+            <!-- 扫描清理 Tab -->
+            <div class="batch-tab-content" id="tab-scan" style="flex: 1; min-height: 0; display: none; flex-direction: column; margin-top: 15px; position: relative;">
+                <div id="scan-upload-area" style="border: 2px dashed rgba(255,255,255,0.2); border-radius: 12px; padding: 40px 20px; text-align: center; cursor: pointer; transition: 0.3s; margin-bottom: 20px;">
+                    <div style="font-size: 40px; margin-bottom: 10px;">📥</div>
+                    <div style="font-size: 16px; font-weight: bold; margin-bottom: 5px;">点击或拖拽书签 HTML 文件到此处</div>
+                    <div style="font-size: 12px; color: rgba(255,255,255,0.5);">支持各大浏览器导出的标准书签 HTML 文件</div>
+                    <input type="file" id="scan-file-input" accept=".html" style="display: none;">
+                </div>
+                <div id="scan-stats-card" style="display: none; background: rgba(255,255,255,0.05); border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1);"></div>
+                <div id="scan-action-bar" style="display: none; margin-bottom: 15px; gap: 10px;">
+                    <button class="ui-button small-btn" id="scan-delete-selected-btn" style="background: rgba(255,69,58,0.15); color: #ff453a; border-color: rgba(255,69,58,0.3); width: auto; padding: 6px 15px;">🗑️ 删除选中项</button>
+                    <button class="ui-button small-btn" id="scan-reset-btn" style="width: auto; padding: 6px 15px;">🔄 重新扫描</button>
+                </div>
+                <div id="scan-results-list" style="flex: 1; display: flex; flex-direction: column; gap: 15px; overflow-y: auto; padding-right: 5px;"></div>
+                <div id="scan-progress-container" style="position: absolute; bottom: 0; left: 0; width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; display: none;">
+                    <div id="scan-progress-bar" style="width: 0%; height: 100%; background-color: var(--text-b); background-image: linear-gradient(45deg, rgba(255,255,255,0.15) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0.15) 75%, transparent 75%, transparent); background-size: 20px 20px; transition: width 0.3s; opacity: 1;"></div>
+                </div>
+            </div>
+
+            <!-- 原有的分类面板 Tab -->
+            <div class="batch-tab-content active" id="tab-category" style="flex: 1; min-height: 0; display: flex; gap: 15px; margin-top: 15px;">
+                <div class="multi-search-sidebar" style="width: 220px; border-right: 1px solid rgba(255,255,255,0.1); padding-right: 15px; display: flex; flex-direction: column;">
+                    <h4 style="font-size: 13px; color: var(--text-b); margin-bottom: 10px;">侧栏分类 (上下拖拽排序)</h4>
+                    <div id="batch-category-list" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 5px;"></div>
+                    <button class="ui-button small-btn" id="batch-add-cat-btn" style="margin-top: 10px;">+ 新建分类区</button>
+                </div>
+                <div style="flex: 1; display: flex; flex-direction: column; padding-left: 5px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <h4 style="font-size: 13px; color: var(--text-b); margin: 0;">当前编辑：<span id="batch-current-cat-name" style="color:#fff;"></span></h4>
+                        <button class="ui-button small-btn" id="batch-add-item-btn" style="width: auto; background: rgba(52, 199, 89, 0.15); border-color: rgba(52, 199, 89, 0.3);">+ 添加新网址 / 文件夹</button>
+                    </div>
+                    <div id="batch-item-list" style="flex: 1; overflow-y: auto; background: rgba(0,0,0,0.2); border-radius: 12px; padding: 10px; border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; gap: 8px;"></div>
+                </div>
+            </div>
+
+            <!-- 合并与 AI 占位 Tab -->
+            <div class="batch-tab-content" id="tab-merge" style="flex: 1; min-height: 0; display: none; flex-direction: row; gap: 15px; margin-top: 15px; position: relative;">
+                
+                <!-- 左侧上传与控制 -->
+                <div style="width: 260px; display: flex; flex-direction: column; border-right: 1px solid rgba(255,255,255,0.1); padding-right: 15px; flex-shrink: 0;">
+                    <div id="merge-upload-area" style="border: 2px dashed rgba(255,255,255,0.2); border-radius: 12px; padding: 25px 20px; text-align: center; cursor: pointer; transition: 0.3s; margin-bottom: 15px;">
+                        <div style="font-size: 30px; margin-bottom: 5px;">📂</div>
+                        <div style="font-size: 13px; font-weight: bold; margin-bottom: 5px;">点击或拖拽添加书签</div>
+                        <div style="font-size: 11px; opacity: 0.5;">支持分次导入多个 HTML 文件</div>
+                        <input type="file" id="merge-file-input" accept=".html" multiple style="display: none;">
+                    </div>
+                    
+                    <div style="font-size: 12px; color: var(--text-b); font-weight: bold; margin-bottom: 8px;">已导入的文件池：</div>
+                    <div id="merge-files-container" style="display: flex; flex-direction: column; gap: 8px; flex: 1; overflow-y: auto; margin-bottom: 15px; min-height: 50px;"></div>
+                    
+                    <div id="merge-toolbar-left" style="display: none; flex-direction: column; gap: 10px; background: rgba(0,0,0,0.2); padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05);">
+                        <span style="font-size: 13px; color: var(--text-b); font-weight: bold;">去重比对规则</span>
+                        <label style="font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 6px;"><input type="radio" name="dupMode" value="url" checked style="accent-color: var(--text-b);"> 仅比对 URL 链接</label>
+                        <label style="font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 6px;"><input type="radio" name="dupMode" value="strict" style="accent-color: var(--text-b);"> URL 与标题必须完全一致</label>
+                    </div>
+                </div>
+
+                <!-- 右侧结果展示区 -->
+                <div style="flex: 1; display: flex; flex-direction: column; min-width: 0;">
+                    <div id="merge-toolbar-right" style="display: none; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); padding: 12px; border-radius: 10px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.05);">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <label style="font-size: 13px; font-weight: bold; color: #ff9500; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                                <input type="checkbox" id="merge-select-all-dups" style="accent-color: #ff9500;" title="全选多余重复项（每组保留首项不选）" checked>
+                                全选多余重复项
+                            </label>
+                            <button class="ui-button small-btn" id="merge-collapse-all-btn" style="width: auto; padding: 2px 8px; font-size: 11px; background: rgba(255,255,255,0.1); border: none;">折叠所有</button>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="ui-button small-btn" id="merge-del-selected-btn" style="background: rgba(255,69,58,0.15); color: #ff453a; border-color: rgba(255,69,58,0.3); width: auto; padding: 6px 15px;">🗑️ 删除勾选项</button>
+                            <button class="ui-button small-btn" id="merge-auto-dedup-btn" style="background: rgba(52, 199, 89, 0.15); color: #34c759; border-color: rgba(52, 199, 89, 0.3); width: auto; padding: 6px 15px; font-weight: bold;">🧹 智能一键去重</button>
+                        </div>
+                    </div>
+                    <div id="merge-results-list" style="flex: 1; overflow-y: auto; padding-right: 5px; display: flex; flex-direction: column; gap: 12px;">
+                        <div style="text-align: center; color: rgba(255,255,255,0.3); margin-top: 50px;">请先在左侧导入书签文件以进行比对</div>
+                    </div>
+                </div>
+                
+                <div id="merge-static-bar" style="position: absolute; bottom: 0; left: 0; width: 100%; height: 6px; background-color: var(--text-b); border-radius: 3px; opacity: 0.8; display: none;"></div>
+            </div>
+            <div class="batch-tab-content" id="tab-ai" style="flex: 1; min-height: 0; display: none; align-items: center; justify-content: center;">
+                <div style="text-align: center; color: rgba(255,255,255,0.5);"><div style="font-size: 40px; margin-bottom: 10px;">✨</div><h3>AI 智能整理</h3><p style="font-size: 12px;">功能开发中，敬请期待...</p></div>
+            </div>
+            
+            <!-- 底部操作按钮动态切换区 -->
+            <div style="text-align: right; margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; display: flex; justify-content: flex-end; gap: 10px;" id="batch-footer-actions">
+                <button class="ui-button" id="batch-save-btn" style="width: auto; padding: 10px 30px; font-size: 14px;">💾 保存排版修改并刷新桌面</button>
+                <button class="ui-button" id="scan-export-btn" style="width: auto; padding: 10px 30px; font-size: 14px; display: none; background: rgba(52, 199, 89, 0.15); color: #34c759; border: 1px solid rgba(52, 199, 89, 0.3);">📥 导出清理后的安全书签</button>
+                <div id="merge-footer-group" style="display: none; gap: 10px;">
+                    <button class="ui-button" id="merge-import-desktop-btn" style="width: auto; padding: 10px 20px; font-size: 14px; background: rgba(165, 180, 252, 0.15); color: var(--text-b); border: 1px solid rgba(165, 180, 252, 0.3);">🚀 一键生成并归类到主页桌面</button>
+                    <button class="ui-button" id="merge-export-btn" style="width: auto; padding: 10px 20px; font-size: 14px; background: rgba(52, 199, 89, 0.15); color: #34c759; border: 1px solid rgba(52, 199, 89, 0.3);">📥 仅导出为 HTML 文件</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="editTileModal" class="modal-overlay">
+    <div class="modal-content edit-tile-content" style="position: relative;">
+        <button id="edit-modal-close-btn" class="close-btn" style="position: absolute; top: 18px; right: 22px; font-size: 24px; background: none; border: none; color: var(--text-b); cursor: pointer;">&times;</button>
+        
+        <div class="modal-header" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; margin-bottom: 20px;">
+            <h3 style="margin: 0; font-size: 18px; color: #fff;"><span id="edit-modal-title">编辑磁贴</span></h3>
+        </div>
+
+        <div class="modal-body">
+            <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 25px; background: rgba(255,255,255,0.03); padding: 15px; border-radius: 16px;">
+                <div style="width: 64px; height: 64px; border-radius: 14px; overflow: hidden; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1);">
+                    <img id="edit-icon-preview" src="" alt="Icon" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div style="flex: 1;">
+                    <button id="edit-upload-trigger-btn" class="ui-button small-btn" style="width: auto; padding: 8px 15px; background: rgba(165, 180, 252, 0.1); border-color: rgba(165, 180, 252, 0.3); color: var(--text-b);">
+                        📂 上传本地图片
+                    </button>
+                    <p style="font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 8px; margin-bottom: 0;">支持 JPG, PNG, SVG</p>
+                    <input type="file" id="edit-file-input" accept="image/*" style="display: none;">
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <label>名称</label>
+                <input type="text" id="edit-name" placeholder="输入名称...">
+            </div>
+            <div id="url-input-group" class="input-group">
+                <label>链接 (URL)</label>
+                <input type="text" id="edit-url" placeholder="https://...">
+            </div>
+            <div class="input-group" id="edit-memo-group">
+                <label>备注 (Memo)</label>
+                <input type="text" id="edit-memo" placeholder="附加备注信息 (显示在名称旁或下方)...">
+            </div>
+            <div class="input-group" style="position: relative;">
+    <label>图标链接 (可选，填写后覆盖上传的图片)</label>
+    <div style="display: flex; align-items: center;">
+        <input type="text" id="edit-icon-url" placeholder="留空则使用本地图片或自动抓取..." style="width: 100%; padding-right: 40px;">
+        <button id="auto-fetch-icon-btn" title="点击自动抓取网站图标" style="position: absolute; right: 10px; bottom: 10px; background: none; border: none; cursor: pointer; color: var(--text-b); display: flex; align-items: center; justify-content: center; padding: 4px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.3"/>
+            </svg>
+        </button>
+    </div>
+</div>
+        </div>
+
+        <div class="modal-footer" style="margin-top: 25px; display: flex; gap: 12px; justify-content: flex-end;">
+            <button id="edit-cancel-btn" class="ui-button" style="width: auto; padding: 10px 25px; background: rgba(255,255,255,0.05);">取消</button>
+            <button class="ui-button" id="save-edit-btn" style="width: auto; padding: 10px 25px; background: var(--text-b); color: var(--bg-base);">保存修改</button>
+        </div>
+    </div>
+</div>
+
+    <!-- 聚合多搜管理弹窗 -->
+    <div id="multi-search-modal" class="modal-overlay">
+        <div class="modal-content glass-panel" style="width: 650px; max-width: 90vw;">
+            <div class="modal-close" id="multi-search-close">×</div>
+            <h3 style="margin-top:0;">🚀 聚合多搜引擎管理</h3>
+            <p style="font-size: 12px; color: rgba(255,255,255,0.6); margin-bottom: 15px; line-height: 1.5;">创建多搜分类后，可在搜索引擎下拉菜单中选中它。<br>搜索时将同时在新标签页打开所有选中的引擎（首次使用时请允许浏览器弹窗权限）。</p>
+            <div class="multi-search-layout" style="display: flex; gap: 15px;">
+                <div class="multi-search-sidebar" style="width: 200px; border-right: 1px solid rgba(255,255,255,0.1); padding-right: 15px; display: flex; flex-direction: column;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
+                        <h4 style="font-size: 13px; color: var(--text-b); margin:0;">多搜组合</h4>
+                        <button class="ui-button small-btn" id="add-multi-group-btn" style="width:auto; padding:2px 8px; background: rgba(52,199,89,0.15); color: #34c759; border: 1px solid rgba(52,199,89,0.3);" title="新建组合">+</button>
+                    </div>
+                    <div id="multi-group-list" style="flex: 1; overflow-y: auto; display:flex; flex-direction:column; gap:8px;"></div>
+                </div>
+                
+                <div style="flex: 1; display:none; flex-direction: column;" id="multi-group-editor">
+                    <div class="input-group">
+                        <label style="color: var(--text-b); font-weight: bold;">该组合的名称</label>
+                        <input type="text" id="multi-group-name" class="ui-input" placeholder="例如：开发必备双搜">
+                    </div>
+                    
+                    <!-- NEW: 图标选择 -->
+                    <h4 style="font-size: 13px; color: var(--text-b); margin-bottom: 10px;">设置显示图标：</h4>
+                    <div class="config-group" style="margin-bottom: 10px;">
+                        <div class="bg-mode-selector" id="multi-icon-mode-selector">
+                            <div class="mode-opt active" data-multi-icon="preset">内置图标</div>
+                            <div class="mode-opt" data-multi-icon="custom">自定义</div>
+                        </div>
+                    </div>
+                    <div id="multi-icon-preset-wrap" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-bottom: 15px;"></div>
+                    <div id="multi-icon-custom-wrap" style="display: none; flex-direction: column; gap: 8px; margin-bottom: 15px;">
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <img id="multi-custom-icon-preview" src="" style="width:36px; height:36px; border-radius:8px; object-fit:cover; display:none; background: rgba(255,255,255,0.1);">
+                            <input type="text" id="multi-group-custom-icon" class="ui-input" placeholder="图标 URL" style="flex:1; margin:0;">
+                        </div>
+                        <button class="ui-button small-btn" id="multi-upload-icon-btn" style="background: rgba(165,180,252,0.15); color: var(--text-b); border-color: rgba(165,180,252,0.3);">📂 上传本地图片</button>
+                        <input type="file" id="multi-icon-file" accept="image/*" style="display: none;">
+                    </div>
+
+                    <h4 style="font-size: 13px; color: var(--text-b); margin-bottom: 10px;">勾选要包含的引擎：</h4>
+                    <div id="multi-engine-checkboxes" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-height: 250px; overflow-y: auto; padding-right: 5px;">
+                        <!-- 动态生成 -->
+                    </div>
+                    <div style="margin-top: 20px; display:flex; gap:10px; justify-content: flex-end;">
+                        <button class="ui-button small-btn danger" id="delete-multi-group-btn" style="margin-top:0; width: auto; padding: 0 15px;">删除此组合</button>
+                        <button class="ui-button small-btn" id="save-multi-group-btn" style="background: var(--text-b); color:#000; border:none; font-weight:bold; width: auto; padding: 0 15px;">保存修改</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 快捷键详细说明弹窗 -->
+    <div id="shortcuts-guide-modal" class="modal-overlay">
+        <div class="modal-content glass-panel" style="width: 540px; max-width: 90vw; max-height: 85vh; overflow-y: auto;">
+            <div class="modal-close" id="shortcuts-guide-close" title="关闭">×</div>
+            <h3 style="margin-top:0; border-left-color: #34c759;">📖 全局快捷键使用指南</h3>
+            
+            <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 20px; font-size: 13px; line-height: 1.6; color: rgba(255,255,255,0.8);">
+                
+                <div style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); padding: 14px 16px; border-radius: 12px;">
+                    <h4 style="color: var(--text-b); margin: 0 0 10px 0; font-size: 14px;">🌌 全局快捷功能</h4>
+                    <div><strong style="color: #fff; background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px;">Space (空格键)</strong> ：随时切换“简约沉浸模式”，隐藏所有桌面元素。</div>
+                    <div style="margin-top: 8px;"><strong style="color: #fff; background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px;">/ (斜杠)</strong> ：快速呼出或隐藏顶部搜索框。</div>
+                    <div style="margin-top: 8px;"><strong style="color: #fff; background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px;">Esc + 1~9</strong> ：无缝盲切前 9 个默认搜索引擎前缀。</div>
+                    <div style="margin-top: 8px;"><strong style="color: #fff; background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px;">Esc + 0</strong> ：瞬间开启 / 关闭无痕搜索模式。</div>
+                </div>
+
+                <div style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); padding: 14px 16px; border-radius: 12px;">
+                    <h4 style="color: var(--text-b); margin: 0 0 10px 0; font-size: 14px;">🔍 搜索与输入</h4>
+                    <div><strong style="color: #fff; background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px;">Alt + Enter</strong> ：在搜索框输入中文后，一键将其翻译为英文搜索。</div>
+                    <div style="margin-top: 8px;"><strong style="color: #fff; background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px;">Ctrl + Enter</strong> ：在搜索框强力唤出高级搜索语法构建器。</div>
+                    <div style="margin-top: 8px;"><strong style="color: #fff; background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px;">Tab</strong> ：极速唤醒智能语音输入转文字。</div>
+                    <div style="margin-top: 8px;"><strong style="color: #fff; background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px;">Tab + 1~9</strong> ：呼出智能联想词后，快速命中对应的项目。</div>
+                    <div style="margin-top: 8px;"><strong style="color: #fff; background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px;">Shift + Delete</strong> ：选中某条不想留存的历史记录时，彻底将其删除。</div>
+                </div>
+
+                <div style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); padding: 14px 16px; border-radius: 12px;">
+                    <h4 style="color: var(--text-b); margin: 0 0 10px 0; font-size: 14px;">🧭 桌面空间导航</h4>
+                    <div><strong style="color: #fff; background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px;">↑ ↓ ← → (方向键)</strong> ：丢掉鼠标，利用 2D 空间导航系统选择分类和磁贴。</div>
+                    <div style="margin-top: 8px;"><strong style="color: #fff; background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px;">Enter (回车)</strong> ：打开当前被键盘光晕高亮选中的磁贴或侧边栏分类。</div>
+                </div>
+                
+                <div style="background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); padding: 14px 16px; border-radius: 12px;">
+                    <h4 style="color: var(--text-b); margin: 0 0 10px 0; font-size: 14px;">🧰 生产力工具</h4>
+                    <div><strong style="color: #fff; background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px;">Ctrl + V</strong> ：在展开的“翻译 / OCR”虚线框内，可直接粘贴系统剪贴板中的图片读取。</div>
+                </div>
+
+                <div style="font-size: 11px; color: rgba(255,255,255,0.4); text-align: center; margin-top: 5px;">部分附带下划线的快捷键可以在设置中自由修改按键映射。</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- QR 扫码弹窗 -->
+    <div id="qr-scanner-modal" class="modal-overlay">
+        <div class="modal-content glass-panel" style="width: 400px; padding: 25px; display: flex; flex-direction: column; align-items: center;">
+            <div class="modal-close" id="qr-scanner-close" title="关闭">×</div>
+            <h3 style="margin-top:0; margin-bottom: 20px;">📷 扫描二维码</h3>
+            <div style="position: relative; width: 300px; height: 300px; background: rgba(0,0,0,0.6); border-radius: 16px; overflow: hidden; box-shadow: inset 0 0 30px rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.1);">
+                <video id="qr-video" style="width: 100%; height: 100%; object-fit: cover;" playsinline></video>
+                <div class="qr-scan-line"></div>
+                <canvas id="qr-canvas" style="display:none;"></canvas>
+            </div>
+            <div id="qr-status" style="margin-top: 18px; font-size: 13px; color: rgba(255,255,255,0.6); text-align: center; margin-bottom: 12px;">准备就绪</div>
+            <div style="display: flex; justify-content: center; gap: 10px; width: 100%;">
+                <button class="ui-button small-btn" id="qr-upload-btn" style="flex: 1; font-size: 12px;">📁 选择本地图片</button>
+                <input type="file" id="qr-file-input" accept="image/*" style="display: none;">
+            </div>
+        </div>
+    </div>
+
+    <!-- 搜索高级设置与国家地区弹窗 -->
+    <div id="search-settings-modal" class="modal-overlay">
+        <div class="modal-content glass-panel" style="width: 580px; max-width: 90vw;">
+            <div class="modal-close" id="search-settings-close">×</div>
+            <h3 style="margin-top:0;">🔎 搜索国家/地区维度过滤</h3>
+            
+            <div style="display: flex; gap: 8px; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h4 style="font-size: 12px; color: var(--text-b); margin: 0;">选择优先获取哪个地区的搜索结果 (可多选)：</h4>
+                <button class="ui-button small-btn" id="reset-country-btn" style="width: auto; padding: 2px 10px; background: rgba(255,255,255,0.1); border: none; font-size: 11px;">↺ 恢复默认</button>
+            </div>
+            <div id="country-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-height: 380px; overflow-y: auto; margin-bottom: 15px; padding-right: 5px;">
+                <!-- 动态生成 -->
+            </div>
+            
+            <div class="country-add-layout" style="display: flex; gap: 8px; align-items: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; flex-wrap: wrap;">
+                <input type="text" id="custom-country-flag" class="ui-input compact-input" placeholder="国旗(如 🇺🇸)" style="width: 80px; text-align: center; font-size: 16px;">
+                <input type="text" id="custom-country-name" class="ui-input compact-input" placeholder="国家名称(如 美国)">
+                <input type="text" id="custom-country-code" class="ui-input compact-input" placeholder="简称(如 US)" style="width: 100px; text-transform: uppercase;">
+                <button class="ui-button small-btn" id="add-custom-country-btn" style="width: auto; padding: 0 16px; background: rgba(52, 199, 89, 0.15); color: #34c759; border-color: rgba(52, 199, 89, 0.3);">添加新国家</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 磁贴详细信息悬浮窗 -->
+    <div id="tile-tooltip" class="tile-tooltip">
+        <div class="tt-header">
+            <img id="tt-icon" src="" alt="icon">
+            <div class="tt-title" id="tt-name"></div>
+        </div>
+        <div class="tt-body">
+            <div class="tt-url" id="tt-url"></div>
+            <div class="tt-memo" id="tt-memo"></div>
+        </div>
+    </div>
+
+    <!-- 🌟 新手引导魔法遮罩 -->
+    <div id="tour-overlay" class="tour-overlay">
+        <div id="tour-highlight" class="tour-highlight"></div>
+        <div id="tour-tooltip" class="tour-tooltip glass-panel">
+            <div id="tour-text" class="tour-text"></div>
+            <div class="tour-actions">
+                <button class="ui-button small-btn" id="tour-skip">跳过 (Ｔ▽Ｔ)</button>
+                <div style="display: flex; gap: 8px;">
+                    <button class="ui-button small-btn" id="tour-prev">← 上一步</button>
+                    <button class="ui-button small-btn" id="tour-next" style="background: var(--text-b); color: #000; font-weight: bold;">下一步 →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🖼️ Wallhaven 响应式图库弹窗 -->
+    <div id="wh-gallery-modal" class="modal-overlay">
+        <div class="modal-content glass-panel" style="width: 950px; max-width: 95vw; height: 85vh; display: flex; flex-direction: column; padding: 0; overflow: hidden !important;">
+            <div style="padding: 20px 25px; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0;">
+                <h3 style="margin:0; border-left-color: #f472b6;">🖼️ Wallhaven 高清响应式壁纸库</h3>
+                <div class="modal-close" id="wh-gallery-close" style="position: static; font-size: 28px; line-height: 1;">×</div>
+            </div>
+            
+            <div style="padding: 15px 25px; display: flex; gap: 10px; background: rgba(0,0,0,0.2); align-items: center; flex-wrap: wrap; flex-shrink: 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                <select id="wh-gal-cat" class="ui-input compact-input" style="width: 120px; margin: 0;"><option value="111">全部分类</option><option value="100">常规 (General)</option><option value="010">二次元 (Anime)</option><option value="001">人物 (People)</option></select>
+                <select id="wh-gal-sort" class="ui-input compact-input" style="width: 120px; margin: 0;"><option value="random">随机推荐</option><option value="toplist">排行榜</option><option value="hot">热门趋势</option><option value="latest">最新上传</option></select>
+                <input type="text" id="wh-gal-q" class="ui-input compact-input" style="flex:1; margin:0; min-width: 150px;" placeholder="搜索关键词 (支持英文标签)...">
+                <button id="wh-gal-search-btn" class="ui-button small-btn" style="width: auto; padding: 0 20px;">🔍 检索内容</button>
+                <div style="width: 1px; height: 24px; background: rgba(255,255,255,0.2); margin: 0 5px;"></div>
+                <button id="wh-gal-fav-btn" class="ui-button small-btn" style="width: auto; padding: 0 20px; background: rgba(255,149,0,0.15); color: #ff9500; border-color: rgba(255,149,0,0.3);">❤️ 我的收藏</button>
+            </div>
+            
+            <div id="wh-gal-grid" style="flex: 1; overflow-y: auto; padding: 25px; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 18px; align-content: start; background: rgba(0,0,0,0.1);">
+                <!-- 图片项将在这里生成 -->
+                <div style="grid-column: 1 / -1; text-align: center; color: rgba(255,255,255,0.4); margin-top: 50px;">点击上方检索按钮开始获取精美壁纸</div>
+            </div>
+            
+            <div id="wh-gal-footer" style="padding: 15px 25px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: center; flex-shrink: 0; background: rgba(0,0,0,0.3);">
+                <button id="wh-gal-loadmore" class="ui-button" style="width: 200px;">加载下一页</button>
+            </div>
+        </div>
+    </div>
+

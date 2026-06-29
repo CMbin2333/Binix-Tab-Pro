@@ -1,0 +1,130 @@
+                    <!-- 设置搜索框 -->
+                    <div class="setting-search-wrap">
+                        <input type="text" id="setting-search" class="ui-input setting-search-input" placeholder="搜索设置项...">
+                    </div>
+
+                    <div class="setting-section" data-section="appearance-theme">
+                        <div class="setting-title">🎨 外观与主题</div>
+                        <div class="setting-content">
+                            <div class="sub-settings-title">背景模式</div>
+                            <div class="sub-settings-title">画面滤镜与形变</div>
+                            <div class="sub-settings-title">桌面时钟</div>
+                            <div class="sub-settings-title">鼠标跟随光斑</div>
+                            <div class="sub-settings-title">全局物理模拟</div>
+                        </div>
+                    </div>
+
+                    <div class="setting-section" data-section="tile-desktop">
+                        <div class="setting-title">📐 磁贴与桌面</div>
+                        <div class="setting-content">
+                            <div class="sub-settings-title">磁贴图标源 (Favicon API)</div>
+                            <div class="sub-settings-title">桌面行为控制</div>
+                            <div class="sub-settings-title">磁贴样式定制</div>
+                        </div>
+                    </div>
+
+                    <div class="setting-section" data-section="search-bar">
+                        <div class="setting-title">🔍 搜索栏</div>
+                        <div class="setting-content">
+                            <div class="sub-settings-title">功能与翻译 (Alt+Enter)</div>
+                            <div class="sub-settings-title">外观与尺寸</div>
+                        </div>
+                    </div>
+
+                    <div class="setting-section" data-section="fold-view-mode">
+                        <div class="setting-title">🗂️ 折叠窗口模式</div>
+                        <div class="setting-content">
+                            <div class="sub-settings-title" style="border-left-color: #6ee7b7;">📚 长条书签视图</div>
+                            <div class="sub-settings">
+                                <div class="sub-settings-title">⏱️ 顶部组件独立尺寸 (时钟与搜索栏)</div>
+                                <div class="config-group"><p style="color: rgba(255,255,255,0.4); font-size: 12px;">设置项提取失败，请手动检查</p></div>
+                            </div>
+                            <div class="sub-settings-title">长条书签样式</div>
+                            <div class="sub-settings">
+                                <div class="sub-settings-title">➗ 列分割线定制</div>
+                                <div class="config-group"><p style="color: rgba(255,255,255,0.4); font-size: 12px;">设置项提取失败，请手动检查</p></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="setting-section" data-section="shortcuts-interact">
+                        <div class="setting-title">⌨️ 快捷键与交互</div>
+                        <div class="setting-content">
+                            <div class="sub-settings-title">基础快捷键映射</div>
+                            <div class="sub-settings-title">搜索引擎管理与 1~9 快捷键</div>
+                            <div class="sub-settings">
+                                <div class="sub-settings-title">➕ 添加自定义搜索引擎</div>
+                                <div class="config-group"><p style="color: rgba(255,255,255,0.4); font-size: 12px;">设置项提取失败，请手动检查</p></div>
+                            </div>
+                            <div class="sub-settings-title">桌面行为控制</div>
+                            <div class="sub-settings">
+                                <div class="sub-settings-title">历史记录点击后行为</div>
+<div class="config-group">
+                                    <label>历史记录点击后行为</label>
+                                    <div class="bg-mode-selector" id="history-action-selector">
+                                        <div class="mode-opt active" data-history-action="direct">直接跳转</div>
+                                        <div class="mode-opt" data-history-action="fill">仅填入</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="sub-settings">
+                                <div class="sub-settings-title">默认直译引擎</div>
+<div class="config-group" style="margin-bottom:0;">
+                                    <label>默认直译引擎</label>
+                                    <div class="bg-mode-selector" id="quick-trans-selector">
+                                        <div class="mode-opt active" data-quick-trans="google">Google</div>
+                                        <div class="mode-opt" data-quick-trans="lingva">Lingva</div>
+                                        <div class="mode-opt" data-quick-trans="mymemory">MyMem</div>
+                                    </div>
+                            <div class="sub-settings" style="margin-bottom:0;">
+                                <div class="sub-settings-title">默认翻译引擎设置</div>
+                                <div class="config-group">
+                                    <div class="engine-choice-grid" id="translate-engine-grid">
+                                        <button type="button" class="engine-choice" data-translate-engine="mymemory"><strong>MyMemory</strong><span>轻量直译</span></button>
+                                        <button type="button" class="engine-choice" data-translate-engine="google"><strong>谷歌翻译</strong><span>快速直译</span></button>
+                                        <button type="button" class="engine-choice" data-translate-engine="microsoft"><strong>微软翻译</strong><span>网页跳转</span></button>
+                                        <button type="button" class="engine-choice" data-translate-engine="youdao"><strong>有道翻译</strong><span>网页跳转</span></button>
+                                        <button type="button" class="engine-choice" data-translate-engine="chatgpt"><strong>ChatGPT AI</strong><span>AI 翻译</span></button>
+                                        <button type="button" class="engine-choice" data-translate-engine="kimi"><strong>Kimi AI</strong><span>AI 翻译</span></button>
+                                        <button type="button" class="engine-choice" data-translate-engine="doubao"><strong>豆包 AI</strong><span>AI 翻译</span></button>
+                                        <button type="button" class="engine-choice" data-translate-engine="custom"><strong>自定义</strong><span>模板跳转</span></button>
+                                    </div>
+                                </div>
+                                <div id="custom-translate-settings" class="inner-settings-group" style="display:none; margin-top:15px;">
+                                    <div class="config-group"><label>自定义翻译名称</label><input type="text" id="custom-translate-name" class="ui-input" placeholder="例如：内部翻译"></div>
+                                    <div class="config-group"><label>自定义 URL 模板</label><input type="text" id="custom-translate-url" class="ui-input" placeholder="https://...?q=%text&from=%from"></div>
+                                    <div class="config-group"><label style="font-size:11px; opacity:0.6; margin:0;">占位符支持：`%text`、`%from`、`%to`</label></div>
+                                </div>
+                            </div>
+                        </div>
+                            </div>
+                            <div class="sub-settings-title">默认翻译引擎设置</div>
+                        </div>
+                    </div>
+
+                    <div class="setting-section" data-section="system-tools">
+                        <div class="setting-title">⚙️ 系统工具</div>
+                        <div class="setting-content">
+                            <div class="sub-settings-title">气象与定位</div>
+                            <div class="sub-settings-title">右下角工具台</div>
+                            <div class="sub-settings-title">闲散功能</div>
+                            <div class="sub-settings-title">🌙 夜间免打扰模式</div>
+                            <div class="sub-settings-title" style="color: #ff453a;">性能与省电</div>
+                        </div>
+                    </div>
+
+                    <div class="setting-section" data-section="content-manage">
+                        <div class="setting-title">📦 内容管理</div>
+                        <div class="setting-content">
+                            <div class="sub-settings-title" style="color: #34c759;">快速添加内容</div>
+                            <div class="sub-settings-title" style="color: #34c759;">📚 批量导入与高级编辑</div>
+                        </div>
+                    </div>
+
+                    <div class="setting-section" data-section="media-sound">
+                        <div class="setting-title">🎵 媒体与声音</div>
+                        <div class="setting-content">
+                            <div class="sub-settings-title">背景音乐播放器</div>
+                            <div class="sub-settings-title">闹钟/计时器铃声库</div>
+                        </div>
+                    </div>

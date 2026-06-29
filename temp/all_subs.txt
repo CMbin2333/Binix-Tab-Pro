@@ -1,0 +1,771 @@
+========= #1: 背景模式 =========
+<div class="sub-settings">
+                                <div class="sub-settings-title">背景模式</div>
+                                <div class="config-group" style="margin-bottom: 10px;">
+                                    <div class="bg-mode-selector">
+                                        <div class="mode-opt active" data-mode="mesh">极光</div>
+                                        <div class="mode-opt" data-mode="bing">Bing</div>
+                                        <div class="mode-opt" data-mode="custom">自选</div>
+                                        <div class="mode-opt" data-mode="live">动态</div>
+                                        <div class="mode-opt" data-mode="wallhaven">Wallhaven</div>
+                                        <div class="mode-opt" data-mode="interactive">交互</div>
+                                    </div>
+                                </div>
+                                <div id="interactive-settings" class="inner-settings-group" style="display: none;">
+                                    <div class="config-group">
+                                        <label>选择交互主题</label>
+                                        <div class="bg-mode-selector" id="interactive-theme-selector">
+                                            <div class="mode-opt active" data-theme="earth">全息地球</div>
+                                            <div class="mode-opt" data-theme="solar">等离子核</div>
+                                            <div class="mode-opt" data-theme="saturn">全息土星</div>
+                                            <div class="mode-opt" data-theme="quantum">量子星核</div>
+                                            <div class="mode-opt" data-theme="cyber">赛博神经</div>
+                                            <div class="mode-opt" data-theme="manifold">流形共振</div>
+                                        </div>
+                                    </div>
+                                    <div class="config-group switch-group" style="margin-top: 15px; background: rgba(255,69,58,0.05); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,69,58,0.2);">
+                                        <label style="color: #ff6b6b; margin: 0;">⚡ 开启极致性能优化</label>
+                                        <label class="switch">
+                                            <input type="checkbox" id="interactive-opt-switch">
+                                            <span class="slider round"></span>
+                                        </label>
+                                    </div>
+                                    <div class="tool-result">提示：在桌面空白处拖拽可旋转全景。</div>
+                                </div>
+                                <div id="mesh-settings" class="inner-settings-group">
+                                    <div class="config-group switch-group" style="margin-top: 10px;"><label>极光随时间变化</label><label class="switch"><input type="checkbox" id="mesh-auto-switch" checked><span class="slider round"></span></label></div>
+                                    <div id="mesh-colors-picker" class="config-group" style="display: none;"><label>自定义流体色</label><div class="color-pickers-row"><input type="color" id="mesh-c1" value="#4338ca"><input type="color" id="mesh-c2" value="#3730a3"><input type="color" id="mesh-c3" value="#312e81"><input type="color" id="mesh-c4" value="#4f46e5"><input type="color" id="mesh-c5" value="#6366f1"></div></div>
+                                </div>
+                                <div id="bing-settings" class="inner-settings-group" style="display: none;"><div class="config-group" style="margin-top: 10px;"><label>更新频率</label><div class="custom-select" id="bing-interval-select"><div class="select-trigger"><span class="selected-text">永不</span><span class="arrow">▼</span></div><div class="select-options"><div class="option" data-value="0">永不 (锁定)</div><div class="option" data-value="1800000">每 30 分钟</div><div class="option" data-value="3600000">每 1 小时</div><div class="option" data-value="86400000">每天</div></div></div></div><button id="bing-refresh-btn" class="ui-button small-btn">🎲 换一张</button></div>
+                                <div id="custom-settings" class="inner-settings-group" style="display: none; margin-top: 10px;">
+                                    <div class="config-group"><label>图片 URL</label><input type="text" id="custom-bg-url" class="ui-input" placeholder="https://..."></div>
+                                    <div class="config-group"><label>上传本地图片</label><input type="file" id="custom-bg-upload" accept="image/*" style="display: none;"><button class="ui-button small-btn" id="trigger-custom-bg-upload">📂 选择本地图片</button><div id="custom-bg-file-name" style="margin-top:8px; font-size:11px; opacity:0.6;">未选择文件</div></div>
+                                </div>
+                                <div id="live-settings" class="inner-settings-group" style="display: none; margin-top: 10px;">
+                                    <div class="config-group"><label>上传视频 (mp4/webm)</label><input type="file" id="live-upload-input" accept="video/mp4,video/webm" style="display: none;"><button class="ui-button small-btn" id="trigger-live-upload">📂 选择本地视频</button><div id="live-file-name" style="margin-top:8px; font-size:11px; opacity:0.6;">未选择文件</div></div>
+                                    <div class="config-group switch-group" style="margin-top:10px;"><label>视频静音</label><label class="switch"><input type="checkbox" id="live-muted-switch" checked><span class="slider round"></span></label></div>
+                                </div>
+                                <div id="wallhaven-settings" class="inner-settings-group" style="display: none; margin-top: 10px;">
+                                    <div class="config-group"><label>类别 (Categories)</label><div class="bg-mode-selector" id="wh-category-selector"><div class="mode-opt" data-wh-cat="111">全选</div><div class="mode-opt" data-wh-cat="100">常规</div><div class="mode-opt" data-wh-cat="010">二次元</div><div class="mode-opt" data-wh-cat="001">人物</div></div></div>
+                                    <div class="config-group"><label>排序方式</label>
+                                        <select id="wh-sort-select" class="ui-input compact-input" style="margin-bottom: 0;">
+                                            <option value="random">随机 (Random)</option>
+                                            <option value="toplist">热门 (Toplist)</option>
+                                            <option value="hot">趋势 (Hot)</option>
+                                            <option value="latest">最新 (Latest)</option>
+                                        </select>
+                                    </div>
+                                    <div class="config-group"><label>关键词检索 (可选)</label><input type="text" id="wh-query-input" class="ui-input" placeholder="如: cyberpunk, landscape..."></div>
+                                    <div style="font-size:11px; color:rgba(255,255,255,0.4); margin-bottom: 15px; line-height: 1.4;">* 数据源来自全球顶尖壁纸库 Wallhaven。已自动过滤 R18 结果以保证浏览安全。</div>
+                                    <button id="wh-refresh-btn" class="ui-button small-btn" style="background: rgba(165,180,252,0.15); color: var(--text-b); border-color: rgba(165,180,252,0.3); margin-bottom: 8px;">🎲 换一张随机壁纸</button>
+                                    <button id="wh-open-gallery-btn" class="ui-button small-btn" style="background: rgba(52,199,89,0.15); color: #34c759; border-color: rgba(52,199,89,0.3);">🖼️ 浏览全部高清壁纸 (收藏库)</button>
+                                </div>
+                            </div>
+
+========= #2: 画面滤镜与形变 =========
+<div class="sub-settings" style="margin-bottom:0;">
+                                <div class="sub-settings-title">画面滤镜与形变</div>
+                                <div class="config-group"><label>背景模糊 (<span id="val-bg-blur">10</span>px)</label><input type="range" id="range-bg-blur" min="0" max="60" value="10"></div>
+                                <div class="config-group"><label>暗度遮罩 (<span id="val-bg-mask">40</span>%)</label><input type="range" id="range-bg-mask" min="0" max="95" value="40"></div>
+                                <div class="config-group"><label>整体缩放 (<span id="val-bg-scale">105</span>%)</label><input type="range" id="range-bg-scale" min="50" max="250" value="105"></div>
+                                <div class="config-group"><label>拉伸宽度 (<span id="val-bg-width">100</span>%)</label><input type="range" id="range-bg-width" min="10" max="300" value="100"></div>
+                                <div class="config-group"><label>拉伸高度 (<span id="val-bg-height">100</span>%)</label><input type="range" id="range-bg-height" min="10" max="300" value="100"></div>
+                                <div class="config-group"><label>背景旋转 (<span id="val-bg-rotate">0</span>°)</label><input type="range" id="range-bg-rotate" min="-180" max="180" value="0"></div>
+                                <div class="config-group"><label>X 轴位移 (<span id="val-bg-translate-x">0</span>px)</label><input type="range" id="range-bg-translate-x" min="-1000" max="1000" step="1"></div>
+                                <div class="config-group"><label>Y 轴位移 (<span id="val-bg-translate-y">0</span>px)</label><input type="range" id="range-bg-translate-y" min="-1000" max="1000" step="1"></div>
+                                <div class="config-group"><label>Z 轴位移 (<span id="val-bg-translate-z">0</span>px)</label><input type="range" id="range-bg-translate-z" min="-2000" max="2000" step="1"></div>
+                                <div class="config-group"><label>显示模式</label><div class="bg-mode-selector" id="bg-fit-selector"><div class="mode-opt active" data-bg-fit="cover">填充</div><div class="mode-opt" data-bg-fit="contain">完整</div><div class="mode-opt" data-bg-fit="stretch">拉伸</div><div class="mode-opt" data-bg-fit="tile">平铺</div></div></div>
+                                <div class="config-group switch-group"><label>水平翻转</label><label class="switch"><input type="checkbox" id="bg-flip-switch"><span class="slider round"></span></label></div>
+                                <div style="display:flex; gap:10px; margin-top: 15px;">
+                                    <button id="reset-bg-transform-btn" class="ui-button small-btn" style="flex:1;">↺ 形变复原</button>
+                                    <button id="reset-appearance-btn" class="ui-button small-btn" style="flex:1; background: rgba(255,69,58,0.15); color: #ff453a; border-color: rgba(255,69,58,0.3);">🚨 滤镜复原</button>
+                                </div>
+                            </div>
+
+========= #3: 桌面时钟 =========
+<div class="sub-settings">
+                                <div class="sub-settings-title">桌面时钟</div>
+                                <div class="config-group"><label>时钟大小 (<span id="val-clock-size">120</span>px)</label><input type="range" id="range-clock-size" min="60" max="250" value="120"></div>
+                                <div class="config-group" style="display: block !important;">
+                                    <label style="margin-bottom: 8px !important; color: #fff;">时钟字体 (23款精选预设)</label>
+                                    <select id="clock-font-select" class="ui-input compact-input" style="width: 100%; margin-bottom: 0;">
+                                        <option value="default">默认系统字体 (Default)</option>
+                                        <option value="'DS-Digital', 'Share Tech Mono', monospace">DS-Digital (数字电子)</option>
+                                        <option value="'MiSans', sans-serif">MiSans (小米)</option>
+                                        <option value="'-apple-system', 'BlinkMacSystemFont', 'SF Pro Display', sans-serif">SFUI (苹果)</option>
+                                        <option value="'HarmonyOS Sans', sans-serif">HarmonyOS (鸿蒙)</option>
+                                        <option value="Arial, sans-serif">Arial (标准黑体)</option>
+                                        <option value="'Bebas Neue', sans-serif">Bebas Neue (窄高海报)</option>
+                                        <option value="'Silkscreen', cursive">Silkscreen (像素丝印)</option>
+                                        <option value="'Orbitron', sans-serif">Orbitron (未来科幻)</option>
+                                        <option value="'Press Start 2P', cursive">Press Start 2P (复古8位)</option>
+                                        <option value="'Righteous', cursive">Righteous (圆润艺术)</option>
+                                        <option value="'Wallpoet', cursive">Wallpoet (街头涂鸦)</option>
+                                        <option value="'Space Mono', monospace">Space Mono (极客等宽)</option>
+                                        <option value="'VT323', monospace">VT323 (复古终端)</option>
+                                        <option value="'Monoton', cursive">Monoton (霓虹线框)</option>
+                                        <option value="'Share Tech Mono', monospace">Share Tech Mono (科技等宽)</option>
+                                        <option value="'Audiowide', cursive">Audiowide (数码宽体)</option>
+                                        <option value="'Nova Square', cursive">Nova Square (方正科技)</option>
+                                        <option value="'Black Ops One', cursive">Black Ops One (军事模版)</option>
+                                        <option value="'Chakra Petch', sans-serif">Chakra Petch (机甲切割)</option>
+                                        <option value="'Michroma', sans-serif">Michroma (宽扁科幻)</option>
+                                        <option value="'Teko', sans-serif">Teko (紧凑方块)</option>
+                                        <option value="Impact, sans-serif">Impact (厚重冲击)</option>
+                                    </select>
+                                </div>
+                                <div class="config-group switch-group"><label>自动吸取背景主题色</label><label class="switch"><input type="checkbox" id="clock-auto-switch" checked><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group"><label>开启时钟动画</label><label class="switch"><input type="checkbox" id="clock-anim-switch" checked><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group"><label>开启秒钟显示</label><label class="switch"><input type="checkbox" id="clock-seconds-switch" checked><span class="slider round"></span></label></div>
+                                <div id="clock-manual-settings" class="inner-settings-group" style="display: none; margin-top: 10px;">
+                                    <div class="config-group"><label>色彩模式</label><div class="bg-mode-selector"><div class="mode-opt active" data-clock-mode="gradient">渐变</div><div class="mode-opt" data-clock-mode="solid">纯色</div></div></div>
+                                    <div class="config-group"><label>文字颜色</label><div class="color-pickers-row"><input type="color" id="clock-col-1" value="#ffffff"><input type="color" id="clock-col-2" value="#a5b4fc"></div></div>
+                                </div>
+                                <div class="config-group" style="margin-top: 10px;">
+                                    <div class="switch-group" style="margin-bottom: 10px !important;"><label>时钟发光特效</label><label class="switch"><input type="checkbox" id="clock-glow-switch" checked><span class="slider round"></span></label></div>
+                                    <div id="clock-glow-panel" class="inner-settings-group">
+                                        <div class="config-group" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;"><label style="margin:0; opacity:0.8; font-size:11px;">发光颜色</label><input type="color" id="clock-glow-color" value="#a5b4fc"></div>
+                                        <div class="config-group"><label style="font-size:11px; opacity:0.8;">扩散强度 (<span id="val-clock-blur">20</span>px)</label><input type="range" id="range-clock-blur" min="0" max="30" value="20"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+========= #4: 鼠标跟随光斑 =========
+<div class="sub-settings">
+                                <div class="sub-settings-title">鼠标跟随光斑</div>
+                                <div class="config-group switch-group"><label>开启鼠标跟随光斑</label><label class="switch"><input type="checkbox" id="mouse-follow-switch" checked><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group"><label>光斑自动吸取背景色</label><label class="switch"><input type="checkbox" id="mouse-follow-auto-switch" checked><span class="slider round"></span></label></div>
+                                <div class="config-group"><label>光斑样式</label><div class="bg-mode-selector" id="mouse-follow-mode-selector"><div class="mode-opt active" data-cursor-mode="single">单色</div><div class="mode-opt" data-cursor-mode="dual">双色</div><div class="mode-opt" data-cursor-mode="triple">三色</div></div></div>
+                                <div class="config-group"><label>光斑大小 (<span id="val-cursor-size">180</span>px)</label><input type="range" id="range-cursor-size" min="80" max="420" value="180"></div>
+                                <div id="mouse-follow-color-panel" class="inner-settings-group">
+                                    <div class="config-group" id="mouse-follow-color-group" style="display:flex; justify-content:space-between; align-items:center;"><label style="margin:0;">主色</label><input type="color" id="mouse-follow-color" value="#a5b4fc"></div>
+                                    <div class="config-group" id="mouse-follow-color-group-2" style="display:flex; justify-content:space-between; align-items:center;"><label style="margin:0;">辅色</label><input type="color" id="mouse-follow-color-2" value="#f472b6"></div>
+                                    <div class="config-group" id="mouse-follow-color-group-3" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0;"><label style="margin:0;">第三色</label><input type="color" id="mouse-follow-color-3" value="#22d3ee"></div>
+                                </div>
+                            </div>
+
+========= #5: 全局物理模拟 =========
+<div class="sub-settings" style="margin-bottom:0;">
+                                <div class="sub-settings-title">全局物理模拟</div>
+                                <div class="config-group switch-group"><label>开启全屏物理天气模拟 (雨雪)</label><label class="switch"><input type="checkbox" id="weather-sim-switch"><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group">
+                                    <label>🧨 春节自动下雪特效</label>
+                                    <label class="switch">
+                                        <input type="checkbox" id="spring-snow-switch" checked>
+                                        <span class="slider round"></span>
+                                    </label>
+                                </div>
+                                <div class="config-group"><label>天气特效浓度 (<span id="val-weather-intensity">100</span>%)</label><input type="range" id="range-weather-intensity" min="10" max="1000" value="100"></div>
+                            </div>
+
+========= #6: 磁贴图标源 (Favicon API) =========
+<div class="sub-settings">
+                                <div class="sub-settings-title">磁贴图标源 (Favicon API)</div>
+                                <div class="config-group">
+                                    <div class="engine-choice-grid" id="icon-source-grid">
+                                        <button type="button" class="engine-choice active" data-icon-source="yandex"><strong>Yandex</strong><span>全球极速/最稳</span></button>
+                                        <button type="button" class="engine-choice" data-icon-source="unavatar"><strong>Unavatar</strong><span>高颜值/防缺图</span></button>
+                                        <button type="button" class="engine-choice" data-icon-source="xinac"><strong>Xinac API</strong><span>国内稳定源</span></button>
+                                        <button type="button" class="engine-choice" data-icon-source="iowen"><strong>Iowen API</strong><span>备用国内源</span></button>
+                                        <button type="button" class="engine-choice" data-icon-source="google"><strong>Google</strong><span>最全/需代理</span></button>
+                                        <button type="button" class="engine-choice" data-icon-source="duckduckgo"><strong>DuckDuckGo</strong><span>海外直连可用</span></button>
+                                        <button type="button" class="engine-choice" data-icon-source="custom" style="grid-column: span 2;"><strong>自定义源</strong><span>填入专属 URL 模板</span></button>
+                                    </div>
+                                </div>
+                                <div id="custom-icon-settings" class="inner-settings-group" style="display:none; margin-bottom:15px;">
+                                    <div class="config-group">
+                                        <label>自定义 API 模板</label>
+                                        <input type="text" id="custom-icon-url" class="ui-input" placeholder="https://...?domain=%domain">
+                                        <div style="font-size:11px; opacity:0.6; margin-top:4px;">占位符支持：`%domain`</div>
+                                    </div>
+                                </div>
+                                <div class="config-group" style="margin-bottom: 0;">
+                                    <button class="ui-button small-btn" id="refresh-all-icons-btn" style="background: rgba(255, 69, 58, 0.15); color: #ff453a; border: 1px solid rgba(255, 69, 58, 0.3);">🔄 强制重置并刷新所有图标</button>
+                                    <div style="font-size:11px; opacity:0.6; margin-top:8px; line-height: 1.4;">提示：切换图标源后，请点击此按钮清空缓存。</div>
+                                </div>
+                            </div>
+
+========= #7: 桌面行为控制 =========
+<div class="sub-settings">
+                                <div class="sub-settings-title">桌面行为控制</div>
+                                <div class="config-group switch-group">
+                                    <label>记住上次所在的分类</label>
+                                    <label class="switch"><input type="checkbox" id="remember-category-switch" checked><span class="slider round"></span></label>
+                                </div>
+                                <div class="config-group switch-group">
+                                    <label>左侧栏自动隐藏 (边缘悬浮显示)</label>
+                                    <label class="switch"><input type="checkbox" id="sidebar-auto-hide-switch"><span class="slider round"></span></label>
+                                </div>
+                                <div class="config-group switch-group">
+                                    <label>开启磁贴自由摆放 (桌面模式)</label>
+                                    <label class="switch"><input type="checkbox" id="free-layout-switch"><span class="slider round"></span></label>
+                                </div>
+                                <div class="config-group switch-group" style="margin-bottom:0 !important;">
+                                    <label>在新标签页中打开链接</label>
+                                    <label class="switch"><input type="checkbox" id="open-new-tab-switch" checked><span class="slider round"></span></label>
+                                </div>
+                            </div>
+
+========= #8: 磁贴样式定制 =========
+<div class="sub-settings">
+                                <div class="sub-settings-title">磁贴样式定制</div>
+                                
+                                <div class="config-group switch-group">
+                                    <label>开启入场弹性动画</label>
+                                    <label class="switch">
+                                        <input type="checkbox" id="tile-anim-switch" checked>
+                                        <span class="slider round"></span>
+                                    </label>
+                                </div>
+                                <div class="config-group">
+                                    <label>单体弹出速度 (<span id="val-tile-anim-duration">0.45</span>s) - 越小越快</label>
+                                    <input type="range" id="range-tile-anim-duration" min="0.1" max="1.5" step="0.05" value="0.45">
+                                </div>
+                                <div class="config-group">
+                                    <label>阵列加载间隔 (<span id="val-tile-anim-stagger">0.02</span>s) - 越小越紧凑</label>
+                                    <input type="range" id="range-tile-anim-stagger" min="0" max="0.15" step="0.01" value="0.02">
+                                </div>
+                                
+                                <div class="config-group">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <label style="margin: 0;">两侧留白</label>
+                                        <span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-grid-padding">8</span>%</span>
+                                    </div>
+                                    <input type="range" id="range-grid-padding" min="0" max="30" value="8">
+                                </div>
+                                <div class="config-group">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <label style="margin: 0;">磁贴大小</label>
+                                        <span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-tile-size">85</span>px</span>
+                                    </div>
+                                    <input type="range" id="range-tile-size" min="50" max="150" value="85">
+                                </div>
+                                <div class="config-group">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <label style="margin: 0;">圆角程度</label>
+                                        <span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-tile-radius">20</span>px</span>
+                                    </div>
+                                    <input type="range" id="range-tile-radius" min="0" max="75" value="20">
+                                </div>
+                                <div class="config-group">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <label style="margin: 0;">玻璃底板透明度</label>
+                                        <span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-tile-opacity">6</span>%</span>
+                                    </div>
+                                    <input type="range" id="range-tile-opacity" min="0" max="100" value="6">
+                                </div>
+                                <div class="config-group switch-group"><label>显示磁贴文字</label><label class="switch"><input type="checkbox" id="tile-text-switch" checked><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group"><label>磁贴背景跟随主题色</label><label class="switch"><input type="checkbox" id="tile-bg-auto-switch"><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group"><label>磁贴文字跟随主题色</label><label class="switch"><input type="checkbox" id="tile-text-auto-switch"><span class="slider round"></span></label></div>
+                                <div class="config-group" style="display:flex; justify-content:space-between; align-items:center;"><label style="margin:0;">磁贴背景颜色</label><input type="color" id="tile-bg-color" value="#ffffff"></div>
+                                <div class="config-group" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0;"><label style="margin:0;">磁贴文字颜色</label><input type="color" id="tile-text-color" value="#ffffff"></div>
+                        </div>
+
+========= #9: 📚 长条书签视图 =========
+<div class="sub-settings">
+                                <div class="sub-settings-title" style="border-left-color: #6ee7b7;">📚 长条书签视图</div>
+                                
+                                <div class="config-group switch-group">
+                                    <label>记住折叠状态</label>
+                                    <label class="switch"><input type="checkbox" id="remember-fold-state-switch" checked><span class="slider round"></span></label>
+                                </div>
+                                
+                                <div class="config-group">
+                                    <label>长条页面模式</label>
+                                    <div class="bg-mode-selector" id="list-layout-selector">
+                                        <div class="mode-opt active" data-list-layout="simple">简约页面</div>
+                                        <div class="mode-opt" data-list-layout="detailed">详细页面 (带预览)</div>
+                                    </div>
+                                </div>
+
+                                <div class="config-group" id="list-preview-mode-group" style="display: none;">
+                                    <label>悬浮预览实现方式</label>
+                                    <div class="bg-mode-selector" id="list-preview-mode-selector">
+                                        <div class="mode-opt" data-preview-mode="iframe">原网页微缩嵌入</div>
+                                        <div class="mode-opt active" data-preview-mode="metadata">安全信息卡片(推荐)</div>
+                                    </div>
+                                    <div style="font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 8px; line-height: 1.4;">* 提示：微缩嵌入呈现 1920x1080 原网页缩放。若遭遇目标网站安全拦截，请切换至安全信息卡片。</div>
+                                </div>
+                                <div class="config-group switch-group">
+                                    <label>全屏沉浸时开启迷你浏览器 (标签页/控制栏)</label>
+                                    <label class="switch"><input type="checkbox" id="list-view-mini-browser-switch" checked><span class="slider round"></span></label>
+                                </div>
+
+                                <div class="config-group" id="list-view-cols-group">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                        <label style="margin: 0;">分栏数量</label>
+                                        <span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-list-view-cols">8</span></span>
+                                    </div>
+                                    <div style="font-size: 10px; opacity: 0.45; margin-bottom: 8px; line-height: 1.35;">折叠总览：每行并排 N 个分类折叠窗，多行向下排列；窗内书签始终单列竖排</div>
+                                    <input type="range" id="range-list-view-cols" min="1" max="12" step="1" value="8">
+                                </div>
+                                <div class="config-group">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <label style="margin: 0;">长条高度</label>
+                                        <span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-list-view-item-height">36</span>px</span>
+                                    </div>
+                                    <input type="range" id="range-list-view-item-height" min="14" max="80" step="1" value="36">
+                                </div>
+                                <div class="config-group" id="list-view-max-width-group">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <label style="margin: 0;">顶部容器最大宽度</label>
+                                        <span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-list-view-max-width">700</span>px</span>
+                                    </div>
+                                    <input type="range" id="range-list-view-max-width" min="300" max="4000" step="10" value="700">
+                                </div>
+                                <div class="config-group" id="list-view-tile-max-width-group">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <label style="margin: 0;">底部磁贴最大长度</label>
+                                        <span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-list-view-tile-max-width">1200</span>px</span>
+                                    </div>
+                                    <input type="range" id="range-list-view-tile-max-width" min="300" max="4000" step="10" value="1200">
+                                </div>
+                                <div class="config-group" id="list-view-header-margin-top-group">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <label style="margin: 0;">顶部组件距顶高度</label>
+                                        <span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-list-view-header-margin-top">0</span>px</span>
+                                    </div>
+                                    <input type="range" id="range-list-view-header-margin-top" min="0" max="300" step="5" value="0">
+                                </div>
+                                <div class="config-group" id="list-view-grid-margin-top-group">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <label style="margin: 0;">底部磁贴距顶高度</label>
+                                        <span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-list-view-grid-margin-top">0</span>px</span>
+                                    </div>
+                                    <input type="range" id="range-list-view-grid-margin-top" min="0" max="300" step="5" value="0">
+                                </div>
+                                <div class="config-group" id="list-view-header-padding-group">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <label style="margin: 0;">顶部组件两侧留白</label>
+                                        <span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-list-view-header-padding">2</span>%</span>
+                                    </div>
+                                    <input type="range" id="range-list-view-header-padding" min="0" max="30" value="2">
+                                </div>
+                                <div class="config-group" id="list-view-grid-padding-group" style="margin-bottom: 0;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <label style="margin: 0;">底部磁贴留白</label>
+                                        <span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-list-view-grid-padding">2</span>%</span>
+                                    </div>
+                                    <input type="range" id="range-list-view-grid-padding" min="0" max="30" value="2">
+                                </div>
+                                
+                                <div style="height: 1px; background: rgba(255,255,255,0.08); margin: 15px 0;"></div>
+                                <div class="sub-settings-title" style="padding: 0; border: none; margin-bottom: 12px; font-size: 12px; color: #6ee7b7;">⏱️ 顶部组件独立尺寸 (时钟与搜索栏)</div>
+                                
+                                <div class="config-group">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <label style="margin: 0;">时钟大小</label>
+                                        <span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-list-view-clock-size">66</span>px</span>
+                                    </div>
+                                    <input type="range" id="range-list-view-clock-size" min="30" max="150" value="66">
+                                </div>
+                                <div class="config-group">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <label style="margin: 0;">搜索栏宽度</label>
+                                        <span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-list-view-search-width">320</span>px</span>
+                                    </div>
+                                    <input type="range" id="range-list-view-search-width" min="200" max="1000" value="320">
+                                </div>
+                                <div class="config-group">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <label style="margin: 0;">搜索栏高度</label>
+                                        <span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-list-view-search-height">44</span>px</span>
+                                    </div>
+                                    <input type="range" id="range-list-view-search-height" min="30" max="80" value="44">
+                                </div>
+                                <div class="config-group">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <label style="margin: 0;">搜索栏圆角</label>
+                                        <span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-list-view-search-radius">22</span>px</span>
+                                    </div>
+                                    <input type="range" id="range-list-view-search-radius" min="0" max="40" value="22">
+                                </div>
+                                <div class="config-group">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <label style="margin: 0;">搜索栏背景透明度</label>
+                                        <span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-list-view-search-opacity">8</span>%</span>
+                                    </div>
+                                    <input type="range" id="range-list-view-search-opacity" min="0" max="100" value="8">
+                                </div>
+                                <div class="config-group" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0;"><label style="margin:0;">呼吸灯发光颜色</label><input type="color" id="color-list-view-search-glow" value="#a5b4fc"></div>
+                            </div>
+
+========= #10: 长条书签样式 =========
+<div class="sub-settings" style="margin-bottom:0;">
+                                <div class="sub-settings-title">长条书签样式</div>
+                                
+                                <div class="config-group switch-group">
+                                    <label>开启入场弹性动画</label>
+                                    <label class="switch">
+                                        <input type="checkbox" id="list-view-tile-anim-switch" checked>
+                                        <span class="slider round"></span>
+                                    </label>
+                                </div>
+                                <div class="config-group">
+                                    <label>单体弹出速度 (<span id="val-list-view-tile-anim-duration">0.45</span>s) - 越小越快</label>
+                                    <input type="range" id="range-list-view-tile-anim-duration" min="0.1" max="1.5" step="0.05" value="0.45">
+                                </div>
+                                <div class="config-group">
+                                    <label>阵列加载间隔 (<span id="val-list-view-tile-anim-stagger">0.02</span>s) - 越小越紧凑</label>
+                                    <input type="range" id="range-list-view-tile-anim-stagger" min="0" max="0.15" step="0.01" value="0.02">
+                                </div>
+
+                                <div class="config-group">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <label style="margin: 0;">圆角程度</label>
+                                        <span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-list-view-tile-radius">8</span>px</span>
+                                    </div>
+                                    <input type="range" id="range-list-view-tile-radius" min="0" max="30" value="8">
+                                </div>
+                                <div class="config-group">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <label style="margin: 0;">玻璃底板透明度</label>
+                                        <span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-list-view-tile-opacity">10</span>%</span>
+                                    </div>
+                                    <input type="range" id="range-list-view-tile-opacity" min="0" max="100" value="10">
+                                </div>
+                                <div class="config-group switch-group"><label>显示书签文字</label><label class="switch"><input type="checkbox" id="list-view-tile-text-switch" checked><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group"><label>背景跟随主题色</label><label class="switch"><input type="checkbox" id="list-view-tile-bg-auto-switch"><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group"><label>文字跟随主题色</label><label class="switch"><input type="checkbox" id="list-view-tile-text-auto-switch"><span class="slider round"></span></label></div>
+                                <div class="config-group" style="display:flex; justify-content:space-between; align-items:center;"><label style="margin:0;">背景颜色</label><input type="color" id="list-view-tile-bg-color" value="#ffffff"></div>
+                                <div class="config-group" style="display:flex; justify-content:space-between; align-items:center;"><label style="margin:0;">文字颜色</label><input type="color" id="list-view-tile-text-color" value="#ffffff"></div>
+                                
+                                <div style="height: 1px; background: rgba(255,255,255,0.08); margin: 15px 0;"></div>
+                                <div class="sub-settings-title" style="padding: 0; border: none; margin-bottom: 12px; font-size: 12px; color: #6ee7b7;">➗ 列分割线定制</div>
+                                <div class="config-group switch-group"><label>显示列分割线</label><label class="switch"><input type="checkbox" id="list-view-sep-switch" checked><span class="slider round"></span></label></div>
+                                <div class="config-group">
+                                    <label>分割线样式</label>
+                                    <div class="bg-mode-selector" id="list-view-sep-style-selector">
+                                        <div class="mode-opt" data-sep-style="solid">实线</div>
+                                        <div class="mode-opt active" data-sep-style="dashed">虚线</div>
+                                        <div class="mode-opt" data-sep-style="dotted">点线</div>
+                                    </div>
+                                </div>
+                                <div class="config-group switch-group"><label>分割线跟随主题色</label><label class="switch"><input type="checkbox" id="list-view-sep-auto-switch"><span class="slider round"></span></label></div>
+                                <div class="config-group" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0;"><label style="margin:0;">分割线颜色</label><input type="color" id="list-view-sep-color" value="#ffffff"></div>
+                            </div>
+
+========= #11: 基础快捷键映射 =========
+<div class="sub-settings">
+                                <div class="sub-settings-title">基础快捷键映射</div>
+                                <div id="shortcut-settings-list" class="shortcut-list" style="margin-top: 10px;"></div>
+                                <button id="reset-shortcuts-btn" class="ui-button small-btn" style="margin-top: 15px; width: 100%;">↺ 恢复快捷键默认设置</button>
+                                <button id="view-shortcuts-guide-btn" class="ui-button small-btn" style="margin-top: 8px; width: 100%; background: rgba(52, 199, 89, 0.15); color: #34c759; border-color: rgba(52, 199, 89, 0.3);">📖 查看全部快捷键详细说明</button>
+                                <p style="font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 12px; margin-bottom: 0; line-height: 1.5;">提示：点击上方对应按键框后，按下新按键即可完成录制。</p>
+                                <div class="config-group" style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 15px;">
+                                    <label>联想词点击与快捷键选择行为</label>
+                                    <div class="bg-mode-selector" id="suggestion-action-selector">
+                                        <div class="mode-opt active" data-action="direct">直接跳转</div>
+                                        <div class="mode-opt" data-action="fill">仅填入</div>
+                                    </div>
+                                </div>
+                                <p style="font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 12px; margin-bottom: 0; line-height: 1.5;">提示：设置为仅填入时，选中联想词后需手动按回车键搜索。</p>
+                            </div>
+
+========= #12: 搜索引擎管理与 1~9 快捷键 =========
+<div class="sub-settings" style="margin-bottom:0;">
+                                <div class="sub-settings-title">搜索引擎管理与 1~9 快捷键</div>
+                                <div class="media-library-note" style="margin-top: 10px; margin-bottom: 12px; line-height: 1.5;">上下拖拽排序，前 9 个自动绑定数字快捷键。<br>拖拽到页面顶部垃圾桶可删除。修改 URL 自动保存。<br><span style="color: var(--text-b); font-weight: bold;">🚀 极客技巧：按住你设置的“切换引擎”快捷键，再按数字键 1~9，即可瞬间切换！</span></div>
+                                <div id="engine-edit-list" class="music-playlist" style="margin-bottom: 15px; min-height: 10px; display: flex; flex-direction: column; gap: 6px;"></div>
+                                
+                                <div style="height: 1px; background: rgba(255,255,255,0.08); margin: 15px 0;"></div>
+                                
+                                <div class="sub-settings-title" style="padding: 0; border: none; margin-bottom: 12px; font-size: 12px;">➕ 添加自定义搜索引擎</div>
+                                <div class="config-group" style="margin-bottom: 10px;"><input type="text" id="custom-engine-name" class="ui-input" placeholder="名称，例如：知乎" style="margin-bottom:0;"></div>
+                                <div class="config-group" style="margin-bottom: 10px;"><select id="custom-engine-type" class="ui-input" style="margin-bottom:0;"><option value="search">综合搜索</option><option value="ai">AI 搜索</option><option value="media">媒体视频</option></select></div>
+                                <div class="config-group" style="margin-bottom: 10px;"><input type="text" id="custom-engine-url" class="ui-input" placeholder="URL (必须用 %s 代替搜索词)" style="margin-bottom:0;"></div>
+                                <div class="config-group" style="margin-bottom: 15px;"><input type="text" id="custom-engine-icon" class="ui-input" placeholder="图标 URL（选填，留空则自动抓取）" style="margin-bottom:0;"></div>
+                                <button class="ui-button small-btn" id="add-custom-engine" style="background: rgba(52, 199, 89, 0.15); border-color: rgba(52, 199, 89, 0.3); color: #fff; width: 100%;">添加并加入快捷列表</button>
+                            </div>
+
+========= #13: 桌面行为 =========
+<div class="sub-settings"><div class="sub-settings-title">桌面行为</div><div class="config-group switch-group" style="margin-bottom:0 !important;"><label>在新标签页中打开链接</label><label class="switch"><input type="checkbox" id="open-new-tab-switch" checked><span class="slider round"></span></label></div></div>
+
+========= #14: 默认翻译引擎设置 =========
+<div class="sub-settings" style="margin-bottom:0;">
+                                <div class="sub-settings-title">默认翻译引擎设置</div>
+                                <div class="config-group">
+                                    <div class="engine-choice-grid" id="translate-engine-grid">
+                                        <button type="button" class="engine-choice" data-translate-engine="mymemory"><strong>MyMemory</strong><span>轻量直译</span></button>
+                                        <button type="button" class="engine-choice" data-translate-engine="google"><strong>谷歌翻译</strong><span>快速直译</span></button>
+                                        <button type="button" class="engine-choice" data-translate-engine="microsoft"><strong>微软翻译</strong><span>网页跳转</span></button>
+                                        <button type="button" class="engine-choice" data-translate-engine="youdao"><strong>有道翻译</strong><span>网页跳转</span></button>
+                                        <button type="button" class="engine-choice" data-translate-engine="chatgpt"><strong>ChatGPT AI</strong><span>AI 翻译</span></button>
+                                        <button type="button" class="engine-choice" data-translate-engine="kimi"><strong>Kimi AI</strong><span>AI 翻译</span></button>
+                                        <button type="button" class="engine-choice" data-translate-engine="doubao"><strong>豆包 AI</strong><span>AI 翻译</span></button>
+                                        <button type="button" class="engine-choice" data-translate-engine="custom"><strong>自定义</strong><span>模板跳转</span></button>
+                                    </div>
+                                </div>
+                                <div id="custom-translate-settings" class="inner-settings-group" style="display:none; margin-top:15px;">
+                                    <div class="config-group"><label>自定义翻译名称</label><input type="text" id="custom-translate-name" class="ui-input" placeholder="例如：内部翻译"></div>
+                                    <div class="config-group"><label>自定义 URL 模板</label><input type="text" id="custom-translate-url" class="ui-input" placeholder="https://...?q=%text&from=%from"></div>
+                                    <div class="config-group"><label style="font-size:11px; opacity:0.6; margin:0;">占位符支持：`%text`、`%from`、`%to`</label></div>
+                                </div>
+                            </div>
+
+========= #15: 功能与翻译 (Alt+Enter) =========
+<div class="sub-settings">
+                                <div class="sub-settings-title">功能与翻译 (Alt+Enter)</div>
+                                <div class="config-group switch-group">
+                                    <label>开启搜索沉浸聚焦与水波纹特效</label>
+                                    <label class="switch">
+                                        <input type="checkbox" id="search-focus-switch">
+                                        <span class="slider round"></span>
+                                    </label>
+                                </div>
+                                <div class="config-group switch-group"><label>开启搜索关联建议</label><label class="switch"><input type="checkbox" id="search-suggestion-switch" checked><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group"><label>开启搜索历史记录</label><label class="switch"><input type="checkbox" id="search-history-switch" checked><span class="slider round"></span></label></div>
+                                </div>
+
+========= #16: 外观与尺寸 =========
+<div class="sub-settings" style="margin-bottom:0;">
+                                <div class="sub-settings-title">外观与尺寸</div>
+                                <div class="config-group switch-group"><label>显示查询按钮</label><label class="switch"><input type="checkbox" id="search-btn-switch" checked><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group"><label>显示语音输入按钮</label><label class="switch"><input type="checkbox" id="mic-btn-switch"><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group"><label>显示扫码识别按钮</label><label class="switch"><input type="checkbox" id="qr-btn-switch"><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group"><label>显示左侧引擎图标</label><label class="switch"><input type="checkbox" id="search-engine-switch" checked><span class="slider round"></span></label></div>
+                                <div class="config-group">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <label style="margin: 0;">宽度</label>
+                                        <span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-search-width">500</span>px</span>
+                                    </div>
+                                    <input type="range" id="range-search-width" min="200" max="1000" value="500">
+                                </div>
+                                <div class="config-group">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <label style="margin: 0;">高度</label>
+                                        <span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-search-height">52</span>px</span>
+                                    </div>
+                                    <input type="range" id="range-search-height" min="30" max="80" value="52">
+                                </div>
+                                <div class="config-group">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <label style="margin: 0;">圆角</label>
+                                        <span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-search-radius">26</span>px</span>
+                                    </div>
+                                    <input type="range" id="range-search-radius" min="0" max="40" value="26">
+                                </div>
+                                <div class="config-group">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <label style="margin: 0;">背景透明度</label>
+                                        <span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-search-opacity">15</span>%</span>
+                                    </div>
+                                    <input type="range" id="range-search-opacity" min="0" max="100" value="15">
+                                </div>
+                                <div class="config-group" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0;"><label style="margin:0;">呼吸灯发光颜色</label><input type="color" id="color-search-glow" value="#a5b4fc"></div>
+                            </div>
+
+========= #17: 右下角工具台 =========
+<div class="sub-settings">
+                                <div class="sub-settings-title">右下角工具台</div>
+                                <div class="config-group switch-group"><label>在菜单栏显示时间工具</label><label class="switch"><input type="checkbox" id="show-time-tool-switch" checked><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group"><label>在菜单栏显示翻译/OCR</label><label class="switch"><input type="checkbox" id="show-translate-tool-switch" checked><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group"><label>在菜单栏显示音乐控制</label><label class="switch"><input type="checkbox" id="show-music-tool-switch" checked><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group"><label>在菜单栏显示代办清单</label><label class="switch"><input type="checkbox" id="show-todo-tool-switch" checked><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.05); margin-bottom:0 !important;">
+                                    <label>右下角工具台自动隐藏 (悬浮显示)</label>
+                                    <label class="switch"><input type="checkbox" id="dock-auto-hide-switch"><span class="slider round"></span></label>
+                                </div>
+                            <div class="sub-settings">
+                                <div class="sub-settings-title">闲散功能</div>
+                                <div class="config-group switch-group"><label>显示底部每日名言</label><label class="switch"><input type="checkbox" id="show-quote-switch" checked><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group"><label>开启自动整点报时</label><label class="switch"><input type="checkbox" id="hourly-chime-switch"><span class="slider round"></span></label></div>
+                                <div class="config-group" style="margin-top: 12px; margin-bottom: 12px;">
+                                    <label>名言数据源 (API)</label>
+                                    <select id="quote-source-select" class="ui-input compact-input" style="margin-bottom: 0;">
+                                        <option value="hitokoto">一言 (Hitokoto / 国内极速)</option>
+                                        <option value="jinrishici">今日诗词 (古诗词 / 国内稳定)</option>
+                                        <option value="xygeng">句子迷 (Xygeng / 经典语录)</option>
+                                        <option value="zenquotes">ZenQuotes (英文 / 海外节点)</option>
+                                    </select>
+                                </div>
+                                <div class="config-group" style="margin-bottom: 0;">
+                                    <label>历史上的今天数据源 (API)</label>
+                                    <select id="history-source-select" class="ui-input compact-input" style="margin-bottom: 0;">
+                                        <option value="baidu">百度百科 (中文 / 需代理代理)</option>
+                                        <option value="wikipedia">Wikipedia (英文 / 海外直连)</option>
+                                    </select>
+                                </div>
+                            <div class="sub-settings">
+                                <div class="sub-settings-title">🌙 夜间免打扰模式</div>
+                                <div class="config-group switch-group"><label>开启夜间免打扰</label><label class="switch"><input type="checkbox" id="dnd-switch"><span class="slider round"></span></label></div>
+                                <div id="dnd-time-settings" class="inner-settings-group" style="display: none; margin-top: 10px;">
+                                    <div class="inline-tool-row compact-row">
+                                        <div class="config-group" style="flex:1; margin-bottom:0;"><label style="font-size: 11px; opacity: 0.8; margin-bottom: 4px; display: block;">开始时间</label><input type="time" id="dnd-start-time" class="ui-input compact-input" style="width: 100%;"></div>
+                                        <span style="opacity: 0.5;">至</span>
+                                        <div class="config-group" style="flex:1; margin-bottom:0;"><label style="font-size: 11px; opacity: 0.8; margin-bottom: 4px; display: block;">结束时间</label><input type="time" id="dnd-end-time" class="ui-input compact-input" style="width: 100%;"></div>
+                                    </div>
+                                    <div style="font-size: 11px; opacity: 0.6; margin-top: 8px;">在此时段内将自动静音时钟滴答声，并在跨入该时段时自动平滑暂停音乐。</div>
+                                </div>
+                            
+                            <div class="sub-settings" style="margin-bottom:0;">
+                                <div class="sub-settings-title" style="color: #ff453a;">性能与省电</div>
+                                <div class="config-group switch-group"><label>强制锁定为极致省电/专注模式</label><label class="switch"><input type="checkbox" id="power-save-switch"><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group"><label>笔记本断电自动进入省电模式</label><label class="switch"><input type="checkbox" id="auto-power-save-switch"><span class="slider round"></span></label></div>
+                                <div class="tool-result" style="margin-bottom: 0;">开启省电模式后，将自动暂停所有的动态壁纸、极光运算、雨雪粒子模拟，让设备彻底降温冷静。</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="setting-section" id="setting-data-section" data-section="content-media">
+                        <div class="setting-title">📦 内容与媒体</div>
+                        <div class="setting-content">
+                            
+                            <div class="sub-settings add-form" id="addSection">
+                                <div class="sub-settings-title" style="color: #34c759;">快速添加内容</div>
+                                <input type="text" id="new-name" placeholder="名称" class="ui-input">
+                                <input type="text" id="new-url" placeholder="网址 (添加分类/文件夹时留空)" class="ui-input">
+                                
+                                <div style="display: flex; gap: 8px; margin-top: 5px;">
+                                    <button class="ui-button" id="add-submit" style="flex: 1; padding: 10px 0;">添加网址</button>
+                                    <button class="ui-button" id="add-folder-btn" style="flex: 1; padding: 10px 0; background: rgba(52,199,89,0.15); color: #fff; border: 1px solid rgba(52,199,89,0.3);">+ 新建文件夹</button>
+                                </div>
+                                
+                                <div style="display: flex; gap: 8px; margin-top: 8px;">
+                                    <button class="ui-button" id="add-cat-submit" style="flex: 1; padding: 10px 0; background: rgba(52,199,89,0.15); color: #fff; border: 1px solid rgba(52,199,89,0.3);">+ 添加左侧新分类</button>
+                                </div>
+
+                                <button class="ui-button" id="add-local-app-btn" style="width: 100%; margin-top: 8px; padding: 10px 0; background: rgba(255,149,0,0.15); color: #ff9500; border: 1px solid rgba(255,149,0,0.3);">💻 添加本地软件 / 快捷协议</button>
+                            </div>
+                            
+                            <div class="sub-settings" style="margin-bottom:0;">
+                                <div class="sub-settings-title" style="color: #34c759;">📚 批量导入与高级编辑</div>
+                                <div style="display:flex; gap:10px; flex-direction:column;">
+                                    <button class="ui-button small-btn" id="btn-import-browser-bookmarks" style="background: rgba(52,199,89,0.15); border-color: rgba(52,199,89,0.3); color: #fff;">🌟 一键导入浏览器书签</button>
+                                    <button class="ui-button small-btn" id="btn-batch-manage">📋 打开高级批量管理中心</button>
+                                    <input type="file" id="html-bookmark-upload" accept=".html" style="display:none;">
+                                </div>
+                            </div>
+                            <div class="sub-settings">
+                                <div class="sub-settings-title">背景音乐播放器</div>
+                                <div class="config-group switch-group"><label>加载网页时自动播放音乐</label><label class="switch"><input type="checkbox" id="music-autoplay-switch" checked><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group"><label>后台播放保护 (防误关 / 系统控制)</label><label class="switch"><input type="checkbox" id="music-bg-play-switch" checked><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group"><label>记忆并继续上次播放进度 (断点续播)</label><label class="switch"><input type="checkbox" id="music-resume-switch" checked><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group"><label>切换网页时自动暂停，切回时播放</label><label class="switch"><input type="checkbox" id="music-auto-pause-switch"><span class="slider round"></span></label></div>
+                                <div class="config-group"><label>音乐循环模式</label><div class="bg-mode-selector" id="music-play-mode-selector"><div class="mode-opt active" data-music-mode="loop">列表循环</div><div class="mode-opt" data-music-mode="single">单曲循环</div><div class="mode-opt" data-music-mode="shuffle">随机播放</div></div></div>
+                                
+                                <div class="config-group" style="margin-bottom:0;">
+                                    <div class="music-playlist-head" style="margin-top:0;"><strong style="color: var(--text-b);">全局音乐播放列表</strong><button class="ui-button small-btn" id="clear-music-list" style="width: auto;">一键清空</button></div>
+                                    <div class="media-library-note">拖动左侧手柄可重新排序，右侧可删除单曲。</div>
+                                    <div class="music-playlist" id="music-playlist"></div>
+                                </div>
+                            <div class="sub-settings" style="margin-bottom:0;">
+                                <div class="sub-settings-title">闹钟/计时器铃声库</div>
+                                <div class="media-library-note">这里管理时间工具弹窗使用的提示音。</div>
+                                <div class="music-playlist alarm-sound-list" id="alarm-sound-list"></div>
+                            </div>
+                        </div>
+                    </div>
+
+</div>
+            </div>
+
+========= #18: 闲散功能 =========
+<div class="sub-settings">
+                                <div class="sub-settings-title">闲散功能</div>
+                                <div class="config-group switch-group"><label>显示底部每日名言</label><label class="switch"><input type="checkbox" id="show-quote-switch" checked><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group"><label>开启自动整点报时</label><label class="switch"><input type="checkbox" id="hourly-chime-switch"><span class="slider round"></span></label></div>
+                                <div class="config-group" style="margin-top: 12px; margin-bottom: 12px;">
+                                    <label>名言数据源 (API)</label>
+                                    <select id="quote-source-select" class="ui-input compact-input" style="margin-bottom: 0;">
+                                        <option value="hitokoto">一言 (Hitokoto / 国内极速)</option>
+                                        <option value="jinrishici">今日诗词 (古诗词 / 国内稳定)</option>
+                                        <option value="xygeng">句子迷 (Xygeng / 经典语录)</option>
+                                        <option value="zenquotes">ZenQuotes (英文 / 海外节点)</option>
+                                    </select>
+                                </div>
+                                <div class="config-group" style="margin-bottom: 0;">
+                                    <label>历史上的今天数据源 (API)</label>
+                                    <select id="history-source-select" class="ui-input compact-input" style="margin-bottom: 0;">
+                                        <option value="baidu">百度百科 (中文 / 需代理代理)</option>
+                                        <option value="wikipedia">Wikipedia (英文 / 海外直连)</option>
+                                    </select>
+                                </div>
+                            <div class="sub-settings">
+                                <div class="sub-settings-title">🌙 夜间免打扰模式</div>
+                                <div class="config-group switch-group"><label>开启夜间免打扰</label><label class="switch"><input type="checkbox" id="dnd-switch"><span class="slider round"></span></label></div>
+                                <div id="dnd-time-settings" class="inner-settings-group" style="display: none; margin-top: 10px;">
+                                    <div class="inline-tool-row compact-row">
+                                        <div class="config-group" style="flex:1; margin-bottom:0;"><label style="font-size: 11px; opacity: 0.8; margin-bottom: 4px; display: block;">开始时间</label><input type="time" id="dnd-start-time" class="ui-input compact-input" style="width: 100%;"></div>
+                                        <span style="opacity: 0.5;">至</span>
+                                        <div class="config-group" style="flex:1; margin-bottom:0;"><label style="font-size: 11px; opacity: 0.8; margin-bottom: 4px; display: block;">结束时间</label><input type="time" id="dnd-end-time" class="ui-input compact-input" style="width: 100%;"></div>
+                                    </div>
+                                    <div style="font-size: 11px; opacity: 0.6; margin-top: 8px;">在此时段内将自动静音时钟滴答声，并在跨入该时段时自动平滑暂停音乐。</div>
+                                </div>
+                            
+                            <div class="sub-settings" style="margin-bottom:0;">
+                                <div class="sub-settings-title" style="color: #ff453a;">性能与省电</div>
+                                <div class="config-group switch-group"><label>强制锁定为极致省电/专注模式</label><label class="switch"><input type="checkbox" id="power-save-switch"><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group"><label>笔记本断电自动进入省电模式</label><label class="switch"><input type="checkbox" id="auto-power-save-switch"><span class="slider round"></span></label></div>
+                                <div class="tool-result" style="margin-bottom: 0;">开启省电模式后，将自动暂停所有的动态壁纸、极光运算、雨雪粒子模拟，让设备彻底降温冷静。</div>
+                            </div>
+                        </div>
+                    </div>
+
+========= #19: 🌙 夜间免打扰模式 =========
+<div class="sub-settings">
+                                <div class="sub-settings-title">🌙 夜间免打扰模式</div>
+                                <div class="config-group switch-group"><label>开启夜间免打扰</label><label class="switch"><input type="checkbox" id="dnd-switch"><span class="slider round"></span></label></div>
+                                <div id="dnd-time-settings" class="inner-settings-group" style="display: none; margin-top: 10px;">
+                                    <div class="inline-tool-row compact-row">
+                                        <div class="config-group" style="flex:1; margin-bottom:0;"><label style="font-size: 11px; opacity: 0.8; margin-bottom: 4px; display: block;">开始时间</label><input type="time" id="dnd-start-time" class="ui-input compact-input" style="width: 100%;"></div>
+                                        <span style="opacity: 0.5;">至</span>
+                                        <div class="config-group" style="flex:1; margin-bottom:0;"><label style="font-size: 11px; opacity: 0.8; margin-bottom: 4px; display: block;">结束时间</label><input type="time" id="dnd-end-time" class="ui-input compact-input" style="width: 100%;"></div>
+                                    </div>
+                                    <div style="font-size: 11px; opacity: 0.6; margin-top: 8px;">在此时段内将自动静音时钟滴答声，并在跨入该时段时自动平滑暂停音乐。</div>
+                                </div>
+                            
+                            <div class="sub-settings" style="margin-bottom:0;">
+                                <div class="sub-settings-title" style="color: #ff453a;">性能与省电</div>
+                                <div class="config-group switch-group"><label>强制锁定为极致省电/专注模式</label><label class="switch"><input type="checkbox" id="power-save-switch"><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group"><label>笔记本断电自动进入省电模式</label><label class="switch"><input type="checkbox" id="auto-power-save-switch"><span class="slider round"></span></label></div>
+                                <div class="tool-result" style="margin-bottom: 0;">开启省电模式后，将自动暂停所有的动态壁纸、极光运算、雨雪粒子模拟，让设备彻底降温冷静。</div>
+                            </div>
+                        </div>
+
+========= #20: 性能与省电 =========
+<div class="sub-settings" style="margin-bottom:0;">
+                                <div class="sub-settings-title" style="color: #ff453a;">性能与省电</div>
+                                <div class="config-group switch-group"><label>强制锁定为极致省电/专注模式</label><label class="switch"><input type="checkbox" id="power-save-switch"><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group"><label>笔记本断电自动进入省电模式</label><label class="switch"><input type="checkbox" id="auto-power-save-switch"><span class="slider round"></span></label></div>
+                                <div class="tool-result" style="margin-bottom: 0;">开启省电模式后，将自动暂停所有的动态壁纸、极光运算、雨雪粒子模拟，让设备彻底降温冷静。</div>
+                            </div>
+
+========= #21: 📚 批量导入与高级编辑 =========
+<div class="sub-settings" style="margin-bottom:0;">
+                                <div class="sub-settings-title" style="color: #34c759;">📚 批量导入与高级编辑</div>
+                                <div style="display:flex; gap:10px; flex-direction:column;">
+                                    <button class="ui-button small-btn" id="btn-import-browser-bookmarks" style="background: rgba(52,199,89,0.15); border-color: rgba(52,199,89,0.3); color: #fff;">🌟 一键导入浏览器书签</button>
+                                    <button class="ui-button small-btn" id="btn-batch-manage">📋 打开高级批量管理中心</button>
+                                    <input type="file" id="html-bookmark-upload" accept=".html" style="display:none;">
+                                </div>
+                            </div>
+
+========= #22: 背景音乐播放器 =========
+<div class="sub-settings">
+                                <div class="sub-settings-title">背景音乐播放器</div>
+                                <div class="config-group switch-group"><label>加载网页时自动播放音乐</label><label class="switch"><input type="checkbox" id="music-autoplay-switch" checked><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group"><label>后台播放保护 (防误关 / 系统控制)</label><label class="switch"><input type="checkbox" id="music-bg-play-switch" checked><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group"><label>记忆并继续上次播放进度 (断点续播)</label><label class="switch"><input type="checkbox" id="music-resume-switch" checked><span class="slider round"></span></label></div>
+                                <div class="config-group switch-group"><label>切换网页时自动暂停，切回时播放</label><label class="switch"><input type="checkbox" id="music-auto-pause-switch"><span class="slider round"></span></label></div>
+                                <div class="config-group"><label>音乐循环模式</label><div class="bg-mode-selector" id="music-play-mode-selector"><div class="mode-opt active" data-music-mode="loop">列表循环</div><div class="mode-opt" data-music-mode="single">单曲循环</div><div class="mode-opt" data-music-mode="shuffle">随机播放</div></div></div>
+                                
+                                <div class="config-group" style="margin-bottom:0;">
+                                    <div class="music-playlist-head" style="margin-top:0;"><strong style="color: var(--text-b);">全局音乐播放列表</strong><button class="ui-button small-btn" id="clear-music-list" style="width: auto;">一键清空</button></div>
+                                    <div class="media-library-note">拖动左侧手柄可重新排序，右侧可删除单曲。</div>
+                                    <div class="music-playlist" id="music-playlist"></div>
+                                </div>
+                            <div class="sub-settings" style="margin-bottom:0;">
+                                <div class="sub-settings-title">闹钟/计时器铃声库</div>
+                                <div class="media-library-note">这里管理时间工具弹窗使用的提示音。</div>
+                                <div class="music-playlist alarm-sound-list" id="alarm-sound-list"></div>
+                            </div>
+                        </div>
+
+========= #23: 闹钟/计时器铃声库 =========
+<div class="sub-settings" style="margin-bottom:0;">
+                                <div class="sub-settings-title">闹钟/计时器铃声库</div>
+                                <div class="media-library-note">这里管理时间工具弹窗使用的提示音。</div>
+                                <div class="music-playlist alarm-sound-list" id="alarm-sound-list"></div>
+                            </div>
+
