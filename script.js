@@ -17932,7 +17932,141 @@ function triggerConfetti(startX, startY) {
             tickSound: localStorage.getItem('binix_tick_sound'),
             interactiveTheme: localStorage.getItem('interactiveTheme'),
             manualPowerSave: localStorage.getItem('manual_power_save'),
-            isZenMode: state.isZenMode
+            isZenMode: state.isZenMode,
+            // 🔧 v4.3.1 补全：之前遗漏的重要配置项
+            tileResizeEnabled: state.tileResizeEnabled,
+            replaceClockWithTimer: state.replaceClockWithTimer,
+            listViewMode: state.listViewMode,
+            listLayoutMode: state.listLayoutMode,
+            listPreviewMode: state.listPreviewMode,
+            listViewMiniBrowser: state.listViewMiniBrowser,
+            listFoldCols: state.listFoldCols,
+            rememberFoldState: state.rememberFoldState,
+            foldColumnWidths: state.foldColumnWidths,
+            previewWidth: state.previewWidth,
+            searchMarqueeSpeed: state.searchMarqueeSpeed,
+            isIncognitoSearch: state.isIncognitoSearch,
+            bgTransforms: state.bgTransforms,
+            bgZoom: state.bgZoom,
+            ipLocationEnabled: state.ipLocationEnabled,
+            ipLocationOrder: state.ipLocationOrder,
+            weatherApiOrder: state.weatherApiOrder,
+            useAmap: state.useAmap,
+            // 独立 localStorage 数据（不在 state 中）
+            fineAnimationFreeze: localStorage.getItem('fine_animation_freeze'),
+            fineHideAmbient: localStorage.getItem('fine_hide_ambient'),
+            fineHideCanvas: localStorage.getItem('fine_hide_canvas'),
+            fineHideCursor: localStorage.getItem('fine_hide_cursor'),
+            fineNoGlass: localStorage.getItem('fine_no_glass'),
+            finePauseVideo: localStorage.getItem('fine_pause_video'),
+            finePauseWeather: localStorage.getItem('fine_pause_weather'),
+            gpuLayersEnabled: localStorage.getItem('gpu_layers_enabled'),
+            cursorGpuEnabled: localStorage.getItem('cursor_gpu_enabled'),
+            fcSettings: localStorage.getItem('fc_settings'),
+            extTheme: localStorage.getItem('ext_theme'),
+            idleSleepTimeout: localStorage.getItem('idle_sleep_timeout'),
+            tabProSettingsV430: localStorage.getItem('tab_pro_settings_v430'),
+            // ═══ v4.3.2 补全：小组件相关 ═══
+            binixovoWidgets: JSON.parse(localStorage.getItem('binixovo_widgets') || 'null'),
+            binixCustomWidgets: JSON.parse(localStorage.getItem('binix_custom_widgets') || 'null'),
+            binixCategoryOrder: JSON.parse(localStorage.getItem('binix_categoryOrder') || 'null'),
+            binixFoldColMap: JSON.parse(localStorage.getItem('binix_foldColMap') || 'null'),
+            binixPoemColors: JSON.parse(localStorage.getItem('binix_poem_colors') || 'null'),
+            binixTourCompletedV430: localStorage.getItem('binix_tour_completed_v430'),
+            // ═══ 外观自定义 - 按钮 ═══
+            btnBgBlur: localStorage.getItem('btn_bg_blur'),
+            btnBgColor: localStorage.getItem('btn_bg_color'),
+            btnBgFollow: localStorage.getItem('btn_bg_follow'),
+            btnBgOpacity: localStorage.getItem('btn_bg_opacity'),
+            btnTextColor: localStorage.getItem('btn_text_color'),
+            btnTextFollow: localStorage.getItem('btn_text_follow'),
+            // ═══ 外观自定义 - Dock栏 ═══
+            dockBgColor: localStorage.getItem('dock_bg_color'),
+            dockBgFollow: localStorage.getItem('dock_bg_follow'),
+            dockBgOpacity: localStorage.getItem('dock_bg_opacity'),
+            dockBlur: localStorage.getItem('dock_blur'),
+            dockBorderOpacity: localStorage.getItem('dock_border_opacity'),
+            dockSaturate: localStorage.getItem('dock_saturate'),
+            dockTextColor: localStorage.getItem('dock_text_color'),
+            dockTextFollow: localStorage.getItem('dock_text_follow'),
+            // ═══ 外观自定义 - 历史面板 ═══
+            historyBgColor: localStorage.getItem('history_bg_color'),
+            historyBgFollow: localStorage.getItem('history_bg_follow'),
+            historyBgOpacity: localStorage.getItem('history_bg_opacity'),
+            historyBlur: localStorage.getItem('history_blur'),
+            historyMaxRows: localStorage.getItem('history_max_rows'),
+            historySaturate: localStorage.getItem('history_saturate'),
+            historyTextColor: localStorage.getItem('history_text_color'),
+            historyTextFollow: localStorage.getItem('history_text_follow'),
+            // ═══ 外观自定义 - 列表项 ═══
+            itemBgBlur: localStorage.getItem('item_bg_blur'),
+            itemBgColor: localStorage.getItem('item_bg_color'),
+            itemBgFollow: localStorage.getItem('item_bg_follow'),
+            itemBgOpacity: localStorage.getItem('item_bg_opacity'),
+            itemTextColor: localStorage.getItem('item_text_color'),
+            itemTextFollow: localStorage.getItem('item_text_follow'),
+            // ═══ 外观自定义 - 左侧栏 ═══
+            railBgBlur: localStorage.getItem('rail_bg_blur'),
+            railBgColor: localStorage.getItem('rail_bg_color'),
+            railBgFollow: localStorage.getItem('rail_bg_follow'),
+            railBgOpacity: localStorage.getItem('rail_bg_opacity'),
+            // ═══ 外观自定义 - 搜索建议 ═══
+            suggestionBgColor: localStorage.getItem('suggestion_bg_color'),
+            suggestionBgFollow: localStorage.getItem('suggestion_bg_follow'),
+            suggestionBgOpacity: localStorage.getItem('suggestion_bg_opacity'),
+            suggestionBlur: localStorage.getItem('suggestion_blur'),
+            suggestionMaxRows: localStorage.getItem('suggestion_max_rows'),
+            suggestionSaturate: localStorage.getItem('suggestion_saturate'),
+            suggestionTextColor: localStorage.getItem('suggestion_text_color'),
+            suggestionTextFollow: localStorage.getItem('suggestion_text_follow'),
+            // ═══ 外观自定义 - 设置面板 ═══
+            settingPanelBgBlur: localStorage.getItem('setting_panel_bg_blur'),
+            settingPanelBgColor: localStorage.getItem('setting_panel_bg_color'),
+            settingPanelBgFollow: localStorage.getItem('setting_panel_bg_follow'),
+            settingPanelBgOpacity: localStorage.getItem('setting_panel_bg_opacity'),
+            settingPanelTextColor: localStorage.getItem('setting_panel_text_color'),
+            settingPanelTextFollow: localStorage.getItem('setting_panel_text_follow'),
+            settingPanelWidth: localStorage.getItem('setting_panel_width'),
+            // ═══ 搜索波纹效果 ═══
+            searchRippleColorMode: localStorage.getItem('search_ripple_color_mode'),
+            searchRippleCustomColor: localStorage.getItem('search_ripple_custom_color'),
+            searchRippleSize: localStorage.getItem('search_ripple_size'),
+            searchRippleSpeed: localStorage.getItem('search_ripple_speed'),
+            // ═══ 样式/主题 ═══
+            customStyles: JSON.parse(localStorage.getItem('custom_styles') || 'null'),
+            activeStyleId: localStorage.getItem('active_style_id'),
+            useDynamicBlobs: localStorage.getItem('use_dynamic_blobs'),
+            // ═══ 功能开关/配置 ═══
+            stockWatchlist: JSON.parse(localStorage.getItem('stock_watchlist') || 'null'),
+            countryOrder: JSON.parse(localStorage.getItem('country_order') || 'null'),
+            listGeneralDisplayName: localStorage.getItem('list_general_display_name'),
+            quoteEnglishDate: localStorage.getItem('quote_english_date'),
+            quoteEnglishIndex: localStorage.getItem('quote_english_index'),
+            searchFocusEnabled: localStorage.getItem('search_focus_enabled'),
+            customLocationEnabled: localStorage.getItem('custom_location_enabled'),
+            // ═══ API/密钥配置 ═══
+            aiPolishCustomModel: localStorage.getItem('ai_polish_custom_model'),
+            aiPolishCustomUrl: localStorage.getItem('ai_polish_custom_url'),
+            aiPolishEngine: localStorage.getItem('ai_polish_engine'),
+            aiPolishKey: localStorage.getItem('ai_polish_key'),
+            binixovoApiConfig: JSON.parse(localStorage.getItem('binixovo_api_config') || 'null'),
+            unsplashAccessKey: localStorage.getItem('unsplash_access_key'),
+            // engicon 引擎图标数据（前缀键集合）
+            engIcons: (function() { var icons = {}; for (var i = 0; i < localStorage.length; i++) { var k = localStorage.key(i); if (k && k.indexOf('engicon_') === 0) icons[k] = localStorage.getItem(k); } return Object.keys(icons).length ? icons : null; })(),
+            // ═══ v4.3.2 补全：常量定义键 ═══
+            sectionColors: JSON.parse(localStorage.getItem('section_colors') || 'null'),
+            binixovoExtSettings: JSON.parse(localStorage.getItem('binixovo_ext_settings') || 'null'),
+            timerState: JSON.parse(localStorage.getItem('timer_state') || 'null'),
+            binixovoWeatherCities: JSON.parse(localStorage.getItem('binixovo_weather_cities') || 'null'),
+            binixovoBookmarkVisits: JSON.parse(localStorage.getItem('binixovo_bookmark_visits') || 'null'),
+            // ═══ 动态模板键：fold_settings_* / fold_state_* ═══
+            foldSettingsMap: (function() { var m = {}; for (var i = 0; i < localStorage.length; i++) { var k = localStorage.key(i); if (k && k.indexOf('fold_settings_') === 0) { try { m[k] = JSON.parse(localStorage.getItem(k)); } catch(e) { m[k] = localStorage.getItem(k); } } } return Object.keys(m).length ? m : null; })(),
+            foldStateMap: (function() { var m = {}; for (var i = 0; i < localStorage.length; i++) { var k = localStorage.key(i); if (k && k.indexOf('fold_state_') === 0) { try { m[k] = JSON.parse(localStorage.getItem(k)); } catch(e) { m[k] = localStorage.getItem(k); } } } return Object.keys(m).length ? m : null; })(),
+            // ═══ 缓存/统计（番茄钟/汇率/赛事/天气） ═══
+            pomodoroDailyStats: JSON.parse(localStorage.getItem('pomodoro_daily_stats') || 'null'),
+            binixovoCurrencyRates: JSON.parse(localStorage.getItem('binixovo_currency_rates') || 'null'),
+            binixovoSportsMatchesCache: JSON.parse(localStorage.getItem('binixovo_sports_matches_cache_v1') || 'null'),
+            binixWeatherCache: JSON.parse(localStorage.getItem('binix_weather_cache') || 'null')
         };
         const jsonString = JSON.stringify(exportData, null, 2);
         const blob = new Blob([jsonString], {type: 'application/json;charset=utf-8'});
@@ -18114,6 +18248,144 @@ function triggerConfetti(startX, startY) {
                         if (imported.isZenMode !== undefined) {
                             localStorage.setItem('is_zen_mode', String(imported.isZenMode === true || imported.isZenMode === 'true'));
                         }
+                    // 🔧 v4.3.1 补全：新导出字段的导入恢复
+                    if (imported.tileResizeEnabled !== undefined) localStorage.setItem('tile_resize_enabled', imported.tileResizeEnabled);
+                    if (imported.replaceClockWithTimer !== undefined) localStorage.setItem('replace_clock_timer', imported.replaceClockWithTimer);
+                    if (imported.listViewMode !== undefined) localStorage.setItem('list_view_mode', imported.listViewMode);
+                    if (imported.listLayoutMode) localStorage.setItem('list_layout_mode', imported.listLayoutMode);
+                    if (imported.listPreviewMode) localStorage.setItem('list_preview_mode', imported.listPreviewMode);
+                    if (imported.listViewMiniBrowser !== undefined) localStorage.setItem('list_view_mini_browser', imported.listViewMiniBrowser);
+                    if (imported.listFoldCols !== undefined) localStorage.setItem('list_fold_cols', imported.listFoldCols);
+                    if (imported.rememberFoldState !== undefined) localStorage.setItem('remember_fold_state', imported.rememberFoldState);
+                    if (imported.foldColumnWidths) localStorage.setItem('fold_column_widths', JSON.stringify(imported.foldColumnWidths));
+                    if (imported.previewWidth !== undefined) localStorage.setItem('preview_width', imported.previewWidth);
+                    if (imported.searchMarqueeSpeed !== undefined) localStorage.setItem('search_marquee_speed', imported.searchMarqueeSpeed);
+                    if (imported.isIncognitoSearch !== undefined) localStorage.setItem('is_incognito_search', imported.isIncognitoSearch);
+                    if (imported.bgTransforms) localStorage.setItem('bg_transforms', JSON.stringify(imported.bgTransforms));
+                    if (imported.bgZoom) {
+                        if (imported.bgZoom.enabled !== undefined) localStorage.setItem('bg_zoom_enabled', imported.bgZoom.enabled);
+                        if (imported.bgZoom.scale !== undefined) localStorage.setItem('bg_zoom_scale', imported.bgZoom.scale);
+                        if (imported.bgZoom.duration !== undefined) localStorage.setItem('bg_zoom_duration', imported.bgZoom.duration);
+                    }
+                    if (imported.ipLocationEnabled !== undefined) localStorage.setItem('ip_location_enabled', imported.ipLocationEnabled);
+                    if (imported.ipLocationOrder) localStorage.setItem('ip_location_order', imported.ipLocationOrder);
+                    if (imported.weatherApiOrder) localStorage.setItem('weather_api_order', imported.weatherApiOrder);
+                    if (imported.useAmap !== undefined) localStorage.setItem('use_amap', imported.useAmap);
+                    // 独立 localStorage 数据恢复
+                    if (imported.fineAnimationFreeze !== undefined) localStorage.setItem('fine_animation_freeze', imported.fineAnimationFreeze);
+                    if (imported.fineHideAmbient !== undefined) localStorage.setItem('fine_hide_ambient', imported.fineHideAmbient);
+                    if (imported.fineHideCanvas !== undefined) localStorage.setItem('fine_hide_canvas', imported.fineHideCanvas);
+                    if (imported.fineHideCursor !== undefined) localStorage.setItem('fine_hide_cursor', imported.fineHideCursor);
+                    if (imported.fineNoGlass !== undefined) localStorage.setItem('fine_no_glass', imported.fineNoGlass);
+                    if (imported.finePauseVideo !== undefined) localStorage.setItem('fine_pause_video', imported.finePauseVideo);
+                    if (imported.finePauseWeather !== undefined) localStorage.setItem('fine_pause_weather', imported.finePauseWeather);
+                    if (imported.gpuLayersEnabled !== undefined) localStorage.setItem('gpu_layers_enabled', imported.gpuLayersEnabled);
+                    if (imported.cursorGpuEnabled !== undefined) localStorage.setItem('cursor_gpu_enabled', imported.cursorGpuEnabled);
+                    if (imported.fcSettings) localStorage.setItem('fc_settings', imported.fcSettings);
+                    if (imported.extTheme) localStorage.setItem('ext_theme', imported.extTheme);
+                    if (imported.idleSleepTimeout) localStorage.setItem('idle_sleep_timeout', imported.idleSleepTimeout);
+                    if (imported.tabProSettingsV430) localStorage.setItem('tab_pro_settings_v430', imported.tabProSettingsV430);
+                    // ═══ v4.3.2 补全：小组件相关 ═══
+                    if (imported.binixovoWidgets) { try { const v = typeof imported.binixovoWidgets === 'string' ? JSON.parse(imported.binixovoWidgets) : imported.binixovoWidgets; localStorage.setItem('binixovo_widgets', JSON.stringify(v)); } catch(e) {} }
+                    if (imported.binixCustomWidgets) { try { const v = typeof imported.binixCustomWidgets === 'string' ? JSON.parse(imported.binixCustomWidgets) : imported.binixCustomWidgets; localStorage.setItem('binix_custom_widgets', JSON.stringify(v)); } catch(e) {} }
+                    if (imported.binixCategoryOrder) { try { const v = typeof imported.binixCategoryOrder === 'string' ? JSON.parse(imported.binixCategoryOrder) : imported.binixCategoryOrder; localStorage.setItem('binix_categoryOrder', JSON.stringify(v)); } catch(e) {} }
+                    if (imported.binixFoldColMap) { try { const v = typeof imported.binixFoldColMap === 'string' ? JSON.parse(imported.binixFoldColMap) : imported.binixFoldColMap; localStorage.setItem('binix_foldColMap', JSON.stringify(v)); } catch(e) {} }
+                    if (imported.binixPoemColors) { try { const v = typeof imported.binixPoemColors === 'string' ? JSON.parse(imported.binixPoemColors) : imported.binixPoemColors; localStorage.setItem('binix_poem_colors', JSON.stringify(v)); } catch(e) {} }
+                    if (imported.binixTourCompletedV430 !== undefined) localStorage.setItem('binix_tour_completed_v430', imported.binixTourCompletedV430);
+                    // ═══ 外观自定义 - 按钮 ═══
+                    if (imported.btnBgBlur !== undefined) localStorage.setItem('btn_bg_blur', imported.btnBgBlur);
+                    if (imported.btnBgColor !== undefined) localStorage.setItem('btn_bg_color', imported.btnBgColor);
+                    if (imported.btnBgFollow !== undefined) localStorage.setItem('btn_bg_follow', imported.btnBgFollow);
+                    if (imported.btnBgOpacity !== undefined) localStorage.setItem('btn_bg_opacity', imported.btnBgOpacity);
+                    if (imported.btnTextColor !== undefined) localStorage.setItem('btn_text_color', imported.btnTextColor);
+                    if (imported.btnTextFollow !== undefined) localStorage.setItem('btn_text_follow', imported.btnTextFollow);
+                    // ═══ 外观自定义 - Dock栏 ═══
+                    if (imported.dockBgColor !== undefined) localStorage.setItem('dock_bg_color', imported.dockBgColor);
+                    if (imported.dockBgFollow !== undefined) localStorage.setItem('dock_bg_follow', imported.dockBgFollow);
+                    if (imported.dockBgOpacity !== undefined) localStorage.setItem('dock_bg_opacity', imported.dockBgOpacity);
+                    if (imported.dockBlur !== undefined) localStorage.setItem('dock_blur', imported.dockBlur);
+                    if (imported.dockBorderOpacity !== undefined) localStorage.setItem('dock_border_opacity', imported.dockBorderOpacity);
+                    if (imported.dockSaturate !== undefined) localStorage.setItem('dock_saturate', imported.dockSaturate);
+                    if (imported.dockTextColor !== undefined) localStorage.setItem('dock_text_color', imported.dockTextColor);
+                    if (imported.dockTextFollow !== undefined) localStorage.setItem('dock_text_follow', imported.dockTextFollow);
+                    // ═══ 外观自定义 - 历史面板 ═══
+                    if (imported.historyBgColor !== undefined) localStorage.setItem('history_bg_color', imported.historyBgColor);
+                    if (imported.historyBgFollow !== undefined) localStorage.setItem('history_bg_follow', imported.historyBgFollow);
+                    if (imported.historyBgOpacity !== undefined) localStorage.setItem('history_bg_opacity', imported.historyBgOpacity);
+                    if (imported.historyBlur !== undefined) localStorage.setItem('history_blur', imported.historyBlur);
+                    if (imported.historyMaxRows !== undefined) localStorage.setItem('history_max_rows', imported.historyMaxRows);
+                    if (imported.historySaturate !== undefined) localStorage.setItem('history_saturate', imported.historySaturate);
+                    if (imported.historyTextColor !== undefined) localStorage.setItem('history_text_color', imported.historyTextColor);
+                    if (imported.historyTextFollow !== undefined) localStorage.setItem('history_text_follow', imported.historyTextFollow);
+                    // ═══ 外观自定义 - 列表项 ═══
+                    if (imported.itemBgBlur !== undefined) localStorage.setItem('item_bg_blur', imported.itemBgBlur);
+                    if (imported.itemBgColor !== undefined) localStorage.setItem('item_bg_color', imported.itemBgColor);
+                    if (imported.itemBgFollow !== undefined) localStorage.setItem('item_bg_follow', imported.itemBgFollow);
+                    if (imported.itemBgOpacity !== undefined) localStorage.setItem('item_bg_opacity', imported.itemBgOpacity);
+                    if (imported.itemTextColor !== undefined) localStorage.setItem('item_text_color', imported.itemTextColor);
+                    if (imported.itemTextFollow !== undefined) localStorage.setItem('item_text_follow', imported.itemTextFollow);
+                    // ═══ 外观自定义 - 左侧栏 ═══
+                    if (imported.railBgBlur !== undefined) localStorage.setItem('rail_bg_blur', imported.railBgBlur);
+                    if (imported.railBgColor !== undefined) localStorage.setItem('rail_bg_color', imported.railBgColor);
+                    if (imported.railBgFollow !== undefined) localStorage.setItem('rail_bg_follow', imported.railBgFollow);
+                    if (imported.railBgOpacity !== undefined) localStorage.setItem('rail_bg_opacity', imported.railBgOpacity);
+                    // ═══ 外观自定义 - 搜索建议 ═══
+                    if (imported.suggestionBgColor !== undefined) localStorage.setItem('suggestion_bg_color', imported.suggestionBgColor);
+                    if (imported.suggestionBgFollow !== undefined) localStorage.setItem('suggestion_bg_follow', imported.suggestionBgFollow);
+                    if (imported.suggestionBgOpacity !== undefined) localStorage.setItem('suggestion_bg_opacity', imported.suggestionBgOpacity);
+                    if (imported.suggestionBlur !== undefined) localStorage.setItem('suggestion_blur', imported.suggestionBlur);
+                    if (imported.suggestionMaxRows !== undefined) localStorage.setItem('suggestion_max_rows', imported.suggestionMaxRows);
+                    if (imported.suggestionSaturate !== undefined) localStorage.setItem('suggestion_saturate', imported.suggestionSaturate);
+                    if (imported.suggestionTextColor !== undefined) localStorage.setItem('suggestion_text_color', imported.suggestionTextColor);
+                    if (imported.suggestionTextFollow !== undefined) localStorage.setItem('suggestion_text_follow', imported.suggestionTextFollow);
+                    // ═══ 外观自定义 - 设置面板 ═══
+                    if (imported.settingPanelBgBlur !== undefined) localStorage.setItem('setting_panel_bg_blur', imported.settingPanelBgBlur);
+                    if (imported.settingPanelBgColor !== undefined) localStorage.setItem('setting_panel_bg_color', imported.settingPanelBgColor);
+                    if (imported.settingPanelBgFollow !== undefined) localStorage.setItem('setting_panel_bg_follow', imported.settingPanelBgFollow);
+                    if (imported.settingPanelBgOpacity !== undefined) localStorage.setItem('setting_panel_bg_opacity', imported.settingPanelBgOpacity);
+                    if (imported.settingPanelTextColor !== undefined) localStorage.setItem('setting_panel_text_color', imported.settingPanelTextColor);
+                    if (imported.settingPanelTextFollow !== undefined) localStorage.setItem('setting_panel_text_follow', imported.settingPanelTextFollow);
+                    if (imported.settingPanelWidth !== undefined) localStorage.setItem('setting_panel_width', imported.settingPanelWidth);
+                    // ═══ 搜索波纹效果 ═══
+                    if (imported.searchRippleColorMode !== undefined) localStorage.setItem('search_ripple_color_mode', imported.searchRippleColorMode);
+                    if (imported.searchRippleCustomColor !== undefined) localStorage.setItem('search_ripple_custom_color', imported.searchRippleCustomColor);
+                    if (imported.searchRippleSize !== undefined) localStorage.setItem('search_ripple_size', imported.searchRippleSize);
+                    if (imported.searchRippleSpeed !== undefined) localStorage.setItem('search_ripple_speed', imported.searchRippleSpeed);
+                    // ═══ 样式/主题 ═══
+                    if (imported.customStyles) { try { const v = typeof imported.customStyles === 'string' ? JSON.parse(imported.customStyles) : imported.customStyles; localStorage.setItem('custom_styles', JSON.stringify(v)); } catch(e) {} }
+                    if (imported.activeStyleId !== undefined) localStorage.setItem('active_style_id', imported.activeStyleId);
+                    if (imported.useDynamicBlobs !== undefined) localStorage.setItem('use_dynamic_blobs', imported.useDynamicBlobs);
+                    // ═══ 功能开关/配置 ═══
+                    if (imported.stockWatchlist) { try { const v = typeof imported.stockWatchlist === 'string' ? JSON.parse(imported.stockWatchlist) : imported.stockWatchlist; localStorage.setItem('stock_watchlist', JSON.stringify(v)); } catch(e) {} }
+                    if (imported.countryOrder) { try { const v = typeof imported.countryOrder === 'string' ? JSON.parse(imported.countryOrder) : imported.countryOrder; localStorage.setItem('country_order', JSON.stringify(v)); } catch(e) {} }
+                    if (imported.listGeneralDisplayName !== undefined) localStorage.setItem('list_general_display_name', imported.listGeneralDisplayName);
+                    if (imported.quoteEnglishDate !== undefined) localStorage.setItem('quote_english_date', imported.quoteEnglishDate);
+                    if (imported.quoteEnglishIndex !== undefined) localStorage.setItem('quote_english_index', imported.quoteEnglishIndex);
+                    if (imported.searchFocusEnabled !== undefined) localStorage.setItem('search_focus_enabled', imported.searchFocusEnabled);
+                    if (imported.customLocationEnabled !== undefined) localStorage.setItem('custom_location_enabled', imported.customLocationEnabled);
+                    // ═══ API/密钥配置 ═══
+                    if (imported.aiPolishCustomModel !== undefined) localStorage.setItem('ai_polish_custom_model', imported.aiPolishCustomModel);
+                    if (imported.aiPolishCustomUrl !== undefined) localStorage.setItem('ai_polish_custom_url', imported.aiPolishCustomUrl);
+                    if (imported.aiPolishEngine !== undefined) localStorage.setItem('ai_polish_engine', imported.aiPolishEngine);
+                    if (imported.aiPolishKey !== undefined) localStorage.setItem('ai_polish_key', imported.aiPolishKey);
+                    if (imported.binixovoApiConfig) { try { const v = typeof imported.binixovoApiConfig === 'string' ? JSON.parse(imported.binixovoApiConfig) : imported.binixovoApiConfig; localStorage.setItem('binixovo_api_config', JSON.stringify(v)); } catch(e) {} }
+                    if (imported.unsplashAccessKey !== undefined) localStorage.setItem('unsplash_access_key', imported.unsplashAccessKey);
+                    // engicon 引擎图标恢复
+                    if (imported.engIcons && typeof imported.engIcons === 'object') { Object.keys(imported.engIcons).forEach(function(k) { if (k.indexOf('engicon_') === 0) localStorage.setItem(k, imported.engIcons[k]); }); }
+                    // ═══ v4.3.2 补全：常量定义键 ═══
+                    if (imported.sectionColors) { try { var v = typeof imported.sectionColors === 'string' ? JSON.parse(imported.sectionColors) : imported.sectionColors; localStorage.setItem('section_colors', JSON.stringify(v)); } catch(e) {} }
+                    if (imported.binixovoExtSettings) { try { var v = typeof imported.binixovoExtSettings === 'string' ? JSON.parse(imported.binixovoExtSettings) : imported.binixovoExtSettings; localStorage.setItem('binixovo_ext_settings', JSON.stringify(v)); } catch(e) {} }
+                    if (imported.timerState) { try { var v = typeof imported.timerState === 'string' ? JSON.parse(imported.timerState) : imported.timerState; localStorage.setItem('timer_state', JSON.stringify(v)); } catch(e) {} }
+                    if (imported.binixovoWeatherCities) { try { var v = typeof imported.binixovoWeatherCities === 'string' ? JSON.parse(imported.binixovoWeatherCities) : imported.binixovoWeatherCities; localStorage.setItem('binixovo_weather_cities', JSON.stringify(v)); } catch(e) {} }
+                    if (imported.binixovoBookmarkVisits) { try { var v = typeof imported.binixovoBookmarkVisits === 'string' ? JSON.parse(imported.binixovoBookmarkVisits) : imported.binixovoBookmarkVisits; localStorage.setItem('binixovo_bookmark_visits', JSON.stringify(v)); } catch(e) {} }
+                    // ═══ 动态模板键：fold_settings_* / fold_state_* ═══
+                    if (imported.foldSettingsMap && typeof imported.foldSettingsMap === 'object') { Object.keys(imported.foldSettingsMap).forEach(function(k) { try { localStorage.setItem(k, JSON.stringify(imported.foldSettingsMap[k])); } catch(e) {} }); }
+                    if (imported.foldStateMap && typeof imported.foldStateMap === 'object') { Object.keys(imported.foldStateMap).forEach(function(k) { try { localStorage.setItem(k, JSON.stringify(imported.foldStateMap[k])); } catch(e) {} }); }
+                    // ═══ 缓存/统计（番茄钟/汇率/赛事/天气） ═══
+                    if (imported.pomodoroDailyStats) { try { var v = typeof imported.pomodoroDailyStats === 'string' ? JSON.parse(imported.pomodoroDailyStats) : imported.pomodoroDailyStats; localStorage.setItem('pomodoro_daily_stats', JSON.stringify(v)); } catch(e) {} }
+                    if (imported.binixovoCurrencyRates) localStorage.setItem('binixovo_currency_rates', typeof imported.binixovoCurrencyRates === 'string' ? imported.binixovoCurrencyRates : JSON.stringify(imported.binixovoCurrencyRates));
+                    if (imported.binixovoSportsMatchesCache) localStorage.setItem('binixovo_sports_matches_cache_v1', typeof imported.binixovoSportsMatchesCache === 'string' ? imported.binixovoSportsMatchesCache : JSON.stringify(imported.binixovoSportsMatchesCache));
+                    if (imported.binixWeatherCache) localStorage.setItem('binix_weather_cache', typeof imported.binixWeatherCache === 'string' ? imported.binixWeatherCache : JSON.stringify(imported.binixWeatherCache));
                     // 通知其它环境（如交互式壁纸、Java 后端保存）
                     if (typeof window.saveData === 'function') {
                         Object.assign(state, imported);
