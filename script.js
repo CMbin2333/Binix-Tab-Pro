@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ip_ipapi: { url: 'https://ipapi.co/json/', key: '' },
         ip_geojs: { url: 'https://get.geojs.io/v1/ip/geo.json', key: '' },
         ip_pconline: { url: 'https://whois.pconline.com.cn/ipJson.jsp?json=true', key: '' },
-        bing_wallpaper: { url: 'https://bing.biturl.top/?resolution=1920&format=json&index={index}&mkt=zh-CN', key: '' },
+        bing_wallpaper: { url: 'https://www.bing.com/HPImageArchive.aspx?format=js&idx={index}&n=1&mkt=zh-CN', key: '' },
         weather_wttr: { url: 'https://wttr.in/{query}?format=j1&lang=zh', key: '' },
         weather_openmeteo: { url: 'https://api.open-meteo.com/v1/forecast', key: '' },
         ip_amap: { url: 'https://restapi.amap.com/v3/ip', key: '' },
@@ -7855,6 +7855,19 @@ body.list-view-mode.list-fold-layout .list-cat-fold-grid .tile:not(:last-child) 
         updateAlarmStatus();
         if (triggerImportBtn) triggerImportBtn.onclick = () => importInput?.click();
         if (triggerCustomBgUploadBtn) triggerCustomBgUploadBtn.onclick = () => customBgUpload?.click();
+        if (customBgUpload) customBgUpload.onchange = (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = () => {
+                state.customImgData = reader.result;
+                localStorage.setItem('custom_img_data', reader.result);
+                localStorage.setItem('custom_img_name', file.name);
+                if (customBgFileName) customBgFileName.innerText = file.name;
+                setBgMode('custom');
+            };
+            reader.readAsDataURL(file);
+        };
         if (triggerLiveUploadBtn) triggerLiveUploadBtn.onclick = () => liveUploadInput?.click();
         if (resetAllDataBtn) {
             resetAllDataBtn.onclick = () => {
@@ -8212,6 +8225,69 @@ body.list-view-mode.list-fold-layout .list-cat-fold-grid .tile:not(:last-child) 
             opt.onclick = () => { state.histShuffle = opt.dataset.histShuffle === '1'; localStorage.setItem('hist_shuffle', state.histShuffle ? '1' : '0'); histShuffleOpts.forEach(o => o.classList.toggle('active', (o.dataset.histShuffle === '1') === state.histShuffle)); };
         });
         histRefreshBtn.onclick = () => fetchHistoryImage(true);
+        // ===== IndexedDB 视频持久化存储 =====
+        const VIDEO_DB_NAME = 'BinixOvO_VideoStore';
+        const VIDEO_STORE_NAME = 'videos';
+        function openVideoDB() {
+            return new Promise((resolve, reject) => {
+                const req = indexedDB.open(VIDEO_DB_NAME, 1);
+                req.onupgradeneeded = (e) => {
+                    const db = e.target.result;
+                    if (!db.objectStoreNames.contains(VIDEO_STORE_NAME)) {
+                        db.createObjectStore(VIDEO_STORE_NAME, { keyPath: 'id' });
+                    }
+                };
+                req.onsuccess = (e) => resolve(e.target.result);
+                req.onerror = (e) => reject(e.target.error);
+            });
+        }
+        async function saveVideoToDB(file) {
+            try {
+                const db = await openVideoDB();
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        const tx = db.transaction(VIDEO_STORE_NAME, 'readwrite');
+                        const store = tx.objectStore(VIDEO_STORE_NAME);
+                        store.put({ id: 'bg_video', blob: reader.result, name: file.name, type: file.type });
+                        tx.oncomplete = () => { db.close(); resolve(); };
+                        tx.onerror = () => { db.close(); reject(tx.error); };
+                    };
+                    reader.onerror = () => { db.close(); reject(reader.error); };
+                    reader.readAsArrayBuffer(file);
+                });
+            } catch(e) { console.error('saveVideoToDB error:', e); }
+        }
+        async function loadVideoFromDB() {
+            try {
+                const db = await openVideoDB();
+                return new Promise((resolve, reject) => {
+                    const tx = db.transaction(VIDEO_STORE_NAME, 'readonly');
+                    const store = tx.objectStore(VIDEO_STORE_NAME);
+                    const req = store.get('bg_video');
+                    req.onsuccess = () => {
+                        db.close();
+                        if (req.result && req.result.blob) {
+                            // 校验 ArrayBuffer 非空（Chrome MV3 IndexedDB 可能返回已 detached 的缓冲区）
+                            let buffer = req.result.blob;
+                            if (buffer instanceof ArrayBuffer && buffer.byteLength === 0) {
+                                console.error('从 IndexedDB 恢复的视频 ArrayBuffer 为空');
+                                resolve(null);
+                                return;
+                            }
+                            const blob = new Blob([buffer], { type: req.result.type || 'video/mp4' });
+                            if (blob.size === 0) {
+                                console.error('从 IndexedDB 恢复的视频 Blob 为空');
+                                resolve(null);
+                                return;
+                            }
+                            resolve(blob);
+                        } else resolve(null);
+                    };
+                    req.onerror = () => { db.close(); reject(req.error); };
+                });
+            } catch(e) { console.error('loadVideoFromDB error:', e); return null; }
+        }
         liveMutedSwitch.checked = state.liveMuted;
         bgVideo.muted = state.liveMuted;
         liveMutedSwitch.onchange = (e) => {
@@ -8224,13 +8300,49 @@ body.list-view-mode.list-fold-layout .list-cat-fold-grid .tile:not(:last-child) 
             if (file) {
                 liveFileName.innerText = file.name;
                 await saveVideoToDB(file);
-                bgVideo.src = URL.createObjectURL(file);
+                const url = URL.createObjectURL(file);
+                // 必须在设置 src 之前绑定事件，防止 blob URL 元数据同步加载导致事件丢失
+                bgVideo.onloadedmetadata = () => {
+                    bgVideo.play().catch(() => {});
+                    bgVideo.muted = state.liveMuted;
+                    liveMutedSwitch.checked = state.liveMuted;
+                };
+                bgVideo.onerror = () => { console.error('视频壁纸上传加载失败'); };
+                const fallbackPlay = setTimeout(() => {
+                    if (bgVideo.paused && bgVideo.readyState >= 1) {
+                        bgVideo.play().catch(() => {});
+                    }
+                }, 500);
+                bgVideo.addEventListener('canplay', () => {
+                    clearTimeout(fallbackPlay);
+                    if (bgVideo.paused) bgVideo.play().catch(() => {});
+                }, { once: true });
+                bgVideo.muted = true;
+                bgVideo.src = url;
                 setBgMode('live');
             }
         };
         const videoBlob = await loadVideoFromDB();
         if (videoBlob) {
-            bgVideo.src = URL.createObjectURL(videoBlob);
+            const url = URL.createObjectURL(videoBlob);
+            // 必须在设置 src 之前绑定事件，防止 blob URL 元数据同步加载导致事件丢失
+            bgVideo.onloadedmetadata = () => {
+                bgVideo.play().catch(() => {});
+                bgVideo.muted = state.liveMuted;
+                liveMutedSwitch.checked = state.liveMuted;
+            };
+            bgVideo.onerror = () => { console.error('从 IndexedDB 恢复的视频加载失败'); };
+            const fallbackPlay = setTimeout(() => {
+                if (bgVideo.paused && bgVideo.readyState >= 1) {
+                    bgVideo.play().catch(() => {});
+                }
+            }, 500);
+            bgVideo.addEventListener('canplay', () => {
+                clearTimeout(fallbackPlay);
+                if (bgVideo.paused) bgVideo.play().catch(() => {});
+            }, { once: true });
+            bgVideo.muted = true;
+            bgVideo.src = url;
             liveFileName.innerText = "已加载本地视频";
         }
         // 🎨 动态光斑效果开关
@@ -9743,15 +9855,22 @@ body.list-view-mode.list-fold-layout .list-cat-fold-grid .tile:not(:last-child) 
         var skipReset = preloaded && preloaded.mode === state.bgMode;
         if (!skipReset) {
             bgLayer.style.opacity = '0';
+            bgLayer.classList.remove('show');
             bgVideo.style.opacity = '0';
+            bgVideo.classList.remove('show');
             bgLayer.style.backgroundImage = 'none';
         }
         document.body.classList.remove('static-mode');
         if (state.bgMode === 'mesh') {
             updateThemeColor();
         } else if (state.bgMode === 'live') {
+            document.body.classList.remove('power-save-mode');
+            document.body.classList.remove('fine-pause-video');
+            document.body.classList.remove('fine-hide-canvas');
             document.body.classList.add('static-mode');
             bgVideo.style.opacity = '1';
+            bgVideo.style.zIndex = '0';
+            bgVideo.classList.add('show');
         } else if (state.bgMode === 'wallhaven') {
             document.body.classList.add('static-mode');
             bgLayer.style.opacity = '1';
@@ -9951,14 +10070,24 @@ body.list-view-mode.list-fold-layout .list-cat-fold-grid .tile:not(:last-child) 
     }
     function fetchBingImage(force = false) {
         const isRandom = (state.bingInterval > 0 && state.bingInterval < 86400000) || force;
-        const apiIndex = isRandom ? 'random' : '0';
+        const apiIndex = isRandom ? String(Math.floor(Math.random() * 8)) : '0';
         const apiUrl = getApi('bing_wallpaper').url.replace('{index}', apiIndex);
         if(force) bingRefreshBtn.innerText = "⏳ 获取中...";
         fetch(apiUrl)
             .then(res => res.json())
             .then(data => {
-                if (data && data.url) {
-                    state.bingImgUrl = data.url;
+                let imgUrl = null;
+                // 兼容两种 API 格式：官方 Bing API (images[0].url) 和旧版 bing.biturl.top (data.url)
+                if (data && data.images && data.images.length > 0) {
+                    imgUrl = data.images[0].url;
+                    if (imgUrl && !imgUrl.startsWith('http')) {
+                        imgUrl = 'https://www.bing.com' + imgUrl;
+                    }
+                } else if (data && data.url) {
+                    imgUrl = data.url;
+                }
+                if (imgUrl) {
+                    state.bingImgUrl = imgUrl;
                     state.bingLastFetch = Date.now();
                     localStorage.setItem('bing_img_url', state.bingImgUrl);
                     localStorage.setItem('bing_last_fetch', state.bingLastFetch);
@@ -9969,7 +10098,13 @@ body.list-view-mode.list-fold-layout .list-cat-fold-grid .tile:not(:last-child) 
                             bgLayer.style.backgroundImage = `url('${state.bingImgUrl}')`;
                             const bingImg = document.getElementById('bg-bing-img');
                             if (bingImg) bingImg.src = state.bingImgUrl;
-                            applySmartThemeColor(); // 更新为新的吸色引擎
+                            applySmartThemeColor();
+                        };
+                        img.onerror = () => {
+                            console.error('Bing 图片加载失败，尝试重新获取');
+                            state.bingImgUrl = '';
+                            localStorage.removeItem('bing_img_url');
+                            if (state.bgMode === 'bing') fetchBingImage(true);
                         };
                         img.src = state.bingImgUrl;
                     }
@@ -20825,7 +20960,7 @@ ASN号码: ${cachedIpData.asn || '-'}`;
                 var nomUrl = 'https://nominatim.openstreetmap.org/reverse?format=json&lat=' + lat + '&lon=' + lon + '&accept-language=zh';
                 var nomRes = await fetch(nomUrl, {
                     signal: nomCtrl.signal,
-                    headers: { 'User-Agent': 'BinixOvO_TabPro/4.3.0' }
+                    headers: { 'User-Agent': 'BinixOvO_TabPro/4.3.1' }
                 });
                 clearTimeout(nomTid);
                 if (nomRes.ok) {
@@ -26687,7 +26822,7 @@ const fetchIconBtn = document.getElementById('auto-fetch-icon-btn');
         liteSteps: [
             {
                 target: null,
-                text: "看来你已经身经百战啦！\n那我就不啰嗦了，直接为你快速点出我们 4.3.0 版本的核心新特性吧！😎",
+                text: "看来你已经身经百战啦！\n那我就不啰嗦了，直接为你快速点出我们 4.3.1 版本的核心新特性吧！😎",
                 position: "center"
             },
             {
@@ -26884,7 +27019,7 @@ const fetchIconBtn = document.getElementById('auto-fetch-icon-btn');
             this.steps = [
                 {
                     target: null,
-                    text: "✨ 叮咚！欢迎来到全新进化的 BinixOvO 4.3.0 史诗级版本！\n我是你的专属魔法导览员 ( • ̀ω•́ )✧ \n在开始之前，请告诉我你的“数字极客”段位：",
+                    text: "✨ 叮咚！欢迎来到全新进化的 BinixOvO 4.3.1 史诗级版本！\n我是你的专属魔法导览员 ( • ̀ω•́ )✧ \n在开始之前，请告诉我你的“数字极客”段位：",
                     position: "center",
                     choices: [
                         { label: "🚀 老司机带带我 (我是高玩，直接跳过)", action: "skip" },
@@ -26925,7 +27060,7 @@ const fetchIconBtn = document.getElementById('auto-fetch-icon-btn');
             if (this.overlay) {
                 this.overlay.style.pointerEvents = '';
             }
-            localStorage.setItem('binix_tour_completed_v430', 'true'); // 写入 4.3.0 专属记忆
+            localStorage.setItem('binix_tour_completed_v431', 'true'); // 写入 4.3.1 专属记忆
             // 清理按键追踪事件监听器
             if (this._keydownTracker) {
                 document.removeEventListener('keydown', this._keydownTracker);
@@ -27296,8 +27431,8 @@ const fetchIconBtn = document.getElementById('auto-fetch-icon-btn');
             // 1. 先关闭个人信息弹窗
             const userModal = document.getElementById('user-modal');
             if (userModal) userModal.classList.remove('open');
-            // 2. 擦除 4.3.0 版本的本地记忆，让系统以为是全新进来的
-            localStorage.removeItem('binix_tour_completed_v430');
+            // 2. 擦除 4.3.1 版本的本地记忆，让系统以为是全新进来的
+            localStorage.removeItem('binix_tour_completed_v431');
             // 3. 如果之前导览结束时 DOM 已经被清空，这里重新召唤回来
             if (!document.querySelector('.tour-overlay')) {
                 TourSystem.createDOM();
@@ -29716,7 +29851,7 @@ const fetchIconBtn = document.getElementById('auto-fetch-icon-btn');
         { id: 'api_ip_ipapi', name: 'ipapi.co 定位', type: '定位', url: 'https://ipapi.co/json/', key: '', enabled: true },
         { id: 'api_ip_geojs', name: 'GeoJS 定位', type: '定位', url: 'https://get.geojs.io/v1/ip/geo.json', key: '', enabled: true },
         { id: 'api_ip_pconline', name: '太平洋IP定位', type: '定位', url: 'https://whois.pconline.com.cn/ipJson.jsp?json=true', key: '', enabled: true },
-        { id: 'api_bing_wallpaper', name: 'Bing 壁纸', type: '壁纸', url: 'https://bing.biturl.top/?resolution=1920&format=json&index={index}&mkt=zh-CN', key: '', enabled: true },
+        { id: 'api_bing_wallpaper', name: 'Bing 壁纸', type: '壁纸', url: 'https://www.bing.com/HPImageArchive.aspx?format=js&idx={index}&n=1&mkt=zh-CN', key: '', enabled: true },
         { id: 'api_weather_wttr', name: 'wttr.in 天气', type: '天气', url: 'https://wttr.in/{query}?format=j1&lang=zh', key: '', enabled: true },
         { id: 'api_weather_openmeteo', name: 'Open-Meteo 天气', type: '天气', url: 'https://api.open-meteo.com/v1/forecast', key: '', enabled: true },
         { id: 'api_ip_amap', name: 'IP定位(高德)', type: '定位', url: 'https://restapi.amap.com/v3/ip', key: '', enabled: false },

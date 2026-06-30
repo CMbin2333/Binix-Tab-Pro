@@ -1,8 +1,8 @@
 ﻿{
   "manifest_version": 3,
   "name": "BinixOvO Tab Pro",
-  "version": "4.3.0",
-  "description": "BinixOvO 4.3.0 旗舰版响应式动态主题新标签页 - 本地安全版",
+  "version": "4.3.1",
+  "description": "BinixOvO 4.3.1 旗舰版响应式动态主题新标签页 - 本地安全版",
   "browser_specific_settings": {
     "gecko": {
       "id": "binixovo@example.com",
@@ -44,7 +44,7 @@
     }
   },
   "content_security_policy": {
-    "extension_pages": "default-src 'self'; connect-src 'self' https://wttr.in https://api.open-meteo.com https://restapi.amap.com https://ipapi.co https://get.geojs.io https://whois.pconline.com.cn https://nominatim.openstreetmap.org https://ip.taobao.com https://v1.jinrishici.com https://v1.hitokoto.cn https://api.xygeng.cn https://api.allorigins.win https://api.xinac.net https://api.iowen.cn https://translate.googleapis.com https://lingva.ml https://api.mymemory.translated.net https://dns.alidns.com https://api.ocr.space https://bing.biturl.top https://wsrv.nl https://cdn.jsdelivr.net https://qt.gtimg.cn https://smartbox.gtimg.cn https://web.ifzq.gtimg.cn https://open.er-api.com https://site.api.espn.com https://a.espncdn.com https://60s.viki.moe; img-src 'self' data: https:; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; font-src 'self' https://cdn.jsdelivr.net; media-src 'self' data: https://www.soundjay.com; script-src 'self'"
+    "extension_pages": "default-src 'self'; connect-src 'self' https://wttr.in https://api.open-meteo.com https://restapi.amap.com https://ipapi.co https://get.geojs.io https://whois.pconline.com.cn https://nominatim.openstreetmap.org https://ip.taobao.com https://v1.jinrishici.com https://v1.hitokoto.cn https://api.xygeng.cn https://api.allorigins.win https://api.xinac.net https://api.iowen.cn https://translate.googleapis.com https://lingva.ml https://api.mymemory.translated.net https://dns.alidns.com https://api.ocr.space https://www.bing.com https://wsrv.nl https://cdn.jsdelivr.net https://qt.gtimg.cn https://smartbox.gtimg.cn https://web.ifzq.gtimg.cn https://open.er-api.com https://site.api.espn.com https://a.espncdn.com https://60s.viki.moe https://wallhaven.cc https://api.unsplash.com; img-src 'self' data: https:; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; font-src 'self' https://cdn.jsdelivr.net; media-src 'self' blob: data: https://www.soundjay.com; script-src 'self' 'sha256-YaxS0tQp65Y/Pd31Wj+HvEP3XOCDX+PFEEqPpsmWWIw=' 'sha256-J6x8oHFSHWe/3hBkcDrY388fiQDbh0ttHaCw2ZGl+FQ=' 'sha256-xK8CrRV/DhYpJFXBjx5wHeFHXJ4kBdgMGbSQe1mMdY8='"
   },
   "commands": {
     "open-popup": {
