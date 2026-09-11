@@ -6,7 +6,7 @@
 <title>Binix Tab Pro</title>
 <link rel="stylesheet" href="fonts.css">
 <link rel="stylesheet" href="style.css">
-<link rel="icon" href="favicon.ico">
+<link rel="icon" href="icon16.png">
 <style id="ig-minimal-icons-style">
 .ig-icon {
 width: 1.08em;
@@ -923,6 +923,7 @@ bg.classList.add('show');}
 <div class="config-group switch-group"><label>搜索关联建议</label><label class="switch"><input type="checkbox" id="search-suggestion-switch" checked><span class="slider round"></span></label></div>
 <div class="config-group switch-group"><label>搜索历史记录</label><label class="switch"><input type="checkbox" id="search-history-switch" checked><span class="slider round"></span></label></div>
 <div class="config-group switch-group"><label>打开时自动聚焦搜索栏</label><label class="switch"><input type="checkbox" id="search-autofocus-switch" checked><span class="slider round"></span></label></div>
+<div class="config-group switch-group"><label>输入网址自动打开</label><label class="switch"><input type="checkbox" id="search-autourl-switch" checked><span class="slider round"></span></label></div>
 <div class="config-group">
 <label>历史记录点击后行为</label>
 <div class="bg-mode-selector" id="history-action-selector">
@@ -973,7 +974,62 @@ bg.classList.add('show');}
 </div>
 <input type="range" id="range-search-opacity" min="0" max="100" value="15">
 </div>
+<div class="config-group" style="margin-bottom:0;">
+<label>输入文字位置</label>
+<div class="bg-mode-selector" id="search-text-align-selector">
+<div class="mode-opt active" data-search-text-align="left">靠左</div>
+<div class="mode-opt" data-search-text-align="center">居中</div>
+<div class="mode-opt" data-search-text-align="right">靠右</div>
+</div>
+</div>
 <div class="config-group" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0;"><label style="margin:0;">呼吸灯发光颜色</label><input type="color" id="color-search-glow" value="#a5b4fc"></div>
+</div>
+<div class="sub-settings">
+<div class="sub-settings-title">引擎切换弹窗外观</div>
+<div class="config-group switch-group">
+<label>背景颜色跟随主题色</label>
+<label class="switch">
+<input type="checkbox" id="engine-bg-follow-switch" checked>
+<span class="slider round"></span>
+</label>
+</div>
+<div class="config-group" style="display:flex; justify-content:space-between; align-items:center;">
+<label style="margin:0;">自定义背景颜色</label>
+<input type="color" id="engine-bg-color" value="#ffffff" disabled>
+</div>
+<div class="config-group">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+<label style="margin: 0;">背景不透明度</label>
+<span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-engine-bg-opacity">15</span>%</span>
+</div>
+<input type="range" id="range-engine-bg-opacity" min="0" max="100" value="15">
+</div>
+<div class="config-group">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+<label style="margin: 0;">模糊强度</label>
+<span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-engine-blur">20</span>px</span>
+</div>
+<input type="range" id="range-engine-blur" min="0" max="100" value="20">
+</div>
+<div class="config-group">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+<label style="margin: 0;">饱和度增强</label>
+<span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-engine-saturate">100</span>%</span>
+</div>
+<input type="range" id="range-engine-saturate" min="100" max="300" value="100">
+</div>
+<div class="config-group switch-group">
+<label>文字颜色跟随主题色</label>
+<label class="switch">
+<input type="checkbox" id="engine-text-follow-switch" checked>
+<span class="slider round"></span>
+</label>
+</div>
+<div class="config-group" style="display:flex; justify-content:space-between; align-items:center;">
+<label style="margin:0;">自定义文字颜色</label>
+<input type="color" id="engine-text-color" value="#0f172a" disabled>
+</div>
+<button class="ui-button small-btn" id="engine-appearance-reset-btn" style="width:100%; margin-top:12px;">恢复默认</button>
 </div>
 <div class="sub-settings">
 <div class="sub-settings-title">联想弹窗外观</div>
@@ -986,28 +1042,28 @@ bg.classList.add('show');}
 </div>
 <div class="config-group" style="display:flex; justify-content:space-between; align-items:center;">
 <label style="margin:0;">自定义背景颜色</label>
-<input type="color" id="suggestion-bg-color" value="#141822" disabled>
+<input type="color" id="suggestion-bg-color" value="#ffffff" disabled>
 </div>
 <div class="config-group">
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
 <label style="margin: 0;">背景不透明度</label>
-<span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-suggestion-bg-opacity">95</span>%</span>
+<span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-suggestion-bg-opacity">15</span>%</span>
 </div>
-<input type="range" id="range-suggestion-bg-opacity" min="0" max="100" value="95">
+<input type="range" id="range-suggestion-bg-opacity" min="0" max="100" value="15">
 </div>
 <div class="config-group">
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
 <label style="margin: 0;">模糊强度</label>
-<span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-suggestion-blur">35</span>px</span>
+<span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-suggestion-blur">20</span>px</span>
 </div>
-<input type="range" id="range-suggestion-blur" min="0" max="100" value="35">
+<input type="range" id="range-suggestion-blur" min="0" max="100" value="20">
 </div>
 <div class="config-group">
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
 <label style="margin: 0;">饱和度增强</label>
-<span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-suggestion-saturate">180</span>%</span>
+<span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-suggestion-saturate">100</span>%</span>
 </div>
-<input type="range" id="range-suggestion-saturate" min="100" max="300" value="180">
+<input type="range" id="range-suggestion-saturate" min="100" max="300" value="100">
 </div>
 <div class="config-group switch-group">
 <label>文字颜色跟随主题色</label>
@@ -1018,7 +1074,7 @@ bg.classList.add('show');}
 </div>
 <div class="config-group" style="display:flex; justify-content:space-between; align-items:center;">
 <label style="margin:0;">自定义文字颜色</label>
-<input type="color" id="suggestion-text-color" value="#ffffff" disabled>
+<input type="color" id="suggestion-text-color" value="#0f172a" disabled>
 </div>
 <div class="config-group">
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
@@ -1040,28 +1096,28 @@ bg.classList.add('show');}
 </div>
 <div class="config-group" style="display:flex; justify-content:space-between; align-items:center;">
 <label style="margin:0;">自定义背景颜色</label>
-<input type="color" id="history-bg-color" value="#141822" disabled>
+<input type="color" id="history-bg-color" value="#ffffff" disabled>
 </div>
 <div class="config-group">
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
 <label style="margin: 0;">背景不透明度</label>
-<span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-history-bg-opacity">95</span>%</span>
+<span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-history-bg-opacity">15</span>%</span>
 </div>
-<input type="range" id="range-history-bg-opacity" min="0" max="100" value="95">
+<input type="range" id="range-history-bg-opacity" min="0" max="100" value="15">
 </div>
 <div class="config-group">
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
 <label style="margin: 0;">模糊强度</label>
-<span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-history-blur">35</span>px</span>
+<span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-history-blur">20</span>px</span>
 </div>
-<input type="range" id="range-history-blur" min="0" max="100" value="35">
+<input type="range" id="range-history-blur" min="0" max="100" value="20">
 </div>
 <div class="config-group">
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
 <label style="margin: 0;">饱和度增强</label>
-<span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-history-saturate">180</span>%</span>
+<span style="font-size: 12px; opacity: 0.8; font-family: monospace; background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px;"><span id="val-history-saturate">100</span>%</span>
 </div>
-<input type="range" id="range-history-saturate" min="100" max="300" value="180">
+<input type="range" id="range-history-saturate" min="100" max="300" value="100">
 </div>
 <div class="config-group switch-group">
 <label>文字颜色跟随主题色</label>
@@ -1072,7 +1128,7 @@ bg.classList.add('show');}
 </div>
 <div class="config-group" style="display:flex; justify-content:space-between; align-items:center;">
 <label style="margin:0;">自定义文字颜色</label>
-<input type="color" id="history-text-color" value="#ffffff" disabled>
+<input type="color" id="history-text-color" value="#0f172a" disabled>
 </div>
 <div class="config-group">
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
@@ -1663,7 +1719,6 @@ console.log('Hello, Binix!');" spellcheck="false"></textarea>
 <img id="curEngIcon" src="https://favicon.im/www.google.com" alt="当前搜索引擎">
 <span class="engine-fallback-text" id="curEngFallback">Go</span>
 </div>
-<div class="engine-drop" id="engineMenu"></div>
 </div>
 <input type="text" id="searchInput" placeholder="搜索..." autocomplete="off">
 <div class="search-btn qr-btn" id="qrBtn" title="左键调用相机 | 右键本地传图" role="button" tabindex="0" aria-label="二维码扫描">
@@ -1681,7 +1736,10 @@ console.log('Hello, Binix!');" spellcheck="false"></textarea>
 <div class="search-btn" id="searchBtn" role="button" tabindex="0" aria-label="执行搜索">
 <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
 </div>
+</div>
+<div class="engine-drop" id="engineMenu"></div>
 <div class="search-suggestions" id="searchSuggestions">
+<div class="suggestion-panel" id="suggestionPanel">
 <div class="suggestion-list" id="suggestionList"></div>
 </div>
 </div>

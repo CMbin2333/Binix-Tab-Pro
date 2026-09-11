@@ -439,20 +439,42 @@ else if (currentTab === 'history') { loadHistory(doRender); }
 else if (currentTab === 'downloads') { loadDownloads(doRender); }
 else if (currentTab === 'unified' || currentTab === 'search') { loadUnified(doRender); }
 }
-function bindFaviconFallback(el, faviconUrl) {
+function bindFaviconFallback(el, faviconUrl, pageUrl) {
 var faviconEl = el.querySelector('.ext-result-favicon');
 var textEl = el.querySelector('.ext-result-icon-text');
 if (!faviconEl || !faviconUrl) {
 if (faviconEl) faviconEl.remove();
 return;
 }
+if (pageUrl) faviconEl.setAttribute('data-page-url', pageUrl);
 faviconEl.addEventListener('load', function() {
 faviconEl.classList.add('loaded');
 if (textEl) textEl.classList.add('hidden');
 });
 faviconEl.addEventListener('error', function() {
-faviconEl.remove();
+retryFaviconWithNetworkSource(faviconEl, textEl);
 });
+}
+function retryFaviconWithNetworkSource(faviconEl, textEl) {
+if (faviconEl.getAttribute('data-fav-fallback') === '1') {
+if (textEl) textEl.classList.remove('hidden');
+faviconEl.remove();
+return;
+}
+var pageUrl = faviconEl.getAttribute('data-page-url') || '';
+var hostname = '';
+try { hostname = new URL(pageUrl).hostname; } catch (err) {}
+if (!hostname) {
+if (textEl) textEl.classList.remove('hidden');
+faviconEl.remove();
+return;
+}
+faviconEl.setAttribute('data-fav-fallback', '1');
+faviconEl.addEventListener('load', function() {
+faviconEl.classList.add('loaded');
+if (textEl) textEl.classList.add('hidden');
+});
+faviconEl.src = 'https://favicon.im/' + hostname;
 }
 function createResultElement(item) {
 var el = document.createElement('div');
@@ -468,12 +490,12 @@ var firstChar = (item.title || 'B')[0];
 var faviconHtml = '<span class="ext-result-icon-text">' + firstChar + '</span><img class="ext-result-favicon" src="' + escapeHtml(item.favicon || '') + '">';
 var visitBadge = (item.visitCount > 0 && settings.sortByVisits) ? '<span class="ext-tag ext-tag-visit">访问' + item.visitCount + '次</span>' : '';
 el.innerHTML = '<div class="ext-result-icon">' + faviconHtml + '</div><div class="ext-result-main"><span class="ext-result-title">' + escapeHtml(item.title) + '</span><span class="ext-result-url">' + escapeHtml(item.url) + '</span></div><div class="ext-result-tags"><span class="ext-tag ext-tag-bookmark">' + escapeHtml(item.tag || '') + '</span>' + visitBadge + '</div><div class="ext-result-actions">' + copyBtn + deleteBtn + '</div>';
-bindFaviconFallback(el, item.favicon);
+bindFaviconFallback(el, item.favicon, item.url);
 } else if (currentTab === 'history') {
 firstChar = (item.title || 'H')[0];
 faviconHtml = '<span class="ext-result-icon-text">' + firstChar + '</span><img class="ext-result-favicon" src="' + escapeHtml(item.favicon || '') + '">';
 el.innerHTML = '<div class="ext-result-icon">' + faviconHtml + '</div><div class="ext-result-main"><span class="ext-result-title">' + escapeHtml(item.title) + '</span><span class="ext-result-url">' + escapeHtml(item.url) + '</span></div><div class="ext-result-tags"><span class="ext-tag ext-tag-history">' + escapeHtml(item.tag || '') + '</span><span class="ext-tag ext-tag-default">' + escapeHtml(item.time || '') + '</span></div><div class="ext-result-actions">' + copyBtn + deleteBtn + '</div>';
-bindFaviconFallback(el, item.favicon);
+bindFaviconFallback(el, item.favicon, item.url);
 } else if (currentTab === 'downloads') {
 var stateLabel = item.state === 'interrupted' ? '<span class="ext-tag ext-tag-warning">已取消</span>' : (item.state === 'complete' ? '<span class="ext-tag ext-tag-success">已完成</span>' : '');
 var folderBtn = '<button class="ext-action-btn ext-action-folder" title="打开文件夹" data-action="folder" data-id="' + escapeHtmlAttr(item.id || '') + '"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1.5 3.5A1 1 0 0 1 2.5 2.5h2.8l1.2 1.5h4A1 1 0 0 1 11.5 5v6a1 1 0 0 1-1 1h-8a1 1 0 0 1-1-1V3.5Z" stroke="currentColor" stroke-width="1.2"/></svg></button>';
@@ -496,7 +518,7 @@ faviconHtml = '<span class="ext-result-icon-text">' + firstChar + '</span><img c
 visitBadge = (item.source === 'bookmarks' && item.visitCount > 0) ? '<span class="ext-tag ext-tag-visit">访问' + item.visitCount + '次</span>' : '';
 var timeBadge = item.source === 'history' ? '<span class="ext-tag ext-tag-default">' + escapeHtml(item.time || '') + '</span>' : '';
 el.innerHTML = '<div class="ext-result-icon">' + faviconHtml + '</div><div class="ext-result-main"><span class="ext-result-title">' + escapeHtml(item.title) + '</span><span class="ext-result-url">' + escapeHtml(item.url) + '</span></div><div class="ext-result-tags">' + sourceBadge + '<span class="ext-tag ' + sourceTagClass + '">' + escapeHtml(item.tag || '') + '</span>' + visitBadge + timeBadge + '</div><div class="ext-result-actions">' + copyBtn + deleteBtn + '</div>';
-bindFaviconFallback(el, item.favicon);
+bindFaviconFallback(el, item.favicon, item.url);
 }
 }
 el.addEventListener('click', function(e) {
@@ -506,7 +528,7 @@ openItem(item);
 return { el: el, item: item };
 }
 resultsContainer.addEventListener('error', function(e) {
-if (e.target.classList.contains('ext-result-favicon')) {
+if (e.target.classList.contains('ext-result-favicon') && e.target.getAttribute('data-fav-fallback') === '1') {
 var textEl = e.target.parentElement.querySelector('.ext-result-icon-text');
 if (textEl) textEl.classList.remove('hidden');
 e.target.remove();

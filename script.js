@@ -927,6 +927,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return settings.autoFocusSearch !== false;
             } catch(e) { return true; }
         })(),
+        autoOpenUrl: localStorage.getItem('auto_open_url') !== 'false', // 默认开启：输入网址自动跳转
         searchHistory: JSON.parse(localStorage.getItem('search_history') || '[]'),
         historyAction: localStorage.getItem('history_action') || 'direct',
         searchCountry: (function() {
@@ -1029,7 +1030,7 @@ document.addEventListener('DOMContentLoaded', () => {
         categoryOrder: JSON.parse(localStorage.getItem('tab_pro_cat_order')) || (storedData ? Object.keys(storedData) : defaultOrder),
         layout: { ...{
             gridPadding: 8, tileSize: 85, tileIconScale: 100, tileRadius: 20, tileOpacity: 6, tileBgBlur: 10,
-            searchWidth: 500, searchHeight: 52, searchRadius: 26, searchOpacity: 15, searchGlow: '#a5b4fc',
+            searchWidth: 500, searchHeight: 52, searchRadius: 26, searchOpacity: 15, searchGlow: '#a5b4fc', searchTextAlign: 'left',
             bgBlur: 10, bgMask: 40, clockSize: 120,
             showTileText: true, tileBgAuto: false, tileBgColor: '#ffffff', tileTextAuto: false, tileTextColor: '#ffffff',
             tileResize: false, // 磁贴自由调整大小开关
@@ -6936,6 +6937,7 @@ function triggerBase64Cache(item, networkUrl) {
         root.style.setProperty('--search-radius', `${l.searchRadius}px`);
         root.style.setProperty('--search-bg-op', l.searchOpacity / 100);
         root.style.setProperty('--search-glow', l.searchGlow);
+        root.style.setProperty('--search-text-align', l.searchTextAlign || 'left');
         const wallpaperThemeSwitch = document.getElementById('wallpaper-theme-switch');
         root.style.setProperty('--clock-size', `${l.clockSize}px`);
         root.style.setProperty('--tile-text-display', l.showTileText === false ? 'none' : 'block');
@@ -16715,15 +16717,92 @@ function triggerConfetti(startX, startY) {
             }
         }, index * 100); // 每个页面间隔 100 毫秒
     }
+    // 🌟 新增：判断输入内容是否为网址（用于自动跳转）
+    // —— 升级版防误判：结构校验 + 知名顶级域白名单 + 文件/非网站后缀黑名单 + 严格 IP/localhost + 端口校验
+    const KNOWN_TLDS = {
+        'com':1,'net':1,'org':1,'gov':1,'edu':1,'info':1,'biz':1,'name':1,'pro':1,
+        'io':1,'co':1,'ai':1,'me':1,'tv':1,'cc':1,'xyz':1,'top':1,'vip':1,'shop':1,
+        'online':1,'site':1,'fun':1,'app':1,'dev':1,'tech':1,'club':1,'wang':1,'red':1,
+        'group':1,'gs':1,'link':1,'live':1,'today':1,'news':1,'store':1,'space':1,
+        'cloud':1,'world':1,'work':1,'run':1,'email':1,'blog':1,'art':1,'photo':1,
+        'video':1,'social':1,'finance':1,'center':1,'design':1,'network':1,'games':1,
+        'game':1,'media':1,'life':1,'icu':1,'fyi':1,'team':1,'gold':1,'guru':1,
+        'cn':1,'hk':1,'tw':1,'sg':1,'jp':1,'kr':1,'us':1,'uk':1,'ca':1,'au':1,
+        'de':1,'fr':1,'ru':1,'it':1,'es':1,'nl':1,'se':1,'in':1,'br':1,'mx':1,
+        'th':1,'vn':1,'my':1,'ph':1,'id':1,'tr':1,'ua':1,'pl':1,'ch':1,'at':1,
+        'be':1,'ie':1,'za':1,'nz':1,'fi':1,'no':1,'dk':1,'gr':1,'pt':1,'il':1
+    };
+    const NON_WEB_EXT = {
+        'txt':1,'exe':1,'pdf':1,'mp3':1,'mp4':1,'avi':1,'mkv':1,'mov':1,'wmv':1,
+        'flv':1,'wav':1,'flac':1,'ogg':1,'jpg':1,'jpeg':1,'png':1,'gif':1,'bmp':1,
+        'svg':1,'webp':1,'ico':1,'ttf':1,'otf':1,'woff':1,'woff2':1,'html':1,'htm':1,
+        'css':1,'js':1,'json':1,'xml':1,'csv':1,'log':1,'ini':1,'cfg':1,'conf':1,
+        'dll':1,'sys':1,'py':1,'java':1,'cpp':1,'cs':1,'php':1,'aspx':1,'jsp':1,
+        'bat':1,'cmd':1,'sh':1,'ps1':1,'apk':1,'ipa':1,'deb':1,'rpm':1,'iso':1,
+        'img':1,'zip':1,'rar':1,'7z':1,'tar':1,'gz':1,'db':1,'sql':1,'md':1,'bak':1,
+        'tmp':1,'dat':1,'dmg':1,'pkg':1,'rtf':1,'doc':1,'docx':1,'xls':1,'xlsx':1,
+        'ppt':1,'pptx':1,'odt':1,'ods':1,'msg':1,'eml':1
+    };
+    // 校验纯主机名（不含协议/端口/路径）：段合法、TLD 纯字母 2-6 位、白名单内为网址、黑名单内为搜索
+    function isValidHost(host) {
+        if (!host || !/^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/i.test(host)) return false;
+        const segs = host.toLowerCase().split('.');
+        if (segs.length < 2) return false;
+        const last = segs[segs.length - 1];
+        if (!/^[a-z]{2,6}$/i.test(last)) return false;   // TLD 段必须纯字母 2-6 位
+        if (KNOWN_TLDS[last]) return true;               // 知名顶级域 → 信任为网址
+        if (NON_WEB_EXT[last]) return false;             // 文件/非网站后缀 → 当搜索
+        return false;                                    // 未知 TLD → 保守当搜索
+    }
+    function isLikelyUrl(input) {
+        if (!input || typeof input !== 'string') return false;
+        const t = input.trim();
+        if (!t || t.length > 2048 || /\s/.test(t)) return false;   // 含空白一律视为搜索
+        // 剥离协议前缀（仅支持 http/https）
+        let core = /^https?:\/\//i.test(t) ? t.replace(/^https?:\/\//i, '') : t;
+        if (!core) return false;
+        // 分离端口、路径/查询 → 得主机候选
+        const hostPort = core.split(/[\/?#]/)[0];
+        if (!hostPort) return false;
+        const portIdx = hostPort.indexOf(':');
+        let host = portIdx >= 0 ? hostPort.slice(0, portIdx) : hostPort;
+        let portStr = portIdx >= 0 ? hostPort.slice(portIdx + 1) : '';
+        host = host.replace(/\.+$/, '');
+        // 端口校验：必须是 1-5 位数字且 ≤65535
+        if (portStr && (portStr.length > 5 || !/^\d+$/.test(portStr) || Number(portStr) > 65535)) return false;
+        // localhost
+        if (/^localhost$/i.test(host)) return true;
+        // 严格 IPv4：每段 0-255
+        if (/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/i.test(host)) {
+            const ip = host.split('.');
+            for (let i = 0; i < 4; i++) {
+                if (Number(ip[i]) > 255) return false;
+            }
+            return true;
+        }
+        return isValidHost(host);
+    }
     const doSearch = async () => {
         if(!searchInput.value) return;
         const rawKeyword = searchInput.value.trim();
+        // 🌟 新增：输入内容为网址时直接打开网页，而非搜索
+        if (state.autoOpenUrl && isLikelyUrl(rawKeyword)) {
+            let openUrl = rawKeyword;
+            if (!/^https?:\/\//i.test(openUrl)) openUrl = 'https://' + openUrl;
+            if (typeof hideSuggestions === 'function') hideSuggestions();
+            openSearchTab(openUrl, 0, true);
+            return;
+        }
         // 保存搜索历史
         if (rawKeyword && state.showSearchHistory && !state.isIncognitoSearch) {
             state.searchHistory = state.searchHistory.filter(k => k !== rawKeyword);
             state.searchHistory.unshift(rawKeyword);
             if (state.searchHistory.length > 10) state.searchHistory.pop();
             localStorage.setItem('search_history', JSON.stringify(state.searchHistory));
+            // 频率追踪：记录每条搜索词的累计使用次数
+            const meta = JSON.parse(localStorage.getItem('search_history_meta') || '{}');
+            meta[rawKeyword] = (meta[rawKeyword] || 0) + 1;
+            localStorage.setItem('search_history_meta', JSON.stringify(meta));
         }
         const targetCountries = state.searchCountry.length > 0 ? state.searchCountry : [''];
         let openedCount = 0; // 记录发射队列序号
@@ -18068,7 +18147,7 @@ function triggerConfetti(startX, startY) {
             interactiveTheme: localStorage.getItem('interactiveTheme'),
             manualPowerSave: localStorage.getItem('manual_power_save'),
             isZenMode: state.isZenMode,
-            // 🔧 v4.3.1 补全：之前遗漏的重要配置项
+            // 🔧 v4.3.7 补全：之前遗漏的重要配置项
             tileResizeEnabled: state.tileResizeEnabled,
             replaceClockWithTimer: state.replaceClockWithTimer,
             listViewMode: state.listViewMode,
@@ -18101,13 +18180,13 @@ function triggerConfetti(startX, startY) {
             extTheme: localStorage.getItem('ext_theme'),
             idleSleepTimeout: localStorage.getItem('idle_sleep_timeout'),
             tabProSettingsV430: localStorage.getItem('tab_pro_settings_v430'),
-            // ═══ v4.3.2 补全：小组件相关 ═══
+            // ═══ v4.3.7 补全：小组件相关 ═══
             binixovoWidgets: JSON.parse(localStorage.getItem('binixovo_widgets') || 'null'),
             binixCustomWidgets: JSON.parse(localStorage.getItem('binix_custom_widgets') || 'null'),
             binixCategoryOrder: JSON.parse(localStorage.getItem('binix_categoryOrder') || 'null'),
             binixFoldColMap: JSON.parse(localStorage.getItem('binix_foldColMap') || 'null'),
             binixPoemColors: JSON.parse(localStorage.getItem('binix_poem_colors') || 'null'),
-            binixTourCompletedV430: localStorage.getItem('binix_tour_completed_v430'),
+            binixTourCompletedV430: localStorage.getItem('binix_tour_completed_v437'),
             // ═══ 外观自定义 - 按钮 ═══
             btnBgBlur: localStorage.getItem('btn_bg_blur'),
             btnBgColor: localStorage.getItem('btn_bg_color'),
@@ -18188,7 +18267,7 @@ function triggerConfetti(startX, startY) {
             unsplashAccessKey: localStorage.getItem('unsplash_access_key'),
             // engicon 引擎图标数据（前缀键集合）
             engIcons: (function() { var icons = {}; for (var i = 0; i < localStorage.length; i++) { var k = localStorage.key(i); if (k && k.indexOf('engicon_') === 0) icons[k] = localStorage.getItem(k); } return Object.keys(icons).length ? icons : null; })(),
-            // ═══ v4.3.2 补全：常量定义键 ═══
+            // ═══ v4.3.7 补全：常量定义键 ═══
             sectionColors: JSON.parse(localStorage.getItem('section_colors') || 'null'),
             binixovoExtSettings: JSON.parse(localStorage.getItem('binixovo_ext_settings') || 'null'),
             timerState: JSON.parse(localStorage.getItem('timer_state') || 'null'),
@@ -18383,7 +18462,7 @@ function triggerConfetti(startX, startY) {
                         if (imported.isZenMode !== undefined) {
                             localStorage.setItem('is_zen_mode', String(imported.isZenMode === true || imported.isZenMode === 'true'));
                         }
-                    // 🔧 v4.3.1 补全：新导出字段的导入恢复
+                    // 🔧 v4.3.7 补全：新导出字段的导入恢复
                     if (imported.tileResizeEnabled !== undefined) localStorage.setItem('tile_resize_enabled', imported.tileResizeEnabled);
                     if (imported.replaceClockWithTimer !== undefined) localStorage.setItem('replace_clock_timer', imported.replaceClockWithTimer);
                     if (imported.listViewMode !== undefined) localStorage.setItem('list_view_mode', imported.listViewMode);
@@ -18420,7 +18499,7 @@ function triggerConfetti(startX, startY) {
                     if (imported.extTheme) localStorage.setItem('ext_theme', imported.extTheme);
                     if (imported.idleSleepTimeout) localStorage.setItem('idle_sleep_timeout', imported.idleSleepTimeout);
                     if (imported.tabProSettingsV430) localStorage.setItem('tab_pro_settings_v430', imported.tabProSettingsV430);
-                    // ═══ v4.3.2 补全：小组件相关 ═══
+                    // ═══ v4.3.7 补全：小组件相关 ═══
                     if (imported.binixovoWidgets) { try { const v = typeof imported.binixovoWidgets === 'string' ? JSON.parse(imported.binixovoWidgets) : imported.binixovoWidgets; localStorage.setItem('binixovo_widgets', JSON.stringify(v)); } catch(e) {} }
                     if (imported.binixCustomWidgets) { try { const v = typeof imported.binixCustomWidgets === 'string' ? JSON.parse(imported.binixCustomWidgets) : imported.binixCustomWidgets; localStorage.setItem('binix_custom_widgets', JSON.stringify(v)); } catch(e) {} }
                     if (imported.binixCategoryOrder) { try { const v = typeof imported.binixCategoryOrder === 'string' ? JSON.parse(imported.binixCategoryOrder) : imported.binixCategoryOrder; localStorage.setItem('binix_categoryOrder', JSON.stringify(v)); } catch(e) {} }
@@ -18507,7 +18586,7 @@ function triggerConfetti(startX, startY) {
                     if (imported.unsplashAccessKey !== undefined) localStorage.setItem('unsplash_access_key', imported.unsplashAccessKey);
                     // engicon 引擎图标恢复
                     if (imported.engIcons && typeof imported.engIcons === 'object') { Object.keys(imported.engIcons).forEach(function(k) { if (k.indexOf('engicon_') === 0) localStorage.setItem(k, imported.engIcons[k]); }); }
-                    // ═══ v4.3.2 补全：常量定义键 ═══
+                    // ═══ v4.3.7 补全：常量定义键 ═══
                     if (imported.sectionColors) { try { var v = typeof imported.sectionColors === 'string' ? JSON.parse(imported.sectionColors) : imported.sectionColors; localStorage.setItem('section_colors', JSON.stringify(v)); } catch(e) {} }
                     if (imported.binixovoExtSettings) { try { var v = typeof imported.binixovoExtSettings === 'string' ? JSON.parse(imported.binixovoExtSettings) : imported.binixovoExtSettings; localStorage.setItem('binixovo_ext_settings', JSON.stringify(v)); } catch(e) {} }
                     if (imported.timerState) { try { var v = typeof imported.timerState === 'string' ? JSON.parse(imported.timerState) : imported.timerState; localStorage.setItem('timer_state', JSON.stringify(v)); } catch(e) {} }
@@ -18700,6 +18779,20 @@ if (searchHistorySwitch) {
                 localStorage.setItem('history_action', state.historyAction);
                 historyActionOpts.forEach(o => o.classList.toggle('active', o === opt));
                 if (typeof showToast === 'function') showToast(state.historyAction === 'direct' ? '设置为：点击历史记录直接跳转' : '设置为：仅填入搜索框');
+            };
+        });
+    }
+    // 搜索栏输入文字位置（靠左/居中/靠右）
+    const searchTextAlignOpts = document.querySelectorAll('#search-text-align-selector .mode-opt[data-search-text-align]');
+    if (searchTextAlignOpts.length) {
+        searchTextAlignOpts.forEach(opt => {
+            opt.classList.toggle('active', (state.layout.searchTextAlign || 'left') === opt.dataset.searchTextAlign);
+            opt.onclick = () => {
+                state.layout.searchTextAlign = opt.dataset.searchTextAlign;
+                localStorage.setItem('layout_settings', JSON.stringify(state.layout));
+                searchTextAlignOpts.forEach(o => o.classList.toggle('active', o === opt));
+                if (typeof updateLayoutVars === 'function') updateLayoutVars();
+                if (typeof showToast === 'function') showToast(opt.dataset.searchTextAlign === 'center' ? '设置为：输入文字居中' : (opt.dataset.searchTextAlign === 'right' ? '设置为：输入文字靠右' : '设置为：输入文字靠左'));
             };
         });
     }
@@ -20960,7 +21053,7 @@ ASN号码: ${cachedIpData.asn || '-'}`;
                 var nomUrl = 'https://nominatim.openstreetmap.org/reverse?format=json&lat=' + lat + '&lon=' + lon + '&accept-language=zh';
                 var nomRes = await fetch(nomUrl, {
                     signal: nomCtrl.signal,
-                    headers: { 'User-Agent': 'BinixOvO_TabPro/4.3.1' }
+                    headers: { 'User-Agent': 'BinixOvO_TabPro/4.3.7' }
                 });
                 clearTimeout(nomTid);
                 if (nomRes.ok) {
@@ -23912,9 +24005,13 @@ ASN号码: ${cachedIpData.asn || '-'}`;
     const suggestionBox = document.getElementById('searchSuggestions');
     const suggestionList = document.getElementById('suggestionList');
     let suggestionTimer = null;
+    let suggestionSeq = 0; // 联想请求序号：输入即递增，用于丢弃过期网络响应（防竞态）
     let currentSuggestions = [];
     let selectedSuggestionIndex = -1;
     let currentKeyword = '';
+    let historyItems = [];      // 当前渲染的历史数组
+    let suggestionItems = [];   // 当前渲染的联想词数组
+    let totalItemCount = 0;     // 总条目数（历史 + 分割线 + 联想）
     // 🚀 核心优化：内存级缓存字典。查过一次的词秒出结果，0网络请求
     const suggestionCache = {};
     window.handleSearchSuggestions = function(data) {
@@ -23927,61 +24024,217 @@ ASN号码: ${cachedIpData.asn || '-'}`;
             suggestionCache[currentKeyword] = results;
         }
         currentSuggestions = results.slice(0, 8); // 最多展示 8 条
+        currentSuggestionArr = currentSuggestions;
         renderSuggestions(currentKeyword);
     };
+    // ====== 统一渲染函数：一体式单栏面板 ======
+    let currentHistoryArr = [];      // 当前渲染的历史数组
+    let currentSuggestionArr = [];   // 当前渲染的联想词数组
+    let currentRelatedArr = [];      // 当前渲染的相关推荐数组
+    let suggestionLoadError = false; // 联想词接口是否加载失败
+
+    function renderUnifiedPanel() {
+        if (!suggestionList) return;
+        let html = '';
+        const histLen = currentHistoryArr.length;
+        const sugLen = currentSuggestionArr.length;
+        const relLen = currentRelatedArr.length;
+
+        // --- 最近搜索分组（仅无输入时显示；一旦输入文字，窗口切换为搜索建议） ---
+        if (histLen > 0 && !currentKeyword) {
+            html += `<div class="suggestion-section-header">
+                <span class="suggestion-section-title">最近搜索</span>
+                <span class="suggestion-section-clear search-clear-history-btn">清空记录</span>
+            </div>`;
+            currentHistoryArr.forEach((item, index) => {
+                const escaped = item.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                const sel = (!currentKeyword && index === selectedSuggestionIndex) ? ' selected' : '';
+                html += `<div class="suggestion-item${sel}" data-history-index="${index}">
+                    <span class="si-icon">🕒</span>
+                    <span class="si-text">${escaped}</span>
+                    <span class="si-delete" data-history-index="${index}">删除</span>
+                </div>`;
+            });
+        }
+
+        // --- 分割线（仅历史分组实际显示时才渲染） ---
+        const hasBelow = sugLen > 0 || relLen > 0;
+        if (histLen > 0 && !currentKeyword && hasBelow) {
+            html += '<div class="suggestion-divider"></div>';
+        }
+
+        // --- 相关推荐分组（仅历史模式，无输入时） ---
+        if (relLen > 0 && !currentKeyword) {
+            html += `<div class="suggestion-section-header">
+                <span class="suggestion-section-title">相关推荐</span>
+            </div>`;
+            currentRelatedArr.forEach((item, index) => {
+                const escaped = item.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                html += `<div class="suggestion-sug-item" data-related-index="${index}">
+                    <span class="si-icon">🔍</span>
+                    <span class="si-text">${escaped}</span>
+                </div>`;
+            });
+        }
+
+        // --- 搜索建议分组（输入时） ---
+        if (sugLen > 0) {
+            html += `<div class="suggestion-section-header">
+                <span class="suggestion-section-title">搜索建议</span>
+            </div>`;
+            const modifierKey = state.shortcuts.suggestionSelect ? state.shortcuts.suggestionSelect.key : 'Tab';
+            const displayKey = modifierKey === ' ' ? 'Space' : (modifierKey.length === 1 ? modifierKey.toUpperCase() : modifierKey);
+            currentSuggestionArr.forEach((item, index) => {
+                const escaped = item.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                const safeKeyword = (currentKeyword || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                let formattedItem = escaped;
+                if (safeKeyword) {
+                    const regex = new RegExp(`(${safeKeyword})`, 'gi');
+                    formattedItem = escaped.replace(regex, '<span class="highlight">$1</span>');
+                }
+                const shortcutHint = index < 9
+                    ? `<span style="position:absolute;right:12px;font-size:10px;color:var(--text-b);opacity:0.5;pointer-events:none;">${displayKey}+${index + 1}</span>`
+                    : '';
+                const sel = (currentKeyword && index === selectedSuggestionIndex) ? ' selected' : '';
+                html += `<div class="suggestion-sug-item${sel}" data-sug-index="${index}" style="position:relative;">
+                    <span class="si-icon">🔍</span>
+                    <span class="si-text">${formattedItem}</span>
+                    ${shortcutHint}
+                </div>`;
+            });
+        }
+
+        suggestionList.innerHTML = html;
+        // 面板外观模式：无输入且展示历史/相关推荐时切换为「搜索历史弹窗」外观，否则为「联想弹窗」外观
+        if (!currentKeyword && (histLen > 0 || relLen > 0)) {
+            suggestionBox.classList.add('is-history');
+        } else {
+            suggestionBox.classList.remove('is-history');
+        }
+        // 没有任何内容（历史/联想/相关推荐均为空）时不弹窗，静默保持关闭
+        if (!html) {
+            suggestionBox.classList.remove('show');
+            bindUnifiedEvents();
+            return;
+        }
+        suggestionBox.classList.add('show');
+        totalItemCount = histLen + sugLen + relLen;
+        bindUnifiedEvents();
+    }
+
+    function bindUnifiedEvents() {
+        if (!suggestionBox) return;
+        // 历史条目点击
+        suggestionBox.querySelectorAll('.suggestion-item').forEach(el => {
+            el.onclick = (e) => {
+                if (e.target.classList.contains('si-delete')) return;
+                const idx = parseInt(el.dataset.historyIndex);
+                if (currentHistoryArr[idx]) {
+                    searchInput.value = currentHistoryArr[idx];
+                    hideSuggestions();
+                    if (state.historyAction === 'direct') { doSearch(); } else { searchInput.focus(); }
+                }
+            };
+        });
+        // 删除按钮
+        suggestionBox.querySelectorAll('.si-delete').forEach(btn => {
+            btn.onclick = (e) => {
+                e.stopPropagation();
+                const idx = parseInt(btn.dataset.historyIndex);
+                const term = currentHistoryArr[idx];
+                state.searchHistory = state.searchHistory.filter(k => k !== term);
+                const meta = JSON.parse(localStorage.getItem('search_history_meta') || '{}');
+                if (meta[term]) { delete meta[term]; localStorage.setItem('search_history_meta', JSON.stringify(meta)); }
+                localStorage.setItem('search_history', JSON.stringify(state.searchHistory));
+                if (state.searchHistory.length === 0) { hideSuggestions(); return; }
+                window.showHistory();
+            };
+        });
+        // 联想词条目点击
+        suggestionBox.querySelectorAll('.suggestion-sug-item').forEach(el => {
+            el.onclick = () => {
+                const sugIdx = parseInt(el.dataset.sugIndex);
+                const relIdx = parseInt(el.dataset.relatedIndex);
+                if (!isNaN(sugIdx) && currentSuggestionArr[sugIdx]) {
+                    searchInput.value = currentSuggestionArr[sugIdx];
+                    hideSuggestions();
+                    if (state.suggestionAction === 'direct') { doSearch(); } else { searchInput.focus(); }
+                } else if (!isNaN(relIdx) && currentRelatedArr[relIdx]) {
+                    searchInput.value = currentRelatedArr[relIdx];
+                    hideSuggestions();
+                    if (state.suggestionAction === 'direct') { doSearch(); } else { searchInput.focus(); }
+                }
+            };
+        });
+        // 清空记录按钮
+        const clearBtn = suggestionBox.querySelector('.search-clear-history-btn');
+        if (clearBtn) {
+            clearBtn.onclick = (e) => {
+                e.stopPropagation();
+                if (clearBtn.textContent === '清空记录') {
+                    if (typeof showToast === 'function') showToast('⚠️ 请再次点击"清空记录"确认删除全部搜索历史');
+                    clearBtn.textContent = '确认清空';
+                    clearBtn.style.color = '#ff453a';
+                    clearBtn.style.fontWeight = 'bold';
+                } else {
+                    state.searchHistory = [];
+                    localStorage.setItem('search_history', '[]');
+                    localStorage.setItem('search_history_meta', '{}');
+                    hideSuggestions();
+                    if (typeof showToast === 'function') showToast('已清空全部搜索历史');
+                }
+            };
+        }
+    }
+
     window.showHistory = function() {
         if (!state.showSearchHistory || state.isIncognitoSearch || !state.searchHistory.length) {
             hideSuggestions();
             return;
         }
-        currentSuggestions = [...state.searchHistory];
-        currentKeyword = ''; // 清空 currentKeyword 代表当前处于历史模式
-        let html = `<div style="display:flex; justify-content:space-between; align-items:center; padding: 4px 16px 8px; border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 4px;">
-            <span style="font-size:11px; color:rgba(255,255,255,0.4); font-weight: bold; letter-spacing: 1px;">最近搜索记录</span>
-            <span class="search-clear-history-btn" style="font-size:11px; color:rgba(255,255,255,0.4); cursor:pointer; transition:0.2s;" onmouseover="this.style.color='#ff453a'" onmouseout="this.style.color='rgba(255,255,255,0.4)'">清空记录</span>
-        </div>`;
-        html += currentSuggestions.map((item, index) => `
-            <div class="suggestion-item history-item ${index === selectedSuggestionIndex ? 'selected' : ''}" data-index="${index}" style="position:relative; padding-right: 60px;">
-                <span class="suggestion-item-icon">🕒</span>
-                <span class="suggestion-text" style="opacity: 0.9;">${item.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</span>
-                <span class="delete-history-btn" data-index="${index}" style="position:absolute; right:16px; font-size:16px; opacity:0; transition:0.2s; cursor:pointer;" onmouseover="this.style.color='#ff453a'">×</span>
-            </div>
-        `).join('');
-        suggestionList.innerHTML = html;
-        suggestionBox.setAttribute('data-type', 'history');
-        suggestionBox.classList.add('show');
-        suggestionBox.querySelectorAll('.history-item').forEach(el => {
-            el.onclick = (e) => {
-                if(e.target.classList.contains('delete-history-btn')) return;
-                searchInput.value = state.searchHistory[el.dataset.index];
-                hideSuggestions();
-                if (state.historyAction === 'direct') {
-                    doSearch();
-                } else {
-                    searchInput.focus();
-                }
-            };
-            el.onmouseover = () => { const delBtn = el.querySelector('.delete-history-btn'); if(delBtn) delBtn.style.opacity = '1'; };
-            el.onmouseout = () => { const delBtn = el.querySelector('.delete-history-btn'); if(delBtn) delBtn.style.opacity = '0'; };
+        const meta = JSON.parse(localStorage.getItem('search_history_meta') || '{}');
+        const sorted = [...state.searchHistory].sort((a, b) => {
+            const countA = meta[a] || 1;
+            const countB = meta[b] || 1;
+            if (countA !== countB) return countB - countA;
+            return 0;
         });
-        suggestionBox.querySelectorAll('.delete-history-btn').forEach(btn => {
-            btn.onclick = (e) => {
-                e.stopPropagation();
-                state.searchHistory.splice(btn.dataset.index, 1);
-                localStorage.setItem('search_history', JSON.stringify(state.searchHistory));
-                showHistory();
-            };
-        });
-        const clearBtn = suggestionBox.querySelector('.search-clear-history-btn');
-        if (clearBtn) {
-            clearBtn.onclick = (e) => {
-                e.stopPropagation();
-                state.searchHistory = [];
-                localStorage.setItem('search_history', '[]');
-                hideSuggestions();
-            };
+        currentKeyword = '';
+        currentHistoryArr = sorted;
+        currentSuggestionArr = [];
+        currentRelatedArr = [];
+        currentSuggestions = sorted;
+        renderUnifiedPanel();
+
+        // 获取相关推荐
+        const recentTerm = sorted[0];
+        if (recentTerm) {
+            fetchRelatedSuggestions(recentTerm);
         }
     };
+
+    function fetchRelatedSuggestions(keyword) {
+        if (!keyword || !state.showSearchSuggestion) { renderRelatedSection([]); return; }
+        relatedKeyword = keyword;
+        if (suggestionCache[keyword]) {
+            renderRelatedSection(suggestionCache[keyword].slice(0, 8));
+            return;
+        }
+        fetch(`https://www.bing.com/osjson.aspx?query=${encodeURIComponent(keyword)}`)
+            .then(res => res.json())
+            .then(data => {
+                const results = (data && Array.isArray(data[1])) ? data[1] : [];
+                suggestionCache[keyword] = results;
+                renderRelatedSection(results.slice(0, 8));
+            })
+            .catch(() => { renderRelatedSection([]); });
+    }
+
+    function renderRelatedSection(items) {
+        currentRelatedArr = items;
+        currentRelated = items;
+        renderUnifiedPanel();
+    }
     window.showAdvancedSearchModal = function() {
         let modal = document.getElementById('advanced-search-modal');
         if (!modal) {
@@ -24117,100 +24370,134 @@ ASN号码: ${cachedIpData.asn || '-'}`;
         setTimeout(() => document.getElementById('adv-main-kw').focus(), 100);
     };
     function fetchSuggestions(keyword) {
-    currentKeyword = keyword.trim();
-    if (!state.showSearchSuggestion || !currentKeyword) {
-        hideSuggestions();
-        return;
-    }
-    // 如果缓存里有，直接 0ms 瞬间渲染
-    if (suggestionCache[currentKeyword]) {
-        currentSuggestions = suggestionCache[currentKeyword].slice(0, 8);
-        renderSuggestions(currentKeyword);
-        return;
-    }
-    // 🚀 核心替换：改用 Bing 的 OSJSON 接口
-    fetch(`https://api.bing.com/osjson.aspx?query=${encodeURIComponent(currentKeyword)}`)
-        .then(res => res.json())
-        .then(data => {
-            // Bing 的数据格式是：data[0] 是原搜索词，data[1] 是联想词数组
-            let results = (data && Array.isArray(data[1])) ? data[1] : [];
-            // 数据存入缓存
-            suggestionCache[currentKeyword] = results;
-            currentSuggestions = results.slice(0, 8); // 最多展示 8 条
-            renderSuggestions(currentKeyword);
-        })
-        .catch(err => {
-            console.warn('Bing 联想词获取失败:', err);
-        });
-}
-    function renderSuggestions(keyword) {
-        if (!currentSuggestions.length) {
-            hideSuggestions();
+        const seq = ++suggestionSeq; // 本次请求序号：返回时若已不是最新输入则丢弃
+        currentKeyword = keyword.trim();
+        if (!state.showSearchSuggestion || !currentKeyword) {
+            currentSuggestionArr = [];
+            currentSuggestions = [];
+            renderUnifiedPanel();
             return;
         }
-        const modifierKey = state.shortcuts.suggestionSelect ? state.shortcuts.suggestionSelect.key : 'Tab';
-        const displayKey = modifierKey === ' ' ? 'Space' : (modifierKey.length === 1 ? modifierKey.toUpperCase() : modifierKey);
-        const html = currentSuggestions.map((item, index) => {
-            const safeKeyword = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-            const regex = new RegExp(`(${safeKeyword})`, 'gi');
-            const formattedItem = item.replace(regex, `<span class="highlight">$1</span>`);
-            // 👇 自动为前 9 个联想词加上 UI 提示（内联 CSS 防止重叠）
-            const shortcutHint = index < 9
-                ? `<span style="position:absolute; right:12px; font-size:11px; color:var(--text-b); opacity:0.6; pointer-events:none; font-weight:bold;">${displayKey} + ${index + 1}</span>`
-                : '';
-            return `
-            <div class="suggestion-item ${index === selectedSuggestionIndex ? 'selected' : ''}"
-                 data-index="${index}" style="position:relative; padding-right: 60px;">
-                <span class="suggestion-item-icon">✨</span>
-                <span class="suggestion-text">${formattedItem}</span>
-                ${shortcutHint}
-            </div>
-            `;
-        }).join('');
-        suggestionList.innerHTML = html;
-        suggestionBox.setAttribute('data-type', 'suggestion');
-        suggestionBox.classList.add('show');
-        // 绑定点击事件
-        suggestionBox.querySelectorAll('.suggestion-item').forEach(el => {
-            el.onclick = () => {
-                searchInput.value = currentSuggestions[el.dataset.index];
-                hideSuggestions();
-                if (state.suggestionAction === 'direct') {
-                    doSearch();
-                } else {
-                    searchInput.focus();
-                }
-            };
-        });
+        if (suggestionCache[currentKeyword]) {
+            currentSuggestions = suggestionCache[currentKeyword].slice(0, 8);
+            currentSuggestionArr = currentSuggestions;
+            renderSuggestions(currentKeyword);
+            return;
+        }
+        fetch(`https://www.bing.com/osjson.aspx?query=${encodeURIComponent(currentKeyword)}`)
+            .then(res => res.json())
+            .then(data => {
+                if (seq !== suggestionSeq) return; // 已被更新的输入取代，丢弃过期响应
+                let results = (data && Array.isArray(data[1])) ? data[1] : [];
+                suggestionCache[currentKeyword] = results;
+                currentSuggestions = results.slice(0, 8);
+                currentSuggestionArr = currentSuggestions;
+                suggestionLoadError = false;
+                renderSuggestions(currentKeyword);
+            })
+            .catch(err => { console.warn('Bing 联想词获取失败:', err); suggestionLoadError = true; renderUnifiedPanel(); });
+    }
+    function renderSuggestions(keyword) {
+        if (!currentSuggestions.length) {
+            currentSuggestionArr = [];
+        }
+        currentRelatedArr = [];
+        renderUnifiedPanel();
     }
     function hideSuggestions() {
         if (suggestionBox) {
             suggestionBox.classList.remove('show');
-            suggestionBox.removeAttribute('data-type');
         }
+        suggestionList.innerHTML = '';
         currentSuggestions = [];
+        currentHistoryArr = [];
+        currentSuggestionArr = [];
+        currentRelatedArr = [];
+        currentRelated = [];
         selectedSuggestionIndex = -1;
     }
-    // 输入监听：把防抖极度压缩到 120ms，跟手性极强
+    // 输入监听：本地即时渲染 + 60ms 网络补全，跟手且无竞态
     searchInput.addEventListener('input', (e) => {
         clearTimeout(suggestionTimer);
+        suggestionSeq++; // 立即使在途的旧网络响应失效，防止晚到的旧词覆盖新输入
         const val = e.target.value;
-        selectedSuggestionIndex = -1; // 🌟 修复：继续打字时重置高亮状态
-        // 如果输入框空了，瞬间关掉
+        selectedSuggestionIndex = -1;
         if (!val.trim()) {
-            showHistory();
+            window.showHistory();
             return;
         }
+        // 步骤1：不等网络，先用本地数据（历史记录 + 已缓存联想）做即时匹配渲染，打字瞬间就有反馈
+        renderInstantSuggestions(val);
+        // 步骤2：防抖 60ms 后请求网络联想，回来再精确替换补全
         suggestionTimer = setTimeout(() => {
             fetchSuggestions(val);
-        }, 120);
+        }, 60);
     });
+
+    // 本地即时联想：优先命中即可秒出，杜绝“输入一个字才显示”
+    function renderInstantSuggestions(val) {
+        if (!state.showSearchSuggestion) return;
+        currentKeyword = val.trim();
+        if (!currentKeyword) return;
+        const kw = currentKeyword.toLowerCase();
+        const seen = new Set();
+        const merged = [];
+        // 候选池：历史记录 + 所有已缓存联想词
+        const poolSet = new Set(state.searchHistory || []);
+        Object.keys(suggestionCache).forEach(k => {
+            (suggestionCache[k] || []).forEach(t => poolSet.add(t));
+        });
+        for (const term of poolSet) {
+            if (!term || seen.has(term)) continue;
+            if (term.toLowerCase().includes(kw)) {
+                seen.add(term);
+                merged.push(term);
+                if (merged.length >= 8) break;
+            }
+        }
+        currentSuggestions = merged;
+        currentSuggestionArr = merged;
+        currentHistoryArr = [];
+        currentRelatedArr = [];
+        // 本地无匹配且面板已打开时保持现状，避免闪烁“暂无搜索建议”，等网络词回来再更新
+        if (merged.length === 0 && suggestionBox.classList.contains('show')) return;
+        renderUnifiedPanel();
+    }
+
+    // 打字时快速渲染历史（不重新获取推荐）
+    function renderLeftColumnOnType() {
+        if (!state.showSearchHistory || state.isIncognitoSearch || !state.searchHistory.length) return;
+        const sorted = [...state.searchHistory].sort((a, b) => {
+            const meta = JSON.parse(localStorage.getItem('search_history_meta') || '{}');
+            const countA = meta[a] || 1;
+            const countB = meta[b] || 1;
+            if (countA !== countB) return countB - countA;
+            return 0;
+        });
+        currentHistoryArr = sorted;
+        currentSuggestions = sorted;
+        currentSuggestionArr = [];
+        currentRelatedArr = [];
+        renderUnifiedPanel();
+    }
+    // 刷新高亮状态（键盘导航用）
+    function refreshHistoryHighlight() {
+        if (!suggestionList) return;
+        suggestionList.querySelectorAll('.suggestion-item').forEach((el, i) => {
+            el.classList.toggle('selected', !currentKeyword && i === selectedSuggestionIndex);
+        });
+        suggestionList.querySelectorAll('.suggestion-sug-item').forEach((el, i) => {
+            el.classList.toggle('selected', currentKeyword && i === selectedSuggestionIndex);
+        });
+    }
+
     // ====== 统一合并的搜索框专属事件 ======
 let isSuggestionModifierPressed = false;
 searchInput.addEventListener('keydown', async (e) => {
-    // 1. 拦截 Esc，防止和全局切换引擎冲突
-    if (e.key === 'Escape' && pressedKeys.has('Escape')) {
+    // 1. 拦截 Esc，关闭所有下拉面板（联想词 / 历史记录 / 引擎选择）
+    if (e.key === 'Escape') {
         if (typeof hideSuggestions === 'function') hideSuggestions();
+        if (typeof rotateEngine === 'function' && engineMenu && engineMenu.classList.contains('open')) rotateEngine(false);
         return;
     }
     const s = state.shortcuts.translate;
@@ -24256,7 +24543,7 @@ searchInput.addEventListener('keydown', async (e) => {
                     doSearch();
                 } else {
                     selectedSuggestionIndex = targetIndex;
-                    renderSuggestions(currentKeyword);
+                    renderUnifiedPanel();
                     searchInput.value = currentSuggestions[targetIndex];
                     searchInput.focus();
                 }
@@ -24267,37 +24554,39 @@ searchInput.addEventListener('keydown', async (e) => {
     // Shift+Delete 极客操作：快速删除当前选中高亮的历史记录
     if (e.key === 'Delete' && e.shiftKey && suggestionBox.classList.contains('show') && selectedSuggestionIndex !== -1 && !currentKeyword) {
         e.preventDefault();
-        state.searchHistory.splice(selectedSuggestionIndex, 1);
+        const termToDelete = currentSuggestions[selectedSuggestionIndex];
+        state.searchHistory = state.searchHistory.filter(k => k !== termToDelete);
         localStorage.setItem('search_history', JSON.stringify(state.searchHistory));
+        // 同步清理 meta
+        const meta = JSON.parse(localStorage.getItem('search_history_meta') || '{}');
+        if (meta[termToDelete]) { delete meta[termToDelete]; localStorage.setItem('search_history_meta', JSON.stringify(meta)); }
         if (selectedSuggestionIndex >= state.searchHistory.length) {
             selectedSuggestionIndex = Math.max(-1, state.searchHistory.length - 1);
         }
         showHistory();
-        if (selectedSuggestionIndex !== -1) {
-            searchInput.value = state.searchHistory[selectedSuggestionIndex];
+        if (selectedSuggestionIndex !== -1 && state.searchHistory.length > 0) {
+            const newSorted = [...state.searchHistory].sort((a, b) => { const ma = meta[a] || 1; const mb = meta[b] || 1; return mb - ma; });
+            searchInput.value = newSorted[selectedSuggestionIndex] || '';
         } else {
             searchInput.value = '';
         }
         if (typeof showToast === 'function') showToast('🗑️ 已删除此条搜索历史');
         return;
     }
-    // 4. 上下键及回车逻辑 (重点修复区)
+    // 4. 上下键及回车逻辑
     if (suggestionBox.classList.contains('show') && currentSuggestions.length > 0) {
         if (e.key === 'ArrowDown') {
             e.preventDefault();
             selectedSuggestionIndex = (selectedSuggestionIndex + 1) % currentSuggestions.length;
-            if (!currentKeyword && state.showSearchHistory) showHistory();
-            else renderSuggestions(currentKeyword);
+            refreshHistoryHighlight();
             searchInput.value = currentSuggestions[selectedSuggestionIndex];
             return;
         } else if (e.key === 'ArrowUp') {
             e.preventDefault();
-            // 修复 ArrowUp 索引跳跃 bug
             selectedSuggestionIndex = selectedSuggestionIndex <= 0
                 ? currentSuggestions.length - 1
                 : selectedSuggestionIndex - 1;
-            if (!currentKeyword && state.showSearchHistory) showHistory();
-            else renderSuggestions(currentKeyword);
+            refreshHistoryHighlight();
             searchInput.value = currentSuggestions[selectedSuggestionIndex];
             return;
         }
@@ -26042,6 +26331,15 @@ const fetchIconBtn = document.getElementById('auto-fetch-icon-btn');
             }
         };
     }
+    // 🌟 新增：输入网址自动跳转开关
+    const searchAutoUrlSwitchDom = document.getElementById('search-autourl-switch');
+    if (searchAutoUrlSwitchDom) {
+        searchAutoUrlSwitchDom.checked = state.autoOpenUrl;
+        searchAutoUrlSwitchDom.onchange = (e) => {
+            state.autoOpenUrl = e.target.checked;
+            localStorage.setItem('auto_open_url', state.autoOpenUrl);
+        };
+    }
     // 动态生成 UI 图层元素并挂载到页面
     const focusOverlayDom = document.createElement('div');
     focusOverlayDom.className = 'focus-overlay';
@@ -26093,11 +26391,23 @@ const fetchIconBtn = document.getElementById('auto-fetch-icon-btn');
             searchRippleDom.style.opacity = '0';
         }
     };
+    // 聚焦/再次点击时刷新搜索联想面板：空值显示历史窗口，有文字立即渲染联想并补网络
+    function refreshSearchPanel() {
+        const value = searchInput.value.trim();
+        if (!value) {
+            showHistory();
+            return;
+        }
+        if (!state.showSearchSuggestion) return;
+        renderInstantSuggestions(value);
+        clearTimeout(suggestionTimer);
+        suggestionTimer = setTimeout(() => fetchSuggestions(value), 0);
+    }
     // 监听搜索框聚焦事件，呼出特效
     if (searchInput) {
         searchInput.addEventListener('focus', () => {
             if (!state.searchFocusEnabled) {
-                if (!searchInput.value.trim()) showHistory();
+                refreshSearchPanel();
                 return;
             }
             // 每次触发重新计算原点（精准适配各类屏幕布局下的中心点）
@@ -26124,12 +26434,10 @@ const fetchIconBtn = document.getElementById('auto-fetch-icon-btn');
             }
             // 注入全局沉浸状态的类名
             document.body.classList.add('search-focus-active');
-            if (!searchInput.value.trim()) showHistory();
+            refreshSearchPanel();
         });
         searchInput.addEventListener('click', () => {
-            if (!searchInput.value.trim() && !suggestionBox.classList.contains('show')) {
-                showHistory();
-            }
+            refreshSearchPanel();
         });
     }
     // 监听全局鼠标点击：点击空白处智能退出并还原视效
@@ -26822,7 +27130,7 @@ const fetchIconBtn = document.getElementById('auto-fetch-icon-btn');
         liteSteps: [
             {
                 target: null,
-                text: "看来你已经身经百战啦！\n那我就不啰嗦了，直接为你快速点出我们 4.3.1 版本的核心新特性吧！😎",
+                text: "看来你已经身经百战啦！\n那我就不啰嗦了，直接为你快速点出我们 4.3.7 版本的核心新特性吧！😎",
                 position: "center"
             },
             {
@@ -26874,7 +27182,7 @@ const fetchIconBtn = document.getElementById('auto-fetch-icon-btn');
         steps: [], // 动态加载池
         init() {
             // 🛡️ 防打扰机制：检查是否已经完成过引导
-            if (localStorage.getItem('binix_tour_completed_v430') === 'true') return;
+            if (localStorage.getItem('binix_tour_completed_v437') === 'true') return;
             this.createDOM();
             this.bindEvents();
             // 延迟 1.5 秒启动，等待桌面磁贴上浮动画播放完毕，更有仪式感！
@@ -27019,7 +27327,7 @@ const fetchIconBtn = document.getElementById('auto-fetch-icon-btn');
             this.steps = [
                 {
                     target: null,
-                    text: "✨ 叮咚！欢迎来到全新进化的 BinixOvO 4.3.1 史诗级版本！\n我是你的专属魔法导览员 ( • ̀ω•́ )✧ \n在开始之前，请告诉我你的“数字极客”段位：",
+                    text: "✨ 叮咚！欢迎来到全新进化的 BinixOvO 4.3.7 史诗级版本！\n我是你的专属魔法导览员 ( • ̀ω•́ )✧ \n在开始之前，请告诉我你的“数字极客”段位：",
                     position: "center",
                     choices: [
                         { label: "🚀 老司机带带我 (我是高玩，直接跳过)", action: "skip" },
@@ -27060,7 +27368,7 @@ const fetchIconBtn = document.getElementById('auto-fetch-icon-btn');
             if (this.overlay) {
                 this.overlay.style.pointerEvents = '';
             }
-            localStorage.setItem('binix_tour_completed_v431', 'true'); // 写入 4.3.1 专属记忆
+            localStorage.setItem('binix_tour_completed_v437', 'true'); // 写入 4.3.7 专属记忆
             // 清理按键追踪事件监听器
             if (this._keydownTracker) {
                 document.removeEventListener('keydown', this._keydownTracker);
@@ -27431,8 +27739,8 @@ const fetchIconBtn = document.getElementById('auto-fetch-icon-btn');
             // 1. 先关闭个人信息弹窗
             const userModal = document.getElementById('user-modal');
             if (userModal) userModal.classList.remove('open');
-            // 2. 擦除 4.3.1 版本的本地记忆，让系统以为是全新进来的
-            localStorage.removeItem('binix_tour_completed_v431');
+            // 2. 擦除 4.3.7 版本的本地记忆，让系统以为是全新进来的
+            localStorage.removeItem('binix_tour_completed_v437');
             // 3. 如果之前导览结束时 DOM 已经被清空，这里重新召唤回来
             if (!document.querySelector('.tour-overlay')) {
                 TourSystem.createDOM();
@@ -28390,16 +28698,16 @@ const fetchIconBtn = document.getElementById('auto-fetch-icon-btn');
         });
         resetBtn.addEventListener('click', function() {
             bgFollowSwitch.checked = true;
-            bgColorPicker.value = '#141822';
+            bgColorPicker.value = '#ffffff';
             bgColorPicker.disabled = true;
-            bgOpacityRange.value = 95;
-            bgOpacityVal.textContent = 95;
-            blurRange.value = 35;
-            blurVal.textContent = 35;
-            saturateRange.value = 180;
-            saturateVal.textContent = 180;
+            bgOpacityRange.value = 15;
+            bgOpacityVal.textContent = 15;
+            blurRange.value = 20;
+            blurVal.textContent = 20;
+            saturateRange.value = 100;
+            saturateVal.textContent = 100;
             textFollowSwitch.checked = true;
-            textColorPicker.value = '#ffffff';
+            textColorPicker.value = '#0f172a';
             textColorPicker.disabled = true;
             maxRowsRange.value = 10;
             maxRowsVal.textContent = 10;
@@ -28543,16 +28851,16 @@ const fetchIconBtn = document.getElementById('auto-fetch-icon-btn');
         });
         resetBtn.addEventListener('click', function() {
             bgFollowSwitch.checked = true;
-            bgColorPicker.value = '#141822';
+            bgColorPicker.value = '#ffffff';
             bgColorPicker.disabled = true;
-            bgOpacityRange.value = 95;
-            bgOpacityVal.textContent = 95;
-            blurRange.value = 35;
-            blurVal.textContent = 35;
-            saturateRange.value = 180;
-            saturateVal.textContent = 180;
+            bgOpacityRange.value = 15;
+            bgOpacityVal.textContent = 15;
+            blurRange.value = 20;
+            blurVal.textContent = 20;
+            saturateRange.value = 100;
+            saturateVal.textContent = 100;
             textFollowSwitch.checked = true;
-            textColorPicker.value = '#ffffff';
+            textColorPicker.value = '#0f172a';
             textColorPicker.disabled = true;
             maxRowsRange.value = 15;
             maxRowsVal.textContent = 15;
@@ -28607,9 +28915,144 @@ const fetchIconBtn = document.getElementById('auto-fetch-icon-btn');
             root.style.setProperty('--history-max-rows', maxRowsRange.value);
         }
     }
+    // ==========================================
+    // 🔧 引擎切换弹窗外观设置
+    // ==========================================
+    function initEngineAppearance() {
+        const bgFollowSwitch = document.getElementById('engine-bg-follow-switch');
+        const bgColorPicker = document.getElementById('engine-bg-color');
+        const bgOpacityRange = document.getElementById('range-engine-bg-opacity');
+        const bgOpacityVal = document.getElementById('val-engine-bg-opacity');
+        const blurRange = document.getElementById('range-engine-blur');
+        const blurVal = document.getElementById('val-engine-blur');
+        const saturateRange = document.getElementById('range-engine-saturate');
+        const saturateVal = document.getElementById('val-engine-saturate');
+        const textFollowSwitch = document.getElementById('engine-text-follow-switch');
+        const textColorPicker = document.getElementById('engine-text-color');
+        const resetBtn = document.getElementById('engine-appearance-reset-btn');
+        if (!bgFollowSwitch) return;
+        const savedBgFollow = localStorage.getItem('engine_bg_follow');
+        const savedBgColor = localStorage.getItem('engine_bg_color');
+        const savedBgOpacity = localStorage.getItem('engine_bg_opacity');
+        const savedBlur = localStorage.getItem('engine_blur');
+        const savedSaturate = localStorage.getItem('engine_saturate');
+        const savedTextFollow = localStorage.getItem('engine_text_follow');
+        const savedTextColor = localStorage.getItem('engine_text_color');
+        if (savedBgFollow !== null) bgFollowSwitch.checked = savedBgFollow === 'true';
+        if (savedBgColor) bgColorPicker.value = savedBgColor;
+        bgColorPicker.disabled = bgFollowSwitch.checked;
+        if (savedBgOpacity !== null) {
+            bgOpacityRange.value = savedBgOpacity;
+            bgOpacityVal.textContent = savedBgOpacity;
+        }
+        if (savedBlur !== null) {
+            blurRange.value = savedBlur;
+            blurVal.textContent = savedBlur;
+        }
+        if (savedSaturate !== null) {
+            saturateRange.value = savedSaturate;
+            saturateVal.textContent = savedSaturate;
+        }
+        if (savedTextFollow !== null) textFollowSwitch.checked = savedTextFollow === 'true';
+        if (savedTextColor) textColorPicker.value = savedTextColor;
+        textColorPicker.disabled = textFollowSwitch.checked;
+        // 事件监听
+        bgFollowSwitch.addEventListener('change', function() {
+            bgColorPicker.disabled = this.checked;
+            localStorage.setItem('engine_bg_follow', this.checked);
+            applyEngineAppearance();
+        });
+        bgColorPicker.addEventListener('input', function() {
+            localStorage.setItem('engine_bg_color', this.value);
+            applyEngineAppearance();
+        });
+        bgOpacityRange.addEventListener('input', function() {
+            bgOpacityVal.textContent = this.value;
+            localStorage.setItem('engine_bg_opacity', this.value);
+            applyEngineAppearance();
+        });
+        blurRange.addEventListener('input', function() {
+            blurVal.textContent = this.value;
+            localStorage.setItem('engine_blur', this.value);
+            applyEngineAppearance();
+        });
+        saturateRange.addEventListener('input', function() {
+            saturateVal.textContent = this.value;
+            localStorage.setItem('engine_saturate', this.value);
+            applyEngineAppearance();
+        });
+        textFollowSwitch.addEventListener('change', function() {
+            textColorPicker.disabled = this.checked;
+            localStorage.setItem('engine_text_follow', this.checked);
+            applyEngineAppearance();
+        });
+        textColorPicker.addEventListener('input', function() {
+            localStorage.setItem('engine_text_color', this.value);
+            applyEngineAppearance();
+        });
+        resetBtn.addEventListener('click', function() {
+            bgFollowSwitch.checked = true;
+            bgColorPicker.value = '#ffffff';
+            bgColorPicker.disabled = true;
+            bgOpacityRange.value = 15;
+            bgOpacityVal.textContent = 15;
+            blurRange.value = 20;
+            blurVal.textContent = 20;
+            saturateRange.value = 100;
+            saturateVal.textContent = 100;
+            textFollowSwitch.checked = true;
+            textColorPicker.value = '#0f172a';
+            textColorPicker.disabled = true;
+            localStorage.removeItem('engine_bg_follow');
+            localStorage.removeItem('engine_bg_color');
+            localStorage.removeItem('engine_bg_opacity');
+            localStorage.removeItem('engine_blur');
+            localStorage.removeItem('engine_saturate');
+            localStorage.removeItem('engine_text_follow');
+            localStorage.removeItem('engine_text_color');
+            applyEngineAppearance();
+        });
+        applyEngineAppearance();
+    }
+    function applyEngineAppearance() {
+        const bgFollowSwitch = document.getElementById('engine-bg-follow-switch');
+        const bgColorPicker = document.getElementById('engine-bg-color');
+        const bgOpacityRange = document.getElementById('range-engine-bg-opacity');
+        const blurRange = document.getElementById('range-engine-blur');
+        const saturateRange = document.getElementById('range-engine-saturate');
+        const textFollowSwitch = document.getElementById('engine-text-follow-switch');
+        const textColorPicker = document.getElementById('engine-text-color');
+        const root = document.documentElement;
+        if (bgFollowSwitch && bgFollowSwitch.checked) {
+            root.style.removeProperty('--engine-bg-r');
+            root.style.removeProperty('--engine-bg-g');
+            root.style.removeProperty('--engine-bg-b');
+        } else if (bgColorPicker) {
+            const rgb = hexToRgb(bgColorPicker.value);
+            root.style.setProperty('--engine-bg-r', rgb.r);
+            root.style.setProperty('--engine-bg-g', rgb.g);
+            root.style.setProperty('--engine-bg-b', rgb.b);
+        }
+        if (bgOpacityRange) {
+            const opacity = bgOpacityRange.value / 100;
+            root.style.setProperty('--engine-bg-opacity', opacity);
+        }
+        if (blurRange) {
+            root.style.setProperty('--engine-blur', blurRange.value + 'px');
+        }
+        if (saturateRange) {
+            root.style.setProperty('--engine-saturate', saturateRange.value + '%');
+        }
+        if (textFollowSwitch && textFollowSwitch.checked) {
+            root.style.removeProperty('--engine-text-color');
+        } else if (textColorPicker) {
+            root.style.setProperty('--engine-text-color', textColorPicker.value);
+        }
+    }
     initDockAppearance();
     initSuggestionAppearance();
     initHistoryAppearance();
+    initEngineAppearance();
     // ==========================================
     // 🎨 折叠窗口右键颜色自定义
     // ==========================================
