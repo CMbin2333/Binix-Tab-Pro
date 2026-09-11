@@ -23,16 +23,6 @@ setTimeout(tryFocus, ms);
 }).catch(() => {}); // 静默失败
 }
 });
-chrome.commands.onCommand.addListener((command) => {
-if (command === "open-popup") {
-chrome.windows.create({
-url: 'popup.html',
-type: 'popup',
-width: 400,
-height: 580
-});
-}
-});
 chrome.runtime.onInstalled.addListener(() => {
 chrome.declarativeNetRequest.updateDynamicRules({
 removeRuleIds: [1], // 清除可能存在的旧规则

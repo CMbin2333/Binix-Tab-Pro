@@ -1,4 +1,4 @@
-﻿{
+{
   "manifest_version": 3,
   "name": "BinixOvO Tab Pro",
   "version": "4.3.7",
@@ -47,11 +47,11 @@
     "extension_pages": "default-src 'self'; connect-src 'self' https://wttr.in https://api.open-meteo.com https://restapi.amap.com https://ipapi.co https://get.geojs.io https://whois.pconline.com.cn https://nominatim.openstreetmap.org https://ip.taobao.com https://v1.jinrishici.com https://v1.hitokoto.cn https://api.xygeng.cn https://api.allorigins.win https://api.xinac.net https://api.iowen.cn https://translate.googleapis.com https://lingva.ml https://api.mymemory.translated.net https://dns.alidns.com https://api.ocr.space https://api.bing.com https://www.bing.com https://wsrv.nl https://cdn.jsdelivr.net https://qt.gtimg.cn https://smartbox.gtimg.cn https://web.ifzq.gtimg.cn https://open.er-api.com https://site.api.espn.com https://a.espncdn.com https://60s.viki.moe https://wallhaven.cc https://api.unsplash.com; img-src 'self' data: https:; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; font-src 'self' https://cdn.jsdelivr.net; media-src 'self' blob: data: https://www.soundjay.com; script-src 'self'"
   },
   "commands": {
-    "open-popup": {
+    "_execute_action": {
       "suggested_key": {
         "default": "Ctrl+B"
       },
-      "description": "打开 BinixOvO 插件搜索窗口"
+      "description": "激活该扩展程序"
     }
   }
 }

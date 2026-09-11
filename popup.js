@@ -474,7 +474,7 @@ faviconEl.addEventListener('load', function() {
 faviconEl.classList.add('loaded');
 if (textEl) textEl.classList.add('hidden');
 });
-faviconEl.src = 'https://favicon.im/' + hostname;
+faviconEl.src = 'https://api.xinac.net/icon/?url=' + hostname;
 }
 function createResultElement(item) {
 var el = document.createElement('div');
@@ -864,24 +864,24 @@ var searchEngineIcon = document.getElementById('ext-search-engine-icon');
 var engineDrop = document.getElementById('ext-engine-drop');
 var engineDropInner = document.getElementById('ext-engine-drop-inner');
 var SEARCH_ENGINES = {
-google: { name: 'Google', url: 'https://www.google.com/search?q=%s', icon: 'https://www.google.com/favicon.ico', group: 'search' },
-bing: { name: 'Bing', url: 'https://cn.bing.com/search?q=%s', icon: 'https://cn.bing.com/favicon.ico', group: 'search' },
-baidu: { name: 'Baidu', url: 'https://www.baidu.com/s?wd=%s', icon: 'https://www.baidu.com/favicon.ico', group: 'search' },
-duckduckgo: { name: 'DuckDuckGo', url: 'https://duckduckgo.com/?q=%s', icon: 'https://duckduckgo.com/favicon.ico', group: 'search' },
-brave: { name: 'Brave', url: 'https://search.brave.com/search?q=%s', icon: 'https://search.brave.com/favicon.ico', group: 'search' },
-sogou: { name: '搜狗', url: 'https://www.sogou.com/web?query=%s', icon: 'https://www.sogou.com/favicon.ico', group: 'search' },
-so360: { name: '360搜索', url: 'https://www.so.com/s?q=%s', icon: 'https://www.so.com/favicon.ico', group: 'search' },
-yahoo: { name: 'Yahoo', url: 'https://search.yahoo.com/search?p=%s', icon: 'https://s.yimg.com/rz/l/favicon.ico', group: 'search' },
-chatgpt: { name: 'ChatGPT', url: 'https://chatgpt.com/?q=%s', icon: 'https://chatgpt.com/favicon.ico', group: 'ai' },
-perplexity: { name: 'Perplexity', url: 'https://www.perplexity.ai/search?q=%s', icon: 'https://www.perplexity.ai/favicon.ico', group: 'ai' },
-kimi: { name: 'Kimi', url: 'https://kimi.moonshot.cn/?q=%s', icon: 'https://kimi.moonshot.cn/favicon.ico', group: 'ai' },
-doubao: { name: '豆包', url: 'https://www.doubao.com/?q=%s', icon: 'https://www.doubao.com/favicon.ico', group: 'ai' },
-metaso: { name: '秘塔AI', url: 'https://metaso.cn/?q=%s', icon: 'https://metaso.cn/favicon.ico', group: 'ai' },
-felo: { name: 'Felo', url: 'https://felo.ai/search?q=%s', icon: 'https://felo.ai/favicon.ico', group: 'ai' },
-bilibili: { name: '哔哩哔哩', url: 'https://search.bilibili.com/all?keyword=%s', icon: 'https://www.bilibili.com/favicon.ico', group: 'media' },
-youtube: { name: 'YouTube', url: 'https://www.youtube.com/results?search_query=%s', icon: 'https://www.youtube.com/favicon.ico', group: 'media' },
-douyin: { name: '抖音', url: 'https://www.douyin.com/search/%s', icon: 'https://www.douyin.com/favicon.ico', group: 'media' },
-tiktok: { name: 'TikTok', url: 'https://www.tiktok.com/search?q=%s', icon: 'https://www.tiktok.com/favicon.ico', group: 'media' }
+google: { name: 'Google', url: 'https://www.google.com/search?q=%s', icon: 'https://api.xinac.net/icon/?url=www.google.com', group: 'search' },
+bing: { name: 'Bing', url: 'https://cn.bing.com/search?q=%s', icon: 'https://api.xinac.net/icon/?url=cn.bing.com', group: 'search' },
+baidu: { name: 'Baidu', url: 'https://www.baidu.com/s?wd=%s', icon: 'https://api.xinac.net/icon/?url=www.baidu.com', group: 'search' },
+duckduckgo: { name: 'DuckDuckGo', url: 'https://duckduckgo.com/?q=%s', icon: 'https://api.xinac.net/icon/?url=duckduckgo.com', group: 'search' },
+brave: { name: 'Brave', url: 'https://search.brave.com/search?q=%s', icon: 'https://api.xinac.net/icon/?url=search.brave.com', group: 'search' },
+sogou: { name: '搜狗', url: 'https://www.sogou.com/web?query=%s', icon: 'https://api.xinac.net/icon/?url=www.sogou.com', group: 'search' },
+so360: { name: '360搜索', url: 'https://www.so.com/s?q=%s', icon: 'https://api.xinac.net/icon/?url=www.so.com', group: 'search' },
+yahoo: { name: 'Yahoo', url: 'https://search.yahoo.com/search?p=%s', icon: 'https://api.xinac.net/icon/?url=s.yimg.com/rz/l', group: 'search' },
+chatgpt: { name: 'ChatGPT', url: 'https://chatgpt.com/?q=%s', icon: 'https://api.xinac.net/icon/?url=chatgpt.com', group: 'ai' },
+perplexity: { name: 'Perplexity', url: 'https://www.perplexity.ai/search?q=%s', icon: 'https://api.xinac.net/icon/?url=www.perplexity.ai', group: 'ai' },
+kimi: { name: 'Kimi', url: 'https://kimi.moonshot.cn/?q=%s', icon: 'https://api.xinac.net/icon/?url=kimi.moonshot.cn', group: 'ai' },
+doubao: { name: '豆包', url: 'https://www.doubao.com/?q=%s', icon: 'https://api.xinac.net/icon/?url=www.doubao.com', group: 'ai' },
+metaso: { name: '秘塔AI', url: 'https://metaso.cn/?q=%s', icon: 'https://api.xinac.net/icon/?url=metaso.cn', group: 'ai' },
+felo: { name: 'Felo', url: 'https://felo.ai/search?q=%s', icon: 'https://api.xinac.net/icon/?url=felo.ai', group: 'ai' },
+bilibili: { name: '哔哩哔哩', url: 'https://search.bilibili.com/all?keyword=%s', icon: 'https://api.xinac.net/icon/?url=www.bilibili.com', group: 'media' },
+youtube: { name: 'YouTube', url: 'https://www.youtube.com/results?search_query=%s', icon: 'https://api.xinac.net/icon/?url=www.youtube.com', group: 'media' },
+douyin: { name: '抖音', url: 'https://www.douyin.com/search/%s', icon: 'https://api.xinac.net/icon/?url=www.douyin.com', group: 'media' },
+tiktok: { name: 'TikTok', url: 'https://www.tiktok.com/search?q=%s', icon: 'https://api.xinac.net/icon/?url=www.tiktok.com', group: 'media' }
 };
 var ENGINE_GROUPS = [
 { key: 'search', label: '综合搜索' },

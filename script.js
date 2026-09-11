@@ -782,26 +782,26 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('resize', resizeCanvas);
     const ENGINES = {
         // 🔍 传统搜索 (统一加上 %s 占位符)
-        google: { name: 'Google', url: 'https://www.google.com/search?q=%s', icon: 'https://favicon.im/www.google.com', group: 'search', placeholder: 'Google 一下' },
-        bing: { name: 'Bing', url: 'https://cn.bing.com/search?q=%s', icon: 'https://favicon.im/cn.bing.com', group: 'search', placeholder: '用 Bing 搜索' },
-        baidu: { name: 'Baidu', url: 'https://www.baidu.com/s?wd=%s', icon: 'https://favicon.im/www.baidu.com', group: 'search', placeholder: '百度一下' },
-        duckduckgo: { name: 'DuckDuckGo', url: 'https://duckduckgo.com/?q=%s', icon: 'https://favicon.im/duckduckgo.com', group: 'search', placeholder: 'DuckDuckGo 搜索' },
-        brave: { name: 'Brave', url: 'https://search.brave.com/search?q=%s', icon: 'https://favicon.im/search.brave.com', group: 'search', placeholder: 'Brave Search 搜索' },
-        sogou: { name: '搜狗', url: 'https://www.sogou.com/web?query=%s', icon: 'https://favicon.im/www.sogou.com', group: 'search', placeholder: '搜狗搜索' },
-        so360: { name: '360搜索', url: 'https://www.so.com/s?q=%s', icon: 'https://favicon.im/www.so.com', group: 'search', placeholder: '360 搜索' },
-        yahoo: { name: 'Yahoo', url: 'https://search.yahoo.com/search?p=%s', icon: 'https://favicon.im/search.yahoo.com', group: 'search', placeholder: 'Yahoo 搜索' },
+        google: { name: 'Google', url: 'https://www.google.com/search?q=%s', icon: 'https://api.xinac.net/icon/?url=www.google.com', group: 'search', placeholder: 'Google 一下' },
+        bing: { name: 'Bing', url: 'https://cn.bing.com/search?q=%s', icon: 'https://api.xinac.net/icon/?url=cn.bing.com', group: 'search', placeholder: '用 Bing 搜索' },
+        baidu: { name: 'Baidu', url: 'https://www.baidu.com/s?wd=%s', icon: 'https://api.xinac.net/icon/?url=www.baidu.com', group: 'search', placeholder: '百度一下' },
+        duckduckgo: { name: 'DuckDuckGo', url: 'https://duckduckgo.com/?q=%s', icon: 'https://api.xinac.net/icon/?url=duckduckgo.com', group: 'search', placeholder: 'DuckDuckGo 搜索' },
+        brave: { name: 'Brave', url: 'https://search.brave.com/search?q=%s', icon: 'https://api.xinac.net/icon/?url=search.brave.com', group: 'search', placeholder: 'Brave Search 搜索' },
+        sogou: { name: '搜狗', url: 'https://www.sogou.com/web?query=%s', icon: 'https://api.xinac.net/icon/?url=www.sogou.com', group: 'search', placeholder: '搜狗搜索' },
+        so360: { name: '360搜索', url: 'https://www.so.com/s?q=%s', icon: 'https://api.xinac.net/icon/?url=www.so.com', group: 'search', placeholder: '360 搜索' },
+        yahoo: { name: 'Yahoo', url: 'https://search.yahoo.com/search?p=%s', icon: 'https://api.xinac.net/icon/?url=search.yahoo.com', group: 'search', placeholder: 'Yahoo 搜索' },
         // 🤖 AI 搜索 (填入文本，部分需要手动按回车发送)
-        chatgpt: { name: 'ChatGPT', url: 'https://chatgpt.com/?q=%s', icon: 'https://favicon.im/chatgpt.com', group: 'ai', placeholder: '向 ChatGPT 提问' },
-        perplexity: { name: 'Perplexity', url: 'https://www.perplexity.ai/search?q=%s', icon: 'https://favicon.im/www.perplexity.ai', group: 'ai', placeholder: '向 Perplexity 提问' },
-        kimi: { name: 'Kimi', url: 'https://kimi.moonshot.cn/?q=%s', icon: 'https://favicon.im/kimi.moonshot.cn', group: 'ai', placeholder: '向 Kimi 提问' },
-        doubao: { name: '豆包', url: 'https://www.doubao.com/?q=%s', icon: 'https://favicon.im/www.doubao.com', group: 'ai', placeholder: '向豆包提问' },
-        metaso: { name: '秘塔AI', url: 'https://metaso.cn/?q=%s', icon: 'https://favicon.im/metaso.cn', group: 'ai', placeholder: '用秘塔 AI 搜索' },
-        felo: { name: 'Felo', url: 'https://felo.ai/search?q=%s', icon: 'https://favicon.im/felo.ai', group: 'ai', placeholder: '用 Felo 搜索' },
+        chatgpt: { name: 'ChatGPT', url: 'https://chatgpt.com/?q=%s', icon: 'https://api.xinac.net/icon/?url=chatgpt.com', group: 'ai', placeholder: '向 ChatGPT 提问' },
+        perplexity: { name: 'Perplexity', url: 'https://www.perplexity.ai/search?q=%s', icon: 'https://api.xinac.net/icon/?url=www.perplexity.ai', group: 'ai', placeholder: '向 Perplexity 提问' },
+        kimi: { name: 'Kimi', url: 'https://kimi.moonshot.cn/?q=%s', icon: 'https://api.xinac.net/icon/?url=kimi.moonshot.cn', group: 'ai', placeholder: '向 Kimi 提问' },
+        doubao: { name: '豆包', url: 'https://www.doubao.com/?q=%s', icon: 'https://api.xinac.net/icon/?url=www.doubao.com', group: 'ai', placeholder: '向豆包提问' },
+        metaso: { name: '秘塔AI', url: 'https://metaso.cn/?q=%s', icon: 'https://api.xinac.net/icon/?url=metaso.cn', group: 'ai', placeholder: '用秘塔 AI 搜索' },
+        felo: { name: 'Felo', url: 'https://felo.ai/search?q=%s', icon: 'https://api.xinac.net/icon/?url=felo.ai', group: 'ai', placeholder: '用 Felo 搜索' },
         // 🎬 媒体视频 (新增需求)
-        bilibili: { name: '哔哩哔哩', url: 'https://search.bilibili.com/all?keyword=%s', icon: 'https://favicon.im/www.bilibili.com', group: 'media', placeholder: '搜 B 站视频' },
-        youtube: { name: 'YouTube', url: 'https://www.youtube.com/results?search_query=%s', icon: 'https://favicon.im/www.youtube.com', group: 'media', placeholder: '搜 YouTube 视频' },
-        douyin: { name: '抖音', url: 'https://www.douyin.com/search/%s', icon: 'https://favicon.im/www.douyin.com', group: 'media', placeholder: '搜抖音视频' },
-        tiktok: { name: 'TikTok', url: 'https://www.tiktok.com/search?q=%s', icon: 'https://favicon.im/www.tiktok.com', group: 'media', placeholder: '搜 TikTok 视频' }
+        bilibili: { name: '哔哩哔哩', url: 'https://search.bilibili.com/all?keyword=%s', icon: 'https://api.xinac.net/icon/?url=www.bilibili.com', group: 'media', placeholder: '搜 B 站视频' },
+        youtube: { name: 'YouTube', url: 'https://www.youtube.com/results?search_query=%s', icon: 'https://api.xinac.net/icon/?url=www.youtube.com', group: 'media', placeholder: '搜 YouTube 视频' },
+        douyin: { name: '抖音', url: 'https://www.douyin.com/search/%s', icon: 'https://api.xinac.net/icon/?url=www.douyin.com', group: 'media', placeholder: '搜抖音视频' },
+        tiktok: { name: 'TikTok', url: 'https://www.tiktok.com/search?q=%s', icon: 'https://api.xinac.net/icon/?url=www.tiktok.com', group: 'media', placeholder: '搜 TikTok 视频' }
     };
     const ENGINE_GROUPS = [
         { key: 'search', label: '综合搜索' },
@@ -913,7 +913,7 @@ document.addEventListener('DOMContentLoaded', () => {
         suggestionAction: localStorage.getItem('suggestion_action') || 'direct',
         translateEngine: localStorage.getItem('translate_engine') || 'google',
         quickTranslateEngine: localStorage.getItem('quick_translate_engine') || 'google', // 下方已做双引擎自动容灾处理
-        iconSource: localStorage.getItem('icon_source') || 'favicon_im',
+        iconSource: localStorage.getItem('icon_source') || 'xinac',
         customIconUrl: localStorage.getItem('custom_icon_url') || '',
         autoSpringSnow: localStorage.getItem('auto_spring_snow') !== 'false',
         freeLayout: localStorage.getItem('free_layout') === 'true',
@@ -1964,7 +1964,7 @@ async function renderQuoteCard() {
         mouseFollowColorGroup3.style.display = showManualColors && state.mouseFollowMode === 'triple' ? 'flex' : 'none';
         mouseFollowModeOpts.forEach(opt => opt.classList.toggle('active', opt.dataset.cursorMode === state.mouseFollowMode));
     }
-    function guessEngineIcon(url, fallback = 'https://favicon.im/www.google.com') {
+    function guessEngineIcon(url, fallback = 'https://api.xinac.net/icon/?url=www.google.com') {
         try {
             const engineUrl = new URL(url.replace('%s', 'query'));
             return getFaviconUrl(engineUrl.origin) || fallback;
@@ -1980,9 +1980,9 @@ async function renderQuoteCard() {
         } catch (e) {
             return '';
         }
-        // 国内源优先：favicon.im CDN 代理 + 直连 favicon.ico
+        // 国内源优先：Xinac 国内 API + 直连 favicon.ico
         const sources = {
-            favicon_im: `https://favicon.im/${hostname}`,
+            favicon_im: `https://api.xinac.net/icon/?url=${hostname}`,
             direct: `https://${hostname}/favicon.ico`,
             yandex: `https://favicon.yandex.net/favicon/${hostname}`,
             unavatar: `https://unavatar.io/${hostname}?fallback=false`,
@@ -1990,9 +1990,9 @@ async function renderQuoteCard() {
             iowen: getApi('icon_iowen').url.replace('{hostname}', hostname),
             google: `https://www.google.com/s2/favicons?sz=128&domain=${hostname}`,
             duckduckgo: `https://icons.duckduckgo.com/ip3/${hostname}.ico`,
-            custom: state.customIconUrl ? state.customIconUrl.replace('%domain', hostname) : `https://favicon.im/${hostname}`
+            custom: state.customIconUrl ? state.customIconUrl.replace('%domain', hostname) : `https://api.xinac.net/icon/?url=${hostname}`
         };
-        // 优先使用用户配置的国内源，默认 favicon_im
+        // 优先使用用户配置的国内源，默认 xinac
         return sources[state.iconSource] || sources.favicon_im;
     }
     function setCurrentEngine(url, icon) {
@@ -8955,7 +8955,7 @@ body.list-view-mode.list-fold-layout .list-cat-fold-grid .tile:not(:last-child) 
                     });
                     // 清空当前的搜索引擎缓存图标
                     state.customEngines.forEach(eng => {
-                        if(eng.icon && eng.icon.includes('google.com/s2/favicons')) {
+                        if(eng.icon && (eng.icon.includes('google.com/s2/favicons') || eng.icon.includes('api.xinac.net'))) {
                             eng.icon = guessEngineIcon(eng.url);
                         }
                     });
@@ -26143,7 +26143,7 @@ const fetchIconBtn = document.getElementById('auto-fetch-icon-btn');
             try {
                 let parsedUrl = websiteUrl.startsWith('http') ? websiteUrl : 'http://' + websiteUrl;
                 let domain = new URL(parsedUrl).hostname;
-                const fetchUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
+                const fetchUrl = `https://api.xinac.net/icon/?url=${domain}`;
                 iconUrlInput.value = fetchUrl;
                 if(typeof showToast === 'function') showToast("图标链接已自动获取！");
                 fetchIconBtn.style.transform = "rotate(180deg)";
@@ -29480,6 +29480,15 @@ const fetchIconBtn = document.getElementById('auto-fetch-icon-btn');
                 return `https://api.xinac.net/icon/?url=${hostname}`;
             } catch (e) { return ''; }
         }
+        // 图标加载成功后隐藏红色首字占位块（.ext-result-icon-text），避免占位底衬透出
+        function bindFaviconHideText(el) {
+            const img = el.querySelector('.ext-result-favicon');
+            const text = el.querySelector('.ext-result-icon-text');
+            if (!img) return;
+            img.addEventListener('load', function () {
+                if (text) text.classList.add('hidden');
+            });
+        }
         function getDomain(url) {
             try {
                 const u = new URL(url);
@@ -29751,6 +29760,7 @@ const fetchIconBtn = document.getElementById('auto-fetch-icon-btn');
                             openItem(item);
                         });
                         content.appendChild(el);
+                        bindFaviconHideText(el);
                         itemRefs.push({ el, item });
                     });
                     groupDiv.appendChild(header);
@@ -29809,6 +29819,7 @@ const fetchIconBtn = document.getElementById('auto-fetch-icon-btn');
                             openItem(item);
                         });
                         resultsContainer.appendChild(el);
+                        bindFaviconHideText(el);
                         itemRefs.push({ el, item });
                     });
                     resultsContainer._groupDomMap = [{ itemRefs }];
