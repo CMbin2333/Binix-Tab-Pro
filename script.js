@@ -11050,7 +11050,7 @@ body.list-view-mode.list-fold-layout .list-cat-fold-grid .tile:not(:last-child) 
 window.__widgetTimers = window.__widgetTimers || new Map();
 function getAllWidgetTypes() {
     const builtin = [
-        { widgetType: 'clock', name: '时钟', icon: '🕐', category: 'time', defaultWidth: 2, defaultHeight: 2 },
+        { widgetType: 'clock', name: '时钟', icon: '<svg class="ig-icon" aria-hidden="true" focusable="false"><use href="#ig-clock"></use></svg>', category: 'time', defaultWidth: 2, defaultHeight: 2 },
         { widgetType: 'weather', name: '天气', icon: '🌤️', category: 'info', defaultWidth: 2, defaultHeight: 2 },
         { widgetType: 'todo', name: '待办事项', icon: '✅', category: 'productivity', defaultWidth: 2, defaultHeight: 3 },
         { widgetType: 'calendar', name: '日历', icon: '📅', category: 'time', defaultWidth: 3, defaultHeight: 3 },
@@ -24050,7 +24050,7 @@ ASN号码: ${cachedIpData.asn || '-'}`;
                 const escaped = item.replace(/</g, '&lt;').replace(/>/g, '&gt;');
                 const sel = (!currentKeyword && index === selectedSuggestionIndex) ? ' selected' : '';
                 html += `<div class="suggestion-item${sel}" data-history-index="${index}">
-                    <span class="si-icon">🕒</span>
+                    <span class="si-icon"><svg class="ig-icon" aria-hidden="true" focusable="false"><use href="#ig-clock"></use></svg></span>
                     <span class="si-text">${escaped}</span>
                     <span class="si-delete" data-history-index="${index}">删除</span>
                 </div>`;
@@ -24071,7 +24071,7 @@ ASN号码: ${cachedIpData.asn || '-'}`;
             currentRelatedArr.forEach((item, index) => {
                 const escaped = item.replace(/</g, '&lt;').replace(/>/g, '&gt;');
                 html += `<div class="suggestion-sug-item" data-related-index="${index}">
-                    <span class="si-icon">🔍</span>
+                    <span class="si-icon"><svg class="ig-icon" aria-hidden="true" focusable="false"><use href="#ig-search"></use></svg></span>
                     <span class="si-text">${escaped}</span>
                 </div>`;
             });
@@ -24097,7 +24097,7 @@ ASN号码: ${cachedIpData.asn || '-'}`;
                     : '';
                 const sel = (currentKeyword && index === selectedSuggestionIndex) ? ' selected' : '';
                 html += `<div class="suggestion-sug-item${sel}" data-sug-index="${index}" style="position:relative;">
-                    <span class="si-icon">🔍</span>
+                    <span class="si-icon"><svg class="ig-icon" aria-hidden="true" focusable="false"><use href="#ig-search"></use></svg></span>
                     <span class="si-text">${formattedItem}</span>
                     ${shortcutHint}
                 </div>`;
