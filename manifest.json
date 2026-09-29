@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "BinixOvO Tab Pro",
-  "version": "4.3.7",
-  "description": "BinixOvO 4.3.7 旗舰版响应式动态主题新标签页 - 本地安全版",
+  "version": "4.3.8v",
+  "description": "BinixOvO 4.3.8v 旗舰版响应式动态主题新标签页 - 本地安全版",
   "browser_specific_settings": {
     "gecko": {
       "id": "binixovo@example.com",

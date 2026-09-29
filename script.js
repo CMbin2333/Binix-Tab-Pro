@@ -747,6 +747,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let quoteClickTimer = null;
     let audioUnlockReady = false;
     let alarmToneContext = null;
+    let successToneContext = null;
     let lastSavedMusicSecond = -1;
     let alarmLoopTimer = null;
     let alarmAlertAutoTimer = null;
@@ -2318,6 +2319,29 @@ async function renderQuoteCard() {
             gain.connect(ctx.destination);
             osc.start(start + index * 0.16);
             osc.stop(start + index * 0.16 + 0.22);
+        });
+    }
+    // 拖拽切换分类成功提示音：Web Audio 生成约 800Hz 短促清脆音，音量适中不刺耳
+    function playSuccessTone() {
+        const AudioContextCtor = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextCtor) return;
+        if (!successToneContext) successToneContext = new AudioContextCtor();
+        const ctx = successToneContext;
+        if (ctx.state === 'suspended') ctx.resume().catch(() => {});
+        const start = ctx.currentTime + 0.01;
+        // 主音 800Hz + 泛音 1600Hz，短促清脆不刺耳
+        [[800, 0.16], [1600, 0.05]].forEach(([freq, vol]) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, start);
+            gain.gain.setValueAtTime(0.0001, start);
+            gain.gain.exponentialRampToValueAtTime(vol, start + 0.015);
+            gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.15);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(start);
+            osc.stop(start + 0.17);
         });
     }
     function startAlarmPlayback() {
@@ -10752,6 +10776,34 @@ body.list-view-mode.list-fold-layout .list-cat-fold-grid .tile:not(:last-child) 
     let hoverReady = false;
     let hoverTimer = null;
     let trashShowTimer = null;
+    // 🧲 拖拽磁贴切换分类：侧栏分类命中检测与高亮
+    function isCategoryNavItem(el) {
+        return !!(el && el.classList && el.classList.contains('nav-item')
+            && el.dataset && el.dataset.cat && state.categoryOrder.includes(el.dataset.cat));
+    }
+    function getCategoryNavItemAt(x, y) {
+        if (state.listViewMode || !dynamicNav) return null;
+        const items = dynamicNav.querySelectorAll('.nav-item');
+        for (let i = 0; i < items.length; i++) {
+            const item = items[i];
+            if (!isCategoryNavItem(item)) continue;
+            const r = item.getBoundingClientRect();
+            if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) return item;
+        }
+        return null;
+    }
+    function updateCategoryDropHighlight(x, y) {
+        if (!dynamicNav) return;
+        const hit = getCategoryNavItemAt(x, y);
+        if (hit) {
+            hit.classList.add('cat-drop-target');
+        } else {
+            dynamicNav.querySelectorAll('.nav-item.cat-drop-target').forEach(el => el.classList.remove('cat-drop-target'));
+        }
+    }
+    function clearCategoryDropHighlight() {
+        if (dynamicNav) dynamicNav.querySelectorAll('.nav-item.cat-drop-target').forEach(el => el.classList.remove('cat-drop-target'));
+    }
     window.widgetGridSortable = new Sortable(gridEl, {
         disabled: state.listViewMode || (state.freeLayout && !state.listViewMode),
         animation: 240,
@@ -10856,6 +10908,8 @@ body.list-view-mode.list-fold-layout .list-cat-fold-grid .tile:not(:last-child) 
                 const x = e.clientX || (e.touches && e.touches[0].clientX);
                 const y = e.clientY || (e.touches && e.touches[0].clientY);
                 if (clone) { clone.style.left = `${x - clone.offsetWidth / 2}px`; clone.style.top = `${y - clone.offsetHeight / 2}px`; }
+                // 🧲 悬停侧栏分类时高亮提示
+                updateCategoryDropHighlight(x, y);
             };
             document.addEventListener('mousemove', onMove, { passive: true });
             document.addEventListener('touchmove', onMove, { passive: true });
@@ -10872,6 +10926,8 @@ body.list-view-mode.list-fold-layout .list-cat-fold-grid .tile:not(:last-child) 
         onEnd: (evt) => {
             if (evt.item._dragClone) { evt.item._dragClone.remove(); evt.item._dragClone = null; }
             if (evt.item._dragMoveHandler) { document.removeEventListener('mousemove', evt.item._dragMoveHandler); document.removeEventListener('touchmove', evt.item._dragMoveHandler); evt.item._dragMoveHandler = null; }
+            // 🧲 清理侧栏分类高亮
+            clearCategoryDropHighlight();
             clearTimeout(hoverTimer);
             clearTimeout(trashShowTimer);
             if (trashShowTimer) trashShowTimer = null;
@@ -10883,6 +10939,37 @@ body.list-view-mode.list-fold-layout .list-cat-fold-grid .tile:not(:last-child) 
             const sortCat = evt.item.dataset.cat || state.activeCat;
             const list = getTileListByCat(sortCat);
             const { x: evtX, y: evtY } = getClientCoords(evt);
+            // 🧲 松手落在侧栏分类上：切换磁贴所属分类并持久化
+            if (!state.listViewMode) {
+                const dropNavItem = getCategoryNavItemAt(evtX, evtY);
+                if (dropNavItem) {
+                    const targetCat = dropNavItem.dataset.cat;
+                    const srcCat = evt.item.dataset.cat || state.activeCat;
+                    const dragUrl = evt.item.dataset.url || '';
+                    if (targetCat && targetCat !== srcCat) {
+                        const srcList = getTileListByCat(srcCat);
+                        const dragIdx = srcList.findIndex(i => i.id === dragUrl || i.url === dragUrl);
+                        if (dragIdx > -1) {
+                            const movedItem = srcList.splice(dragIdx, 1)[0];
+                            getTileListByCat(targetCat).push(movedItem);
+                            window.saveData();
+                            // 移除旧 DOM 节点，避免重建前残留
+                            if (evt.item && evt.item.parentNode) evt.item.remove();
+                            // 切换到目标分类并重建界面
+                            state.activeCat = targetCat;
+                            if (state.rememberCategory) localStorage.setItem('active_cat', targetCat);
+                            renderSidebar();
+                            renderTiles();
+                            if (typeof showToast === 'function') showToast(`已移动到「${getCategoryDisplayName(targetCat)}」`);
+                            playSuccessTone();
+                            if (navigator.vibrate) navigator.vibrate([30, 50]);
+                            stopDragTracking();
+                            document.querySelectorAll('.tile.merge-target').forEach(el => el.classList.remove('merge-target'));
+                            return;
+                        }
+                    }
+                }
+            }
             // 修复：使用 visibility 占位隐藏，防止右侧元素向左塌陷补位
             evt.item.style.visibility = 'hidden';
             const elemBelow = document.elementFromPoint(evtX, evtY);
@@ -11050,7 +11137,7 @@ body.list-view-mode.list-fold-layout .list-cat-fold-grid .tile:not(:last-child) 
 window.__widgetTimers = window.__widgetTimers || new Map();
 function getAllWidgetTypes() {
     const builtin = [
-        { widgetType: 'clock', name: '时钟', icon: '🕐', category: 'time', defaultWidth: 2, defaultHeight: 2 },
+        { widgetType: 'clock', name: '时钟', icon: '<svg class="ig-icon" aria-hidden="true" focusable="false"><use href="#ig-clock"></use></svg>', category: 'time', defaultWidth: 2, defaultHeight: 2 },
         { widgetType: 'weather', name: '天气', icon: '🌤️', category: 'info', defaultWidth: 2, defaultHeight: 2 },
         { widgetType: 'todo', name: '待办事项', icon: '✅', category: 'productivity', defaultWidth: 2, defaultHeight: 3 },
         { widgetType: 'calendar', name: '日历', icon: '📅', category: 'time', defaultWidth: 3, defaultHeight: 3 },
@@ -18147,7 +18234,7 @@ function triggerConfetti(startX, startY) {
             interactiveTheme: localStorage.getItem('interactiveTheme'),
             manualPowerSave: localStorage.getItem('manual_power_save'),
             isZenMode: state.isZenMode,
-            // 🔧 v4.3.7 补全：之前遗漏的重要配置项
+            // 🔧 v4.3.8v 补全：之前遗漏的重要配置项
             tileResizeEnabled: state.tileResizeEnabled,
             replaceClockWithTimer: state.replaceClockWithTimer,
             listViewMode: state.listViewMode,
@@ -18180,7 +18267,7 @@ function triggerConfetti(startX, startY) {
             extTheme: localStorage.getItem('ext_theme'),
             idleSleepTimeout: localStorage.getItem('idle_sleep_timeout'),
             tabProSettingsV430: localStorage.getItem('tab_pro_settings_v430'),
-            // ═══ v4.3.7 补全：小组件相关 ═══
+            // ═══ v4.3.8v 补全：小组件相关 ═══
             binixovoWidgets: JSON.parse(localStorage.getItem('binixovo_widgets') || 'null'),
             binixCustomWidgets: JSON.parse(localStorage.getItem('binix_custom_widgets') || 'null'),
             binixCategoryOrder: JSON.parse(localStorage.getItem('binix_categoryOrder') || 'null'),
@@ -18267,7 +18354,7 @@ function triggerConfetti(startX, startY) {
             unsplashAccessKey: localStorage.getItem('unsplash_access_key'),
             // engicon 引擎图标数据（前缀键集合）
             engIcons: (function() { var icons = {}; for (var i = 0; i < localStorage.length; i++) { var k = localStorage.key(i); if (k && k.indexOf('engicon_') === 0) icons[k] = localStorage.getItem(k); } return Object.keys(icons).length ? icons : null; })(),
-            // ═══ v4.3.7 补全：常量定义键 ═══
+            // ═══ v4.3.8v 补全：常量定义键 ═══
             sectionColors: JSON.parse(localStorage.getItem('section_colors') || 'null'),
             binixovoExtSettings: JSON.parse(localStorage.getItem('binixovo_ext_settings') || 'null'),
             timerState: JSON.parse(localStorage.getItem('timer_state') || 'null'),
@@ -18462,7 +18549,7 @@ function triggerConfetti(startX, startY) {
                         if (imported.isZenMode !== undefined) {
                             localStorage.setItem('is_zen_mode', String(imported.isZenMode === true || imported.isZenMode === 'true'));
                         }
-                    // 🔧 v4.3.7 补全：新导出字段的导入恢复
+                    // 🔧 v4.3.8v 补全：新导出字段的导入恢复
                     if (imported.tileResizeEnabled !== undefined) localStorage.setItem('tile_resize_enabled', imported.tileResizeEnabled);
                     if (imported.replaceClockWithTimer !== undefined) localStorage.setItem('replace_clock_timer', imported.replaceClockWithTimer);
                     if (imported.listViewMode !== undefined) localStorage.setItem('list_view_mode', imported.listViewMode);
@@ -18499,7 +18586,7 @@ function triggerConfetti(startX, startY) {
                     if (imported.extTheme) localStorage.setItem('ext_theme', imported.extTheme);
                     if (imported.idleSleepTimeout) localStorage.setItem('idle_sleep_timeout', imported.idleSleepTimeout);
                     if (imported.tabProSettingsV430) localStorage.setItem('tab_pro_settings_v430', imported.tabProSettingsV430);
-                    // ═══ v4.3.7 补全：小组件相关 ═══
+                    // ═══ v4.3.8v 补全：小组件相关 ═══
                     if (imported.binixovoWidgets) { try { const v = typeof imported.binixovoWidgets === 'string' ? JSON.parse(imported.binixovoWidgets) : imported.binixovoWidgets; localStorage.setItem('binixovo_widgets', JSON.stringify(v)); } catch(e) {} }
                     if (imported.binixCustomWidgets) { try { const v = typeof imported.binixCustomWidgets === 'string' ? JSON.parse(imported.binixCustomWidgets) : imported.binixCustomWidgets; localStorage.setItem('binix_custom_widgets', JSON.stringify(v)); } catch(e) {} }
                     if (imported.binixCategoryOrder) { try { const v = typeof imported.binixCategoryOrder === 'string' ? JSON.parse(imported.binixCategoryOrder) : imported.binixCategoryOrder; localStorage.setItem('binix_categoryOrder', JSON.stringify(v)); } catch(e) {} }
@@ -18586,7 +18673,7 @@ function triggerConfetti(startX, startY) {
                     if (imported.unsplashAccessKey !== undefined) localStorage.setItem('unsplash_access_key', imported.unsplashAccessKey);
                     // engicon 引擎图标恢复
                     if (imported.engIcons && typeof imported.engIcons === 'object') { Object.keys(imported.engIcons).forEach(function(k) { if (k.indexOf('engicon_') === 0) localStorage.setItem(k, imported.engIcons[k]); }); }
-                    // ═══ v4.3.7 补全：常量定义键 ═══
+                    // ═══ v4.3.8v 补全：常量定义键 ═══
                     if (imported.sectionColors) { try { var v = typeof imported.sectionColors === 'string' ? JSON.parse(imported.sectionColors) : imported.sectionColors; localStorage.setItem('section_colors', JSON.stringify(v)); } catch(e) {} }
                     if (imported.binixovoExtSettings) { try { var v = typeof imported.binixovoExtSettings === 'string' ? JSON.parse(imported.binixovoExtSettings) : imported.binixovoExtSettings; localStorage.setItem('binixovo_ext_settings', JSON.stringify(v)); } catch(e) {} }
                     if (imported.timerState) { try { var v = typeof imported.timerState === 'string' ? JSON.parse(imported.timerState) : imported.timerState; localStorage.setItem('timer_state', JSON.stringify(v)); } catch(e) {} }
@@ -21053,7 +21140,7 @@ ASN号码: ${cachedIpData.asn || '-'}`;
                 var nomUrl = 'https://nominatim.openstreetmap.org/reverse?format=json&lat=' + lat + '&lon=' + lon + '&accept-language=zh';
                 var nomRes = await fetch(nomUrl, {
                     signal: nomCtrl.signal,
-                    headers: { 'User-Agent': 'BinixOvO_TabPro/4.3.7' }
+                    headers: { 'User-Agent': 'BinixOvO_TabPro/4.3.8v' }
                 });
                 clearTimeout(nomTid);
                 if (nomRes.ok) {
@@ -24050,7 +24137,7 @@ ASN号码: ${cachedIpData.asn || '-'}`;
                 const escaped = item.replace(/</g, '&lt;').replace(/>/g, '&gt;');
                 const sel = (!currentKeyword && index === selectedSuggestionIndex) ? ' selected' : '';
                 html += `<div class="suggestion-item${sel}" data-history-index="${index}">
-                    <span class="si-icon">🕒</span>
+                    <span class="si-icon"><svg class="ig-icon" aria-hidden="true" focusable="false"><use href="#ig-clock"></use></svg></span>
                     <span class="si-text">${escaped}</span>
                     <span class="si-delete" data-history-index="${index}">删除</span>
                 </div>`;
@@ -24071,7 +24158,7 @@ ASN号码: ${cachedIpData.asn || '-'}`;
             currentRelatedArr.forEach((item, index) => {
                 const escaped = item.replace(/</g, '&lt;').replace(/>/g, '&gt;');
                 html += `<div class="suggestion-sug-item" data-related-index="${index}">
-                    <span class="si-icon">🔍</span>
+                    <span class="si-icon"><svg class="ig-icon" aria-hidden="true" focusable="false"><use href="#ig-search"></use></svg></span>
                     <span class="si-text">${escaped}</span>
                 </div>`;
             });
@@ -24097,7 +24184,7 @@ ASN号码: ${cachedIpData.asn || '-'}`;
                     : '';
                 const sel = (currentKeyword && index === selectedSuggestionIndex) ? ' selected' : '';
                 html += `<div class="suggestion-sug-item${sel}" data-sug-index="${index}" style="position:relative;">
-                    <span class="si-icon">🔍</span>
+                    <span class="si-icon"><svg class="ig-icon" aria-hidden="true" focusable="false"><use href="#ig-search"></use></svg></span>
                     <span class="si-text">${formattedItem}</span>
                     ${shortcutHint}
                 </div>`;
@@ -24615,6 +24702,7 @@ searchInput.addEventListener('keyup', (e) => {
     let batchTempData = {};
     let batchTempOrder = [];
     let currentBatchCat = '';
+    let batchSelectMode = false;   // 批量操作模式开关（true 时显示勾选框与批量工具栏）
     const batchManageModal = document.getElementById('batch-manage-modal');
     const btnBatchManage = document.getElementById('btn-batch-manage');
     const batchModalClose = document.getElementById('batch-modal-close');
@@ -25470,6 +25558,75 @@ searchInput.addEventListener('keyup', (e) => {
             renderBatchItems();
         }
     };
+    // ===== 跨分类拖拽：坐标命中工具（书签不插入左侧分类列表，悬停/松手按指针坐标判定切换归属，避免避让占位） =====
+    function getCategoryAtPoint(x, y) {
+        const items = batchCatList.querySelectorAll('.batch-cat-item');
+        for (let i = 0; i < items.length; i++) {
+            const r = items[i].getBoundingClientRect();
+            if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom) return items[i];
+        }
+        return null;
+    }
+    function clearCategoryDropHighlights() {
+        batchCatList.querySelectorAll('.batch-cat-item.drop-target').forEach(el => el.classList.remove('drop-target'));
+    }
+    function getCatNameFromItem(catEl) {
+        const nameEl = catEl && catEl.querySelector('.batch-cat-name');
+        return nameEl ? nameEl.dataset.cat : null;
+    }
+    function extractBookmarkFromList(srcList, srcIndex) {
+        if (srcList === batchItemList) {
+            return (batchTempData[currentBatchCat] || []).splice(srcIndex, 1)[0];
+        }
+        if (srcList && srcList.id && srcList.id.startsWith('batch-sublist-')) {
+            const folderIdx = parseInt(srcList.id.replace('batch-sublist-', ''), 10);
+            const folder = (batchTempData[currentBatchCat] || [])[folderIdx];
+            if (folder && Array.isArray(folder.items)) {
+                return folder.items.splice(srcIndex, 1)[0];
+            }
+        }
+        return undefined;
+    }
+    function switchBookmarkToCategory(srcList, srcIndex, targetCat) {
+        const moved = extractBookmarkFromList(srcList, srcIndex);
+        if (!moved || !targetCat) return false;
+        batchTempData[targetCat] = batchTempData[targetCat] || [];
+        batchTempData[targetCat].push(moved);
+        return true;
+    }
+    function bindBatchDragHover(sortable) {
+        // Sortable 的 onMove 事件对象是 CustomEvent，不含 clientX/clientY（坐标在 evt.originalEvent 上）；
+        // 且拖出列表后 onMove 不再触发，因此悬停高亮统一交给 document mousemove（trackDragPoint）完成。
+        sortable.options.onMove = () => true;
+        return sortable;
+    }
+    // 拖拽期间用 document mousemove 跟踪指针坐标 + 悬停高亮左侧分类项（不插入分类列表）
+    function trackDragPoint(evt) {
+        window._batchDragPoint = { x: evt.clientX, y: evt.clientY };
+        clearCategoryDropHighlights();
+        const catEl = getCategoryAtPoint(evt.clientX, evt.clientY);
+        if (catEl) catEl.classList.add('drop-target');
+    }
+    // 松手落点：优先取 Sortable 事件的原始事件坐标（mouseup 必含 clientX/clientY），缺失时回退到最后一次 mousemove
+    function getDropCategory(evt) {
+        const oe = evt && (evt.originalEvent || evt);
+        const p = window._batchDragPoint || {};
+        const x = (typeof oe.clientX === 'number') ? oe.clientX : p.x;
+        const y = (typeof oe.clientY === 'number') ? oe.clientY : p.y;
+        return getCategoryAtPoint(x, y);
+    }
+    function startBatchDragTracking() {
+        window._batchDragPoint = null;
+        document.addEventListener('mousemove', trackDragPoint, true);
+    }
+    function stopBatchDragTracking() {
+        document.removeEventListener('mousemove', trackDragPoint, true);
+        clearCategoryDropHighlights();
+    }
+    // 松手后统一重建两侧列表（onEnd 已触发、拖拽会话已结束；setTimeout 避免在 Sortable 清理尾部销毁实例）
+    function finishBatchDragRebuild() {
+        setTimeout(() => { renderBatchCategories(); renderBatchItems(); }, 0);
+    }
     function renderBatchCategories() {
         batchCatList.innerHTML = '';
         batchTempOrder.forEach((cat) => {
@@ -25491,15 +25648,21 @@ searchInput.addEventListener('keyup', (e) => {
             };
             batchCatList.appendChild(div);
         });
-        // 侧边栏分类拖拽排序支持
+        // 侧边栏分类拖拽排序支持（仅分类自身上下排序；书签不插入分类列表，切换归属由右侧 onEnd 坐标命中完成）
         if(window.batchCatSortable) window.batchCatSortable.destroy();
         if(typeof Sortable !== 'undefined') {
             window.batchCatSortable = new Sortable(batchCatList, {
                 animation: 150, easing: "cubic-bezier(0.34, 1.56, 0.64, 1)",
-                onEnd: () => {
-                    const newOrder = [];
-                    batchCatList.querySelectorAll('.batch-cat-item span').forEach(el => newOrder.push(el.innerText.replace('📌 ', '')));
-                    batchTempOrder = newOrder;
+                // 独立 group：与右侧书签组互不匹配，分类列表不会被当作可插入容器（不会出现让位避让/插入占位）
+                group: { name: 'batch-cats', pull: false, put: false },
+                onEnd: (evt) => {
+                    clearCategoryDropHighlights();
+                    // 仅分类列表内部排序时重算顺序
+                    if (evt.to === batchCatList && evt.from === batchCatList) {
+                        const newOrder = [];
+                        batchCatList.querySelectorAll('.batch-cat-item span').forEach(el => newOrder.push(el.innerText.replace('📌 ', '')));
+                        batchTempOrder = newOrder;
+                    }
                 }
             });
         }
@@ -25510,6 +25673,8 @@ searchInput.addEventListener('keyup', (e) => {
         const items = batchTempData[currentBatchCat] || [];
         if (items.length === 0) {
             batchItemList.innerHTML = '<div style="text-align:center; padding: 40px; opacity: 0.5; font-size: 14px;">此分类空空如也，点击右上角绿色的添加按钮吧！</div>';
+            refreshBatchMoveTarget();
+            updateBatchSelectedCount();
             return;
         }
         items.forEach((item, index) => {
@@ -25524,6 +25689,7 @@ searchInput.addEventListener('keyup', (e) => {
                 folderRow.style.padding = '12px';
                 let html = `
                     <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:12px;">
+                        <input type="checkbox" class="batch-item-check" data-index="${index}" data-sub-index="" ${batchSelectMode ? '' : 'style="display:none;"'} title="批量选择">
                         <span style="font-size:22px; cursor:grab;" class="folder-drag-handle" title="上下拖动排序">📁</span>
                         <input type="text" class="batch-input batch-item-input" data-index="${index}" data-sub-index="" data-field="name" style="flex:1; font-weight:bold; font-size:14px; background:rgba(0,0,0,0.3); border-color:var(--text-b);" value="${escapeHTML(item.name || '')}" placeholder="文件夹名称">
                         <button class="ui-button small-btn batch-add-to-folder" data-index="${index}" style="width:auto; padding:6px 12px; background:rgba(255,255,255,0.1);">+ 向内添加网址</button>
@@ -25536,6 +25702,7 @@ searchInput.addEventListener('keyup', (e) => {
                         const iconUrl = subItem.iconBase64 || getFaviconUrl(subItem.url);
                         html += `
                             <div class="batch-bookmark-item nested">
+                                <input type="checkbox" class="batch-item-check" data-index="${index}" data-sub-index="${subIndex}" ${batchSelectMode ? '' : 'style="display:none;"'} title="批量选择">
                                 <img src="${iconUrl}" class="batch-icon-preview" style="cursor:grab;" title="拖动排序">
                                 <input type="text" class="batch-input batch-item-input" data-index="${index}" data-sub-index="${subIndex}" data-field="name" style="flex:1" value="${escapeHTML(subItem.name || '')}" placeholder="网站名称">
                                 <input type="text" class="batch-input batch-item-input" data-index="${index}" data-sub-index="${subIndex}" data-field="url" style="flex:2" value="${escapeHTML(subItem.url || '')}" placeholder="网站 URL 链接">
@@ -25547,22 +25714,48 @@ searchInput.addEventListener('keyup', (e) => {
                 html += `</div>`;
                 folderRow.innerHTML = html;
                 batchItemList.appendChild(folderRow);
-                // 文件夹内部的网址支持上下拖动排序
+                // 文件夹内部的网址支持上下拖动排序 + 拖到左侧分类切换归属（坐标命中，不插入分类列表）
                 if(typeof Sortable !== 'undefined') {
-                    new Sortable(document.getElementById(`batch-sublist-${index}`), {
+                    bindBatchDragHover(new Sortable(document.getElementById(`batch-sublist-${index}`), {
                         animation: 150, handle: '.batch-icon-preview', easing: "cubic-bezier(0.34, 1.56, 0.64, 1)",
+                        group: { name: 'batch-items', pull: false, put: false },
+                        forceFallback: true,
+                        fallbackOnBody: true,
+                        onStart: () => { startBatchDragTracking(); },
                         onEnd: (evt) => {
-                            const folderItems = batchTempData[currentBatchCat][index].items;
-                            const [moved] = folderItems.splice(evt.oldIndex, 1);
-                            folderItems.splice(evt.newIndex, 0, moved);
+                            stopBatchDragTracking();
+                            // 落点命中左侧分类项 → 切换归属到该分类
+                            const catEl = getDropCategory(evt);
+                            if (catEl) {
+                                const targetCat = getCatNameFromItem(catEl);
+                                if (targetCat && targetCat !== currentBatchCat) {
+                                    if (switchBookmarkToCategory(evt.from, evt.oldIndex, targetCat)) {
+                                        currentBatchCat = targetCat;
+                                        finishBatchDragRebuild();
+                                        if (typeof showToast === 'function') showToast(`已移动到「${targetCat}」`);
+                                        playSuccessTone();
+                                    }
+                                } else {
+                                    // 拖回本分类项：保持原位
+                                    setTimeout(() => renderBatchItems(), 0);
+                                }
+                                return;
+                            }
+                            // 未命中分类：仅同列表排序时重排数据
+                            if (evt.from === evt.to && typeof evt.oldIndex === 'number' && typeof evt.newIndex === 'number' && evt.oldIndex !== evt.newIndex) {
+                                const folderItems = batchTempData[currentBatchCat][index].items;
+                                const [moved] = folderItems.splice(evt.oldIndex, 1);
+                                folderItems.splice(evt.newIndex, 0, moved);
+                            }
                         }
-                    });
+                    }));
                 }
             } else {
                 const row = document.createElement('div');
                 row.className = 'batch-bookmark-item';
                 const iconUrl = item.iconBase64 || getFaviconUrl(item.url);
                 row.innerHTML = `
+                    <input type="checkbox" class="batch-item-check" data-index="${index}" data-sub-index="" ${batchSelectMode ? '' : 'style="display:none;"'} title="批量选择">
                     <img src="${iconUrl}" class="batch-icon-preview" style="cursor:grab;" title="拖动排序">
                     <input type="text" class="batch-input batch-item-input" data-index="${index}" data-sub-index="" data-field="name" style="flex:1" value="${escapeHTML(item.name || '')}" placeholder="网站名称">
                     <input type="text" class="batch-input batch-item-input" data-index="${index}" data-sub-index="" data-field="url" style="flex:2" value="${escapeHTML(item.url || '')}" placeholder="网站 URL 链接">
@@ -25591,21 +25784,54 @@ searchInput.addEventListener('keyup', (e) => {
                 deleteBatchItem(index, subIndex);
             });
         });
-        // 外部磁贴与文件夹支持互相拖动排序
+        // 外部磁贴与文件夹支持互相拖动排序 + 拖到左侧分类切换归属（坐标命中，不插入分类列表）
         if(window.batchItemSortable) window.batchItemSortable.destroy();
         if(typeof Sortable !== 'undefined') {
-            window.batchItemSortable = new Sortable(batchItemList, {
+            bindBatchDragHover(new Sortable(batchItemList, {
                 animation: 150, easing: "cubic-bezier(0.34, 1.56, 0.64, 1)",
-                handle: function (e, target) {
-                    return target.tagName === 'IMG' || target.classList.contains('folder-drag-handle');
-                },
+                // 独立 group：与左侧分类组互不匹配，Sortable 不会把左侧当作可插入目标 → 无让位避让/插入占位
+                group: { name: 'batch-items', pull: false, put: false },
+                // handle 必须传 CSS 选择器字符串（Sortable 不支持函数，函数会被当成无效选择器导致拖拽无法启动）
+                handle: '.batch-icon-preview, .folder-drag-handle',
+                // 排除嵌套行：避免与文件夹内部子列表 Sortable 实例抢同一拖拽会话
+                filter: '.nested',
+                forceFallback: true,
+                fallbackOnBody: true,
+                onStart: () => { startBatchDragTracking(); },
                 onEnd: (evt) => {
-                    const list = batchTempData[currentBatchCat];
-                    const [moved] = list.splice(evt.oldIndex, 1);
-                    list.splice(evt.newIndex, 0, moved);
+                    stopBatchDragTracking();
+                    // 落点命中左侧分类项 → 切换归属到该分类（数据移动 + 重建两侧列表 + 保存时落盘）
+                    const catEl = getDropCategory(evt);
+                    if (catEl) {
+                        const targetCat = getCatNameFromItem(catEl);
+                        if (targetCat && targetCat !== currentBatchCat) {
+                            if (switchBookmarkToCategory(evt.from, evt.oldIndex, targetCat)) {
+                                currentBatchCat = targetCat;
+                                finishBatchDragRebuild();
+                                if (typeof showToast === 'function') showToast(`已移动到「${targetCat}」`);
+                                playSuccessTone();
+                            }
+                        } else {
+                            // 拖到本分类项上：保持原位
+                            setTimeout(() => renderBatchItems(), 0);
+                        }
+                        return;
+                    }
+                    // 未命中分类：仅同列表排序时重排数据
+                    if (evt.from === evt.to && evt.to === batchItemList && typeof evt.oldIndex === 'number' && typeof evt.newIndex === 'number' && evt.oldIndex !== evt.newIndex) {
+                        const list = batchTempData[currentBatchCat];
+                        const [moved] = list.splice(evt.oldIndex, 1);
+                        list.splice(evt.newIndex, 0, moved);
+                    }
                 }
-            });
+            }));
         }
+        // 批量勾选事件：同步已选计数与全选状态
+        batchItemList.querySelectorAll('.batch-item-check').forEach(cb => {
+            cb.addEventListener('change', updateBatchSelectedCount);
+        });
+        refreshBatchMoveTarget();
+        updateBatchSelectedCount();
     }
     if (document.getElementById('batch-add-item-btn')) {
         document.getElementById('batch-add-item-btn').onclick = () => {
@@ -25631,6 +25857,112 @@ searchInput.addEventListener('keyup', (e) => {
                 renderBatchCategories();
                 renderBatchItems();
             }
+        };
+    }
+    // ===== 批量操作引擎（多选 / 批量移动 / 批量删除） =====
+    const batchToggleSelectBtn = document.getElementById('batch-toggle-select-btn');
+    const batchToolbar = document.getElementById('batch-toolbar');
+    const batchCheckAll = document.getElementById('batch-check-all');
+    const batchMoveTarget = document.getElementById('batch-move-target');
+    const batchMoveSelectedBtn = document.getElementById('batch-move-selected-btn');
+    const batchDeleteSelectedBtn = document.getElementById('batch-delete-selected-btn');
+    const batchSelectedCount = document.getElementById('batch-selected-count');
+
+    function getCheckedBatchItems() {
+        const result = [];
+        batchItemList.querySelectorAll('.batch-item-check:checked').forEach(cb => {
+            result.push({
+                index: parseInt(cb.dataset.index, 10),
+                subIndex: cb.dataset.subIndex === '' ? null : parseInt(cb.dataset.subIndex, 10)
+            });
+        });
+        return result;
+    }
+    function updateBatchSelectedCount() {
+        const cbs = batchItemList.querySelectorAll('.batch-item-check');
+        const checkedCount = Array.from(cbs).filter(cb => cb.checked).length;
+        if (batchSelectedCount) batchSelectedCount.innerText = `已选 ${checkedCount} 项`;
+        if (batchCheckAll) {
+            batchCheckAll.checked = cbs.length > 0 && checkedCount === cbs.length;
+            batchCheckAll.indeterminate = checkedCount > 0 && checkedCount < cbs.length;
+        }
+    }
+    function refreshBatchMoveTarget() {
+        if (!batchMoveTarget) return;
+        const prev = batchMoveTarget.value;
+        batchMoveTarget.innerHTML = batchTempOrder.map(c =>
+            `<option value="${escapeHTML(c)}" ${c === currentBatchCat ? 'selected' : ''}>${escapeHTML(c)}</option>`
+        ).join('');
+        if (prev && Array.from(batchMoveTarget.options).some(o => o.value === prev)) batchMoveTarget.value = prev;
+    }
+    function removeCheckedBatchItems(checked) {
+        // 先删嵌套子项（同一文件夹内倒序删），再删顶层项（倒序删），保证索引不越界
+        const nestedByFolder = {};
+        const topIndexes = [];
+        checked.forEach(c => {
+            if (c.subIndex === null) topIndexes.push(c.index);
+            else (nestedByFolder[c.index] = nestedByFolder[c.index] || []).push(c.subIndex);
+        });
+        Object.keys(nestedByFolder).forEach(folderIdxStr => {
+            const folderIdx = parseInt(folderIdxStr, 10);
+            const folder = (batchTempData[currentBatchCat] || [])[folderIdx];
+            if (!folder || !Array.isArray(folder.items)) return;
+            const subIndexes = nestedByFolder[folderIdxStr].sort((a, b) => b - a);
+            subIndexes.forEach(si => folder.items.splice(si, 1));
+        });
+        const uniqTop = Array.from(new Set(topIndexes)).sort((a, b) => b - a);
+        uniqTop.forEach(i => batchTempData[currentBatchCat].splice(i, 1));
+    }
+    if (batchToggleSelectBtn) {
+        batchToggleSelectBtn.onclick = () => {
+            batchSelectMode = !batchSelectMode;
+            if (batchToolbar) batchToolbar.style.display = batchSelectMode ? 'flex' : 'none';
+            batchToggleSelectBtn.style.background = batchSelectMode ? 'rgba(165,180,252,0.25)' : '';
+            batchToggleSelectBtn.style.borderColor = batchSelectMode ? 'rgba(165,180,252,0.5)' : '';
+            if (!batchSelectMode && batchCheckAll) batchCheckAll.checked = false;
+            renderBatchItems();
+        };
+    }
+    if (batchCheckAll) {
+        batchCheckAll.addEventListener('change', (e) => {
+            batchItemList.querySelectorAll('.batch-item-check').forEach(cb => cb.checked = e.target.checked);
+            updateBatchSelectedCount();
+        });
+    }
+    if (batchMoveSelectedBtn) {
+        batchMoveSelectedBtn.onclick = () => {
+            const checked = getCheckedBatchItems();
+            const targetCat = batchMoveTarget.value;
+            if (!checked.length) return showToast('请先勾选要移动的书签');
+            if (!targetCat) return showToast('目标分类无效');
+            if (!batchTempData[targetCat]) return showToast('目标分类不存在');
+            // 收集被选中的书签对象引用（嵌套项脱离文件夹提升为顶层项）
+            const movedItems = [];
+            checked.forEach(c => {
+                if (c.subIndex === null) {
+                    const item = (batchTempData[currentBatchCat] || [])[c.index];
+                    if (item) movedItems.push(item);
+                } else {
+                    const folder = (batchTempData[currentBatchCat] || [])[c.index];
+                    if (folder && Array.isArray(folder.items) && folder.items[c.subIndex]) {
+                        movedItems.push(folder.items[c.subIndex]);
+                    }
+                }
+            });
+            removeCheckedBatchItems(checked);
+            if (movedItems.length) batchTempData[targetCat].push(...movedItems);
+            renderBatchItems();
+            showToast(`已移动 ${movedItems.length} 项书签到 [${targetCat}]`);
+        };
+    }
+    if (batchDeleteSelectedBtn) {
+        batchDeleteSelectedBtn.onclick = () => {
+            const checked = getCheckedBatchItems();
+            if (!checked.length) return showToast('请先勾选要删除的书签');
+            if (!confirm(`确定要批量删除选中的 ${checked.length} 项书签吗？\n（文件夹被勾选时会连同内部网址一起删除）`)) return;
+            removeCheckedBatchItems(checked);
+            renderBatchItems();
+            showToast(`已删除 ${checked.length} 项书签`);
         };
     }
     // 🌟 核心引擎：终极落地！将沙盒中的数据全部覆盖给真实物理桌面
@@ -27130,7 +27462,7 @@ const fetchIconBtn = document.getElementById('auto-fetch-icon-btn');
         liteSteps: [
             {
                 target: null,
-                text: "看来你已经身经百战啦！\n那我就不啰嗦了，直接为你快速点出我们 4.3.7 版本的核心新特性吧！😎",
+                text: "看来你已经身经百战啦！\n那我就不啰嗦了，直接为你快速点出我们 4.3.8v 版本的核心新特性吧！😎",
                 position: "center"
             },
             {
@@ -27327,7 +27659,7 @@ const fetchIconBtn = document.getElementById('auto-fetch-icon-btn');
             this.steps = [
                 {
                     target: null,
-                    text: "✨ 叮咚！欢迎来到全新进化的 BinixOvO 4.3.7 史诗级版本！\n我是你的专属魔法导览员 ( • ̀ω•́ )✧ \n在开始之前，请告诉我你的“数字极客”段位：",
+                    text: "✨ 叮咚！欢迎来到全新进化的 BinixOvO 4.3.8v 史诗级版本！\n我是你的专属魔法导览员 ( • ̀ω•́ )✧ \n在开始之前，请告诉我你的“数字极客”段位：",
                     position: "center",
                     choices: [
                         { label: "🚀 老司机带带我 (我是高玩，直接跳过)", action: "skip" },
@@ -27368,7 +27700,7 @@ const fetchIconBtn = document.getElementById('auto-fetch-icon-btn');
             if (this.overlay) {
                 this.overlay.style.pointerEvents = '';
             }
-            localStorage.setItem('binix_tour_completed_v437', 'true'); // 写入 4.3.7 专属记忆
+            localStorage.setItem('binix_tour_completed_v437', 'true'); // 写入 4.3.8v 专属记忆
             // 清理按键追踪事件监听器
             if (this._keydownTracker) {
                 document.removeEventListener('keydown', this._keydownTracker);
@@ -27739,7 +28071,7 @@ const fetchIconBtn = document.getElementById('auto-fetch-icon-btn');
             // 1. 先关闭个人信息弹窗
             const userModal = document.getElementById('user-modal');
             if (userModal) userModal.classList.remove('open');
-            // 2. 擦除 4.3.7 版本的本地记忆，让系统以为是全新进来的
+            // 2. 擦除 4.3.8v 版本的本地记忆，让系统以为是全新进来的
             localStorage.removeItem('binix_tour_completed_v437');
             // 3. 如果之前导览结束时 DOM 已经被清空，这里重新召唤回来
             if (!document.querySelector('.tour-overlay')) {
